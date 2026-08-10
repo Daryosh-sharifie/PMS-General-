@@ -1,0 +1,287 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model AppSetting {
+  id           Int     @id @default(1)
+  hospitalName String
+  logo         String?
+  phone1       String
+  phone2       String?
+  address      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Patient {
+  id               Int     @id @default(autoincrement())
+  fullname         String
+  fathername       String
+  age              String
+  bloodGroup       String?
+  gender           String
+  email            String?
+  phone            String
+  address          String?
+  knownallergies   String?
+
+  prescription     Prescription[]
+  labOrders        LabOrder[]
+
+  createdAt        DateTime @default(now())
+
+  @@index([email])
+  @@index([phone])
+  @@index([fullname])
+  @@index([fathername])
+}
+
+model User {
+  id                    Int      @id @default(autoincrement())
+  name                  String
+  email                 String   @unique
+  password              String
+  role                  UserRole @default(Doctor)
+  avatar                String?
+  passwordResetToken    String?
+  passwordResetExpires  DateTime?
+
+  prescription          Prescription[]
+
+  labOrdersRequested    LabOrder[]     @relation("LabOrderRequestedBy")
+  labResultsEntered     LabOrderItem[] @relation("LabResultEnteredBy")
+  labResultsVerified    LabOrderItem[] @relation("LabResultVerifiedBy")
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([role])
+  @@index([createdAt])
+}
+
+enum UserRole {
+  Admin
+  Doctor
+  Pharmacist
+  Reciption
+  LabStaff
+}
+
+enum PrescriptionStatus {
+  PENDING
+  VERIFIED
+  DISPENSED
+  REJECTED
+}
+
+enum LabOrderStatus {
+  REQUESTED
+  IN_PROGRESS
+  PARTIAL_COMPLETED
+  COMPLETED
+  VERIFIED
+  CANCELLED
+}
+
+enum LabOrderItemStatus {
+  REQUESTED
+  IN_PROGRESS
+  COMPLETED
+  VERIFIED
+  CANCELLED
+}
+
+model Prescription {
+  id               Int                @id @default(autoincrement())
+  prescriptionNo   String             @unique
+
+  patientName      String
+  date             DateTime           @default(now())
+  diagnosis        String
+  status           PrescriptionStatus
+  rejectionReason  String?
+
+  pastHistory      String?
+  investigation    String?
+  notes            String?
+  instructions     String?
+  impression       String?
+  drugHistory      String?
+
+  bloodPressure    String?
+  respiratoryRate  String?
+  pulseRate        String?
+  temperature      String?
+  heartRate        String?
+  spo2             String?
+  clc              String?
+
+  patientId        Int
+  patient          Patient            @relation(fields: [patientId], references: [id])
+
+  doctorId         Int
+  doctor           User               @relation(fields: [doctorId], references: [id])
+
+  medicines        PrescriptionMedicine[]
+  labOrders        LabOrder[]
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@index([patientId])
+  @@index([doctorId])
+  @@index([status])
+  @@index([date])
+  @@index([createdAt])
+  @@index([patientId, status])
+  @@index([doctorId, status])
+}
+
+model PrescriptionMedicine {
+  id              Int          @id @default(autoincrement())
+  name            String
+  dosage          String
+  frequency       String
+  route           String
+  duration        String
+  instructions    String
+  amount          Int          @default(0)
+  mealTiming      String?
+
+  prescriptionId  Int
+  prescription    Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+
+  @@index([prescriptionId])
+  @@index([name])
+}
+
+model LabTest {
+  id            Int      @id @default(autoincrement())
+  name          String   @unique
+  category      String?
+  description   String?
+
+  resultFields  Json?
+
+  isActive      Boolean  @default(true)
+
+  orderItems    LabOrderItem[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model LabOrder {
+  id              Int            @id @default(autoincrement())
+  labOrderNo      String         @unique
+
+  patientId       Int
+  prescriptionId  Int?
+  requestedById   Int?
+
+  status          LabOrderStatus @default(REQUESTED)
+  notes           String?
+
+  patient         Patient        @relation(fields: [patientId], references: [id])
+  prescription    Prescription?  @relation(fields: [prescriptionId], references: [id], onDelete: SetNull)
+  requestedBy     User?          @relation("LabOrderRequestedBy", fields: [requestedById], references: [id])
+
+  items           LabOrderItem[]
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([patientId])
+  @@index([prescriptionId])
+  @@index([requestedById])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model LabOrderItem {
+  id                 Int                @id @default(autoincrement())
+
+  labOrderId          Int
+  labTestId           Int
+
+  status              LabOrderItemStatus @default(REQUESTED)
+
+  testNameSnapshot    String
+  categorySnapshot    String?
+  templateSnapshot    Json?
+
+  manualResults       Json?
+
+  fileUrl             String?
+  fileName            String?
+  fileMimeType        String?
+  fileSize            Int?
+
+  remarks             String?
+
+  enteredById         Int?
+  verifiedById        Int?
+
+  completedAt         DateTime?
+  verifiedAt          DateTime?
+
+  labOrder            LabOrder          @relation(fields: [labOrderId], references: [id], onDelete: Cascade)
+  labTest             LabTest           @relation(fields: [labTestId], references: [id])
+  enteredBy           User?             @relation("LabResultEnteredBy", fields: [enteredById], references: [id])
+  verifiedBy          User?             @relation("LabResultVerifiedBy", fields: [verifiedById], references: [id])
+
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  @@index([labOrderId])
+  @@index([labTestId])
+  @@index([status])
+  @@index([enteredById])
+  @@index([verifiedById])
+}
+
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  action      String
+  entity      String
+  entityId    Int?
+  description String
+  userId      Int?
+  userName    String?
+  userRole    String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([entity])
+}
+
+model Medicine {
+  id           Int      @id @default(autoincrement())
+  type         String
+  companyName  String
+  genericName  String
+  dosage       String
+  amount       Int      @default(0)
+  frequency    String
+  mealTiming   String?
+
+  createdBy    Int?
+  updatedBy    Int?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([genericName])
+  @@index([companyName])
+  @@index([type])
+}

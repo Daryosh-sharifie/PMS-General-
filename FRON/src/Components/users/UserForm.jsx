@@ -1,0 +1,331 @@
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Save, Shield, X, AlertCircle, CheckCircle } from "lucide-react";
+import { Card, CardContent } from "../ui/Card";
+import { inputClasses, buttonPrimary, buttonSecondary } from "../../constants/styles";
+import { useLanguage } from "../../i18n/LanguageContext";
+
+const ROLE_OPTIONS = [
+	{ value: "Doctor", labelKey: "doctor" },
+	{ value: "Admin", labelKey: "admin" },
+	{ value: "Pharmacist", labelKey: "pharmacist" },
+	{ value: "Reciption", labelKey: "reception" },
+	{ value: "LabStaff", labelKey: "labStaff" },
+];
+
+export default function UserForm({
+	onAddUser,
+	onUpdateUser,
+	onRefetch,
+	user,
+}) {
+	const { t } = useLanguage();
+	const isEditMode = Boolean(user?.id);
+	const navigate = useNavigate();
+
+	const [form, setForm] = useState({
+		name: user?.name || "",
+		email: user?.email || "",
+		phone: user?.phone || "",
+		role: user?.role || "Doctor",
+		password: "",
+		confirmPassword: "",
+	});
+
+	const [error, setError] = useState("");
+	const [success, setSuccess] = useState("");
+	const [loading, setLoading] = useState(false);
+
+	const title = isEditMode ? t("editUser") : t("addNewUser");
+
+	const subtitle = isEditMode
+		? t("editUserSubtitle")
+		: t("addUserSubtitle");
+
+	const passwordRequired = !isEditMode;
+
+	const fields = useMemo(
+		() => [
+			{
+				name: "name",
+				label: t("fullName"),
+				type: "text",
+				required: true,
+				placeholder: t("fullNamePlaceholder"),
+			},
+			{
+				name: "email",
+				label: t("email"),
+				type: "email",
+				required: true,
+				placeholder: "example@hospital.com",
+			},
+			{
+				name: "phone",
+				label: t("phone"),
+				type: "tel",
+				required: false,
+				placeholder: t("phonePlaceholder"),
+			},
+		],
+		[t]
+	);
+
+	const updateField = (field, value) => {
+		setForm((prev) => ({ ...prev, [field]: value }));
+		if (error) setError("");
+		if (success) setSuccess("");
+	};
+
+	const validateForm = () => {
+		if (!form.name.trim()) return t("nameRequired");
+		if (!form.email.trim()) return t("emailRequired");
+
+		if (passwordRequired && !form.password) {
+			return t("passwordRequired");
+		}
+
+		if (passwordRequired && !form.confirmPassword) {
+			return t("confirmPasswordRequired");
+		}
+
+		if (form.password && form.password.length < 8) {
+			return t("passwordMinLength");
+		}
+
+		if (form.password && form.password !== form.confirmPassword) {
+			return t("passwordsDoNotMatch");
+		}
+
+		return "";
+	};
+
+	const submit = async (event) => {
+		event.preventDefault();
+
+		const validationError = validateForm();
+		if (validationError) {
+			setError(validationError);
+			return;
+		}
+
+		const payload = {
+			name: form.name.trim(),
+			email: form.email.trim(),
+			phone: form.phone.trim(),
+			role: form.role,
+		};
+
+		if (form.password) {
+			payload.password = form.password;
+		}
+
+		try {
+			setLoading(true);
+			setError("");
+			setSuccess("");
+
+			if (isEditMode) {
+				if (!onUpdateUser) {
+					throw new Error(t("updateUserHandlerMissing"));
+				}
+				await onUpdateUser(user.id, payload);
+				setSuccess(t("userUpdatedSuccessfully"));
+			} else {
+				if (!onAddUser) {
+					throw new Error(t("addUserHandlerMissing"));
+				}
+				await onAddUser(payload);
+				setSuccess(t("userCreatedSuccessfully"));
+			}
+
+			if (onRefetch) await onRefetch();
+
+			setTimeout(() => {
+				navigate("/users");
+			}, 650);
+		} catch (err) {
+			setError(err.message || t("failedToSaveUser"));
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleCancel = () => {
+		navigate("/users");
+	};
+
+	return (
+		<div className="min-h-screen bg-slate-50 px-4 py-8">
+			<Card className="mx-auto w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+				<CardContent className="relative p-6 md:p-8">
+					<button
+						type="button"
+						onClick={handleCancel}
+						className="absolute right-4 top-4 rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-red-500"
+						title={t("cancel")}
+					>
+						<X size={22} />
+					</button>
+
+					<form onSubmit={submit} className="space-y-8" dir="rtl">
+						<div className="flex items-center justify-center border-b border-slate-100 pb-6 text-center">
+							<div>
+								<div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+									<Shield className="h-7 w-7" />
+								</div>
+								<h2 className="text-3xl font-bold text-slate-950">{title}</h2>
+								<p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+							</div>
+						</div>
+
+						{error && <Message type="error" text={error} />}
+						{success && <Message type="success" text={success} />}
+
+						<Section title={t("personalInformation")}>
+							<div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+								{fields.map((field) => (
+									<FormInput
+										key={field.name}
+										label={field.label}
+										type={field.type}
+										value={form[field.name]}
+										placeholder={field.placeholder}
+										required={field.required}
+										onChange={(value) => updateField(field.name, value)}
+									/>
+								))}
+
+								<div>
+									<label className="mb-1.5 block text-right text-xs font-bold text-slate-700">
+										{t("role")} <span className="text-red-500">*</span>
+									</label>
+									<select
+										className={inputClasses}
+										value={form.role}
+										onChange={(event) => updateField("role", event.target.value)}
+										required
+									>
+										{ROLE_OPTIONS.map((role) => (
+											<option key={role.value} value={role.value}>
+												{t(role.labelKey)}
+											</option>
+										))}
+									</select>
+								</div>
+							</div>
+						</Section>
+
+						<Section title={t("securityAndAccess")}>
+							<div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+								<FormInput
+									label={`${t("password")} ${isEditMode ? `(${t("optional")})` : "*"}`}
+									type="password"
+									value={form.password}
+									placeholder={t("passwordPlaceholder")}
+									required={passwordRequired}
+									onChange={(value) => updateField("password", value)}
+								/>
+
+								<FormInput
+									label={`${t("confirmPassword")} ${passwordRequired ? "*" : `(${t("optional")})`}`}
+									type="password"
+									value={form.confirmPassword}
+									placeholder={t("confirmPasswordPlaceholder")}
+									required={passwordRequired}
+									onChange={(value) => updateField("confirmPassword", value)}
+								/>
+							</div>
+
+							<p className="mt-3 text-right text-xs text-slate-500">
+								{isEditMode
+									? t("editPasswordHint")
+									: t("newPasswordHint")}
+							</p>
+						</Section>
+
+						<div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+							<button
+								type="button"
+								className={`${buttonSecondary} justify-center`}
+								onClick={handleCancel}
+								disabled={loading}
+							>
+								{t("cancel")}
+							</button>
+
+							<button
+								type="submit"
+								className={`${buttonPrimary} justify-center disabled:cursor-not-allowed disabled:opacity-60`}
+								disabled={loading}
+							>
+								{loading ? (
+									<span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+								) : (
+									<Save className="mr-2 h-4 w-4" />
+								)}
+								{loading
+									? t("processing")
+									: isEditMode
+									? t("updateUser")
+									: t("addUser")}
+							</button>
+						</div>
+					</form>
+				</CardContent>
+			</Card>
+		</div>
+	);
+}
+
+function Section({ title, children }) {
+	return (
+		<section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
+			<h3 className="mb-4 text-right text-sm font-bold text-slate-800">
+				{title}
+			</h3>
+			{children}
+		</section>
+	);
+}
+
+function FormInput({
+	label,
+	value,
+	onChange,
+	type = "text",
+	required = false,
+	placeholder = "",
+}) {
+	return (
+		<div>
+			<label className="mb-1.5 block text-right text-xs font-bold text-slate-700">
+				{label} {required && <span className="text-red-500">*</span>}
+			</label>
+			<input
+				type={type}
+				className={inputClasses}
+				value={value || ""}
+				placeholder={placeholder}
+				onChange={(event) => onChange(event.target.value)}
+				required={required}
+			/>
+		</div>
+	);
+}
+
+function Message({ type, text }) {
+	const Icon = type === "success" ? CheckCircle : AlertCircle;
+
+	const classes =
+		type === "success"
+			? "border-green-200 bg-green-50 text-green-800"
+			: "border-red-200 bg-red-50 text-red-800";
+
+	return (
+		<div className={`flex items-center gap-2 rounded-xl border p-3 ${classes}`}>
+			<Icon className="h-5 w-5" />
+			<span className="text-sm font-semibold">{text}</span>
+		</div>
+	);
+}

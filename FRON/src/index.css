@@ -1,0 +1,289 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
+
+body {
+  font-family: "Vazirmatn", system-ui, sans-serif;
+}
+/* -------------------------------------------------------
+   Global language direction normalization
+   English = LTR
+   Dari/Farsi = RTL
+
+   Important:
+   Many old tables in this app were written in RTL DOM order:
+   Actions ... #
+   So table column direction must be flipped globally.
+------------------------------------------------------- */
+
+html[dir="ltr"],
+html[dir="ltr"] body {
+	direction: ltr;
+	text-align: left;
+}
+
+html[dir="rtl"],
+html[dir="rtl"] body {
+	direction: rtl;
+	text-align: right;
+}
+
+/* App shell must stay flex-row.
+   Do not use flex-row-reverse in App.jsx.
+   Because dir="rtl" already places first flex item on the right. */
+html[dir="ltr"] .app-shell,
+html[dir="rtl"] .app-shell {
+	display: flex;
+	flex-direction: row;
+}
+
+/* Main page direction */
+html[dir="ltr"] .app-main {
+	direction: ltr;
+	text-align: left;
+}
+
+html[dir="rtl"] .app-main {
+	direction: rtl;
+	text-align: right;
+}
+
+/* -------------------------------------------------------
+   Text alignment compatibility
+   Fix pages/components that were hardcoded as text-right/text-left.
+------------------------------------------------------- */
+
+html[dir="ltr"] .app-main .text-right {
+	text-align: left !important;
+}
+
+html[dir="ltr"] .app-main .text-left {
+	text-align: left !important;
+}
+
+html[dir="rtl"] .app-main .text-left {
+	text-align: right !important;
+}
+
+html[dir="rtl"] .app-main .text-right {
+	text-align: right !important;
+}
+
+html[dir="ltr"] .app-main .text-center,
+html[dir="rtl"] .app-main .text-center {
+	text-align: center !important;
+}
+
+/* -------------------------------------------------------
+   Flex alignment compatibility
+   Fix cards/headers that were hardcoded with justify-end.
+------------------------------------------------------- */
+
+html[dir="ltr"] .app-main .justify-end {
+	justify-content: flex-start !important;
+}
+
+html[dir="ltr"] .app-main .justify-start {
+	justify-content: flex-start !important;
+}
+
+html[dir="rtl"] .app-main .justify-start {
+	justify-content: flex-end !important;
+}
+
+html[dir="rtl"] .app-main .justify-end {
+	justify-content: flex-end !important;
+}
+
+/* Hardcoded row reverse fixes */
+html[dir="ltr"] .app-main .flex-row-reverse {
+	flex-direction: row !important;
+}
+
+html[dir="rtl"] .app-main .flex-row-reverse {
+	flex-direction: row-reverse !important;
+}
+
+/* -------------------------------------------------------
+   GLOBAL TABLE FIX
+   This is the important part for your issue.
+
+   Your old table DOM order is mostly RTL:
+   Actions | Status | ... | #
+
+   So:
+   English must visually flip table columns.
+   Dari must keep RTL visual order.
+------------------------------------------------------- */
+
+/* English:
+   Flip legacy RTL-coded tables so # appears on the left
+   and Actions appears on the right. */
+html[dir="ltr"] .app-main table {
+	direction: rtl !important;
+}
+
+/* Dari:
+   Flip the same legacy order so # appears on the right
+   and Actions appears on the left. */
+html[dir="rtl"] .app-main table {
+	direction: ltr !important;
+}
+
+/* But cell content itself should still follow the selected language. */
+html[dir="ltr"] .app-main table th,
+html[dir="ltr"] .app-main table td {
+	direction: ltr;
+	text-align: left;
+}
+
+html[dir="rtl"] .app-main table th,
+html[dir="rtl"] .app-main table td {
+	direction: rtl;
+	text-align: right;
+}
+
+/* Keep action buttons, status badges, numbers and centered cells centered. */
+html[dir="ltr"] .app-main table th.text-center,
+html[dir="ltr"] .app-main table td.text-center,
+html[dir="rtl"] .app-main table th.text-center,
+html[dir="rtl"] .app-main table td.text-center {
+	text-align: center !important;
+}
+
+/* Tailwind text-right/text-left inside tables */
+html[dir="ltr"] .app-main table th.text-right,
+html[dir="ltr"] .app-main table td.text-right {
+	text-align: left !important;
+}
+
+html[dir="rtl"] .app-main table th.text-left,
+html[dir="rtl"] .app-main table td.text-left {
+	text-align: right !important;
+}
+
+/* Keep table action buttons visually centered */
+html[dir="ltr"] .app-main table td .flex.justify-center,
+html[dir="rtl"] .app-main table td .flex.justify-center {
+	justify-content: center !important;
+}
+
+/* -------------------------------------------------------
+   Forms
+------------------------------------------------------- */
+
+html[dir="ltr"] input,
+html[dir="ltr"] textarea,
+html[dir="ltr"] select {
+	direction: ltr;
+	text-align: left;
+}
+
+html[dir="rtl"] input,
+html[dir="rtl"] textarea,
+html[dir="rtl"] select {
+	direction: rtl;
+	text-align: right;
+}
+
+/* Emails, IDs, phones, numbers should stay readable in both languages */
+html[dir="ltr"] input[type="email"],
+html[dir="ltr"] input[type="tel"],
+html[dir="ltr"] input[type="number"],
+html[dir="ltr"] .ltr-value,
+html[dir="rtl"] input[type="email"],
+html[dir="rtl"] input[type="tel"],
+html[dir="rtl"] input[type="number"],
+html[dir="rtl"] .ltr-value {
+	direction: ltr !important;
+	text-align: left !important;
+}
+
+/* Prescription numbers, IDs, emails, phone values inside tables */
+html[dir="ltr"] .app-main table .ltr-value,
+html[dir="rtl"] .app-main table .ltr-value {
+	direction: ltr !important;
+	text-align: left !important;
+}
+
+/* -------------------------------------------------------
+   Modals / overlays
+------------------------------------------------------- */
+
+html[dir="ltr"] [role="dialog"],
+html[dir="ltr"] .modal {
+	direction: ltr;
+	text-align: left;
+}
+
+html[dir="rtl"] [role="dialog"],
+html[dir="rtl"] .modal {
+	direction: rtl;
+	text-align: right;
+}
+
+/* -------------------------------------------------------
+   Icons
+------------------------------------------------------- */
+
+svg {
+	flex-shrink: 0;
+}
+
+/* -------------------------------------------------------
+   Normal direction tables
+   Use this class for tables that are already written in correct DOM order:
+   First column = first logical column
+   Last column = actions
+------------------------------------------------------- */
+
+html[dir="ltr"] .app-main table.normal-dir-table {
+	direction: ltr !important;
+}
+
+html[dir="rtl"] .app-main table.normal-dir-table {
+	direction: rtl !important;
+}
+
+html[dir="ltr"] .app-main table.normal-dir-table th,
+html[dir="ltr"] .app-main table.normal-dir-table td {
+	direction: ltr !important;
+	text-align: left !important;
+}
+
+html[dir="rtl"] .app-main table.normal-dir-table th,
+html[dir="rtl"] .app-main table.normal-dir-table td {
+	direction: rtl !important;
+	text-align: right !important;
+}
+
+html[dir="ltr"] .app-main table.normal-dir-table th.text-center,
+html[dir="ltr"] .app-main table.normal-dir-table td.text-center,
+html[dir="rtl"] .app-main table.normal-dir-table th.text-center,
+html[dir="rtl"] .app-main table.normal-dir-table td.text-center {
+	text-align: center !important;
+}
+
+html[dir="ltr"] .app-main table.normal-dir-table .ltr-value,
+html[dir="rtl"] .app-main table.normal-dir-table .ltr-value {
+	direction: ltr !important;
+	text-align: left !important;
+}

@@ -1,0 +1,162 @@
+[
+  {
+    "type": "قرص",
+    "companyName": "فیض",
+    "genericName": "پاراسیتامول",
+    "dosage": "500mg",
+    "frequency": "1x3",
+    "mealTiming": "بعد از غذا"
+  },
+  {
+    "type": "سیروپ",
+    "companyName": "داروسازی غرب",
+    "genericName": "امبروکسول",
+    "dosage": "30mg/5ml",
+    "frequency": "2x3",
+    "mealTiming": "بدون توجه به غذا"
+  },
+  {
+    "type": "کپسول",
+    "companyName": "ابوریحان",
+    "genericName": "آموکسی سیلین",
+    "dosage": "250mg",
+    "frequency": "1x3",
+    "mealTiming": "قبل از غذا"
+  },
+  {
+    "type": "انجکشن",
+    "companyName": "اکسیر",
+    "genericName": "انسولین",
+    "dosage": "10 unit",
+    "frequency": "1x2",
+    "mealTiming": "قبل از غذا"
+  },
+  {
+    "type": "قطره",
+    "companyName": "سینا دارو",
+    "genericName": "کلرامفنیکل",
+    "dosage": "0.5%",
+    "frequency": "2x4",
+    "mealTiming": "بدون توجه به غذا"
+  },
+  {
+    "type": "پماد",
+    "companyName": "فارابی",
+    "genericName": "هیدروکورتیزون",
+    "dosage": "1%",
+    "frequency": "2x2",
+    "mealTiming": "بدون توجه به غذا"
+  },
+  {
+    "type": "مرهم",
+    "companyName": "زهراوی",
+    "genericName": "دیکلوفناک",
+    "dosage": "1%",
+    "frequency": "1x2",
+    "mealTiming": "بدون توجه به غذا"
+  },
+  {
+    "type": "قرص",
+    "companyName": "دانا",
+    "genericName": "ایبوپروفن",
+    "dosage": "400mg",
+    "frequency": "1x2",
+    "mealTiming": "بعد از غذا"
+  },
+  {
+    "type": "کپسول",
+    "companyName": "تهران شیمی",
+    "genericName": "سفالکسین",
+    "dosage": "500mg",
+    "frequency": "1x4",
+    "mealTiming": "قبل از غذا"
+  },
+  {
+    "type": "قرص",
+    "companyName": "سبحان",
+    "genericName": "متفورمین",
+    "dosage": "500mg",
+    "frequency": "1x2",
+    "mealTiming": "بعد از غذا"
+  },
+  {
+    "type": "سیروپ",
+    "companyName": "البرز دارو",
+    "genericName": "شربت سرفه",
+    "dosage": "100ml",
+    "frequency": "2x3",
+    "mealTiming": "بدون توجه به غذا"
+  },
+  {
+    "type": "قرص",
+    "companyName": "کوثر",
+    "genericName": "لوزارتان",
+    "dosage": "50mg",
+    "frequency": "1x1",
+    "mealTiming": "بدون توجه به غذا"
+  },
+  {
+    "type": "کپسول",
+    "companyName": "رازک",
+    "genericName": "اومپرازول",
+    "dosage": "20mg",
+    "frequency": "1x1",
+    "mealTiming": "قبل از غذا"
+  },
+  {
+    "type": "قرص",
+    "companyName": "جالینوس",
+    "genericName": "آتورواستاتین",
+    "dosage": "10mg",
+    "frequency": "1x1",
+    "mealTiming": "بدون توجه به غذا"
+  },
+  {
+    "type": "قطره",
+    "companyName": "نور",
+    "genericName": "قطره چشم",
+    "dosage": "5ml",
+    "frequency": "2x3",
+    "mealTiming": "بدون توجه به غذا"
+  },
+  {
+    "type": "قرص",
+    "companyName": "سبحان",
+    "genericName": "سیتریزین",
+    "dosage": "10mg",
+    "frequency": "1x1",
+    "mealTiming": "بدون توجه به غذا"
+  },
+  {
+    "type": "سیروپ",
+    "companyName": "رضوی",
+    "genericName": "پارامول",
+    "dosage": "120mg/5ml",
+    "frequency": "2x3",
+    "mealTiming": "بعد از غذا"
+  },
+  {
+    "type": "کپسول",
+    "companyName": "داروسازی ایران",
+    "genericName": "ویتامین D",
+    "dosage": "1000IU",
+    "frequency": "1x1",
+    "mealTiming": "بعد از غذا"
+  },
+  {
+    "type": "قرص",
+    "companyName": "شفا",
+    "genericName": "آسپرین",
+    "dosage": "80mg",
+    "frequency": "1x1",
+    "mealTiming": "بعد از غذا"
+  },
+  {
+    "type": "قرص",
+    "companyName": "اسوه",
+    "genericName": "گلیبنکلامید",
+    "dosage": "5mg",
+    "frequency": "1x2",
+    "mealTiming": "قبل از غذا"
+  }
+]

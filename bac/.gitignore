@@ -1,0 +1,8 @@
+/node_modules
+/src/generated/prisma
+/.env
+/uploads/blogs
+/uploads/users
+/uploads/logos
+/uploads/avatars
+/uploads/logos
