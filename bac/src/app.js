@@ -15,6 +15,9 @@ const backupRouter = require('./Routes/backupRouter');
 const labTestsRouter = require('./Routes/labTestRouter');
 const labOrdersRouter = require('./Routes/labOrderRouter');
 const labOrderItemRouter = require("./routes/labOrderItemRouter");
+const medicineCategoryRouter = require('./Routes/medicineCategoryRouter');
+const medicineFrequencyRouter = require('./Routes/medicineFrequencyRouter');
+const medicineMealTimingRouter = require('./Routes/medicineMealTimingRouter');
 
 dotenv.config();
  
@@ -49,6 +52,9 @@ app.use('/api/v1/patients', patientRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/prescriptions', prescriptionRouter);
 app.use('/api/v1/medicines', medicineRouter);
+app.use('/api/v1/medicine-categories', medicineCategoryRouter);
+app.use('/api/v1/medicine-frequencies', medicineFrequencyRouter);
+app.use('/api/v1/medicine-meal-timings', medicineMealTimingRouter);
 app.use('/api/v1/activity', activityRouter);
 app.use('/api/v1/backup', backupRouter);
 app.use('/api/v1/lab', labTestsRouter);

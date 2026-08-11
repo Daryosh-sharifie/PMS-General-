@@ -27,7 +27,7 @@ export default function LabReportsPage() {
 	const [addLabTestError, setAddLabTestError] = useState("");
 
 	const pageSize = 10;
-	const { orders, loading, error, refresh } = useLabOrders();
+	const { orders, loading, error } = useLabOrders();
 
 	const filteredOrders = useMemo(() => {
 		const query = searchTerm.trim().toLowerCase();
@@ -135,16 +135,6 @@ export default function LabReportsPage() {
 					description={t("createLabOrderFromPrescription")}
 				/>
 			)}
-
-			<div className="flex justify-end">
-				<button
-					type="button"
-					onClick={refresh}
-					className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-				>
-					{t("refresh")}
-				</button>
-			</div>
 
 			<AddLabTestModal
 				open={showAddLabTestModal}

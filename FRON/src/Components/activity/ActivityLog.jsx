@@ -4,6 +4,7 @@ import {
 	RefreshCw,
 	ChevronLeft,
 	ChevronRight,
+	FileDown,
 	Filter,
 	User,
 	FileText,
@@ -17,6 +18,8 @@ import {
 	CheckCircle,
 	Clock,
 } from "lucide-react";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 import { activityApi } from "../../api/activityApi";
 import { Card, CardContent } from "../ui/Card";
 import { useLanguage } from "../../i18n/LanguageContext";
@@ -185,6 +188,149 @@ function getActionInfo(action) {
 	);
 }
 
+const escapeHtml = (value = "") =>
+	String(value ?? "")
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
+
+async function downloadLogsAsPdf({ logs, t, language, filterLabel, total }) {
+	if (!logs.length) {
+		throw new Error(t("noActivityLogsFound"));
+	}
+
+	const isRtl = language === "fa";
+	const textAlign = isRtl ? "right" : "left";
+	const centerAlign = "center";
+
+	const headerCell = (label) =>
+		`<th style="background:#f1f5f9;border:1px solid #cbd5e1;padding:7px 5px;font-weight:800;color:#334155;text-align:${centerAlign};font-size:11px;">${escapeHtml(label)}</th>`;
+
+	const bodyCell = (value, extra = "") =>
+		`<td style="border:1px solid #e2e8f0;padding:6px 5px;text-align:${centerAlign};vertical-align:top;font-size:11px;word-break:break-word;${extra}">${escapeHtml(value)}</td>`;
+
+	const rows = logs
+		.map((log, index) => {
+			const actionInfo = getActionInfo(log.action);
+			const roleKey = getRoleKey(log.userRole);
+
+			return `
+				<tr>
+					${bodyCell(String(index + 1), "font-weight:700;")}
+					${bodyCell(formatActivityDate(log.createdAt, language))}
+					${bodyCell(t(actionInfo.labelKey))}
+					${bodyCell(log.description || "-", `text-align:${textAlign};max-width:280px;`)}
+					${bodyCell(log.userName || "-")}
+					${bodyCell(roleKey ? t(roleKey) : "-")}
+					${bodyCell(getEntityLabel(log.entity, t))}
+				</tr>
+			`;
+		})
+		.join("");
+
+	const generatedAt = formatActivityDate(new Date().toISOString(), language);
+	const dateStamp = new Date().toISOString().slice(0, 10);
+
+	const wrapper = document.createElement("div");
+	wrapper.setAttribute("dir", isRtl ? "rtl" : "ltr");
+	wrapper.setAttribute("data-pdf-export", "true");
+	Object.assign(wrapper.style, {
+		position: "fixed",
+		left: "0",
+		top: "0",
+		width: "1100px",
+		background: "#ffffff",
+		color: "#1e293b",
+		padding: "16px",
+		zIndex: "999999",
+		fontFamily: "'Vazirmatn', Arial, Helvetica, sans-serif",
+	});
+
+	wrapper.innerHTML = `
+		<div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #1e293b;padding-bottom:10px;margin-bottom:14px;">
+			<div style="font-size:22px;font-weight:900;color:#1e293b;">${escapeHtml(t("activityLogs"))}</div>
+			<div style="font-size:11px;color:#475569;line-height:1.7;text-align:${isRtl ? "left" : "right"};">
+				${escapeHtml(t("total"))}: ${escapeHtml(String(total))} ${escapeHtml(t("eventsRecorded"))}<br />
+				${escapeHtml(t("filter"))}: ${escapeHtml(filterLabel)}<br />
+				${escapeHtml(generatedAt)}
+			</div>
+		</div>
+		<table style="width:100%;border-collapse:collapse;color:#1e293b;">
+			<thead>
+				<tr>
+					${headerCell("#")}
+					${headerCell(t("dateAndTime"))}
+					${headerCell(t("action"))}
+					${headerCell(t("description"))}
+					${headerCell(t("user"))}
+					${headerCell(t("role"))}
+					${headerCell(t("entity"))}
+				</tr>
+			</thead>
+			<tbody>${rows}</tbody>
+		</table>
+	`;
+
+	document.body.appendChild(wrapper);
+
+	try {
+		if (document.fonts?.ready) {
+			await document.fonts.ready;
+		}
+
+		await new Promise((resolve) => setTimeout(resolve, 150));
+
+		const canvas = await html2canvas(wrapper, {
+			scale: 2,
+			useCORS: true,
+			backgroundColor: "#ffffff",
+			logging: false,
+			width: wrapper.scrollWidth,
+			height: wrapper.scrollHeight,
+			windowWidth: wrapper.scrollWidth,
+			windowHeight: wrapper.scrollHeight,
+		});
+
+		if (!canvas.width || !canvas.height) {
+			throw new Error("Failed to render PDF content");
+		}
+
+		const pdf = new jsPDF({
+			orientation: "landscape",
+			unit: "mm",
+			format: "a4",
+		});
+
+		const pageWidth = pdf.internal.pageSize.getWidth();
+		const pageHeight = pdf.internal.pageSize.getHeight();
+		const margin = 8;
+		const contentWidth = pageWidth - margin * 2;
+		const contentHeight = pageHeight - margin * 2;
+		const imgWidth = contentWidth;
+		const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+		let heightLeft = imgHeight;
+		let position = margin;
+		const imgData = canvas.toDataURL("image/jpeg", 0.95);
+
+		pdf.addImage(imgData, "JPEG", margin, position, imgWidth, imgHeight);
+		heightLeft -= contentHeight;
+
+		while (heightLeft > 0) {
+			position = margin - (imgHeight - heightLeft);
+			pdf.addPage();
+			pdf.addImage(imgData, "JPEG", margin, position, imgWidth, imgHeight);
+			heightLeft -= contentHeight;
+		}
+
+		pdf.save(`reports-${dateStamp}.pdf`);
+	} finally {
+		document.body.removeChild(wrapper);
+	}
+}
+
 export default function ActivityLog() {
 	const { t, language } = useLanguage();
 
@@ -198,6 +344,7 @@ export default function ActivityLog() {
 	const [entityFilter, setEntityFilter] = useState("");
 	const [deleting, setDeleting] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [exporting, setExporting] = useState(false);
 
 	const numberLocale = language === "fa" ? "fa-IR" : "en-US";
 	const isRtl = language === "fa";
@@ -239,6 +386,32 @@ export default function ActivityLog() {
 	const handleFilterChange = (value) => {
 		setEntityFilter(value);
 		setPage(1);
+	};
+
+	const handleExportPdf = async () => {
+		try {
+			setExporting(true);
+			setError("");
+
+			const filters = {};
+			if (entityFilter) filters.entity = entityFilter;
+
+			const result = await activityApi.getLogs(1, 1000, filters);
+			const normalized = extractLogsResponse(result);
+			const exportLogs = normalized.logs.length ? normalized.logs : logs;
+
+			await downloadLogsAsPdf({
+				logs: exportLogs,
+				t,
+				language,
+				filterLabel: currentFilterLabel,
+				total: exportLogs.length,
+			});
+		} catch (err) {
+			setError(err.message || t("failedToLoadActivityLogs"));
+		} finally {
+			setExporting(false);
+		}
 	};
 
 	const handleDeleteAll = async () => {
@@ -306,6 +479,16 @@ export default function ActivityLog() {
 						
 					</div>
 					<div className="flex flex-wrap gap-2">
+						<button
+							type="button"
+							onClick={handleExportPdf}
+							disabled={exporting || loading || total === 0}
+							className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							<FileDown className={`h-4 w-4 ${exporting ? "animate-pulse" : ""}`} />
+							{t("exportPdf")}
+						</button>
+
 						<button
 							type="button"
 							onClick={fetchLogs}

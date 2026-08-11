@@ -1,32 +1,22 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Save, X, Pill } from "lucide-react";
 import { Card, CardContent } from "../ui/Card";
 import { buttonPrimary, buttonSecondary } from "../../constants/styles";
 import { useLanguage } from "../../i18n/LanguageContext";
+import MedicineCategorySelect from "./MedicineCategorySelect";
+import AddableSelect from "./AddableSelect";
+import { medicineFrequencyApi, medicineMealTimingApi } from "../../api/medicineLookupApi";
 
-const MEDICINE_TYPES = [
-	"Tablet",
-	"Capsule",
-	"Syrup",
-	"Injection",
-	"Drops",
-	"Ointment",
-	"Paste",
-	"Vial",
-	"Suppository",
-	"Inhaler",
-	"Infusion",
-	"Solution",
-	"Serum",
-	"Powder",
-	"Granules",
-	"Lozenge",
-	"Spray",
-	"Patch",
-	"Other",
-];
+const MEAL_TIMING_LABEL_KEYS = {
+	"Before Food": "beforeFood",
+	"After Food": "afterFood",
+	"With Food": "withFood",
+	Anytime: "anytime",
+};
 
-const FREQUENCY_OPTIONS = [
+const DEFAULT_MEAL_TIMINGS = ["Before Food", "After Food", "With Food", "Anytime"];
+
+const DEFAULT_FREQUENCIES = [
 	"1x1",
 	"1x2",
 	"1x3",
@@ -48,7 +38,7 @@ const FREQUENCY_OPTIONS = [
 ];
 
 const EMPTY_FORM = {
-	type: "",
+	categoryId: "",
 	companyName: "",
 	genericName: "",
 	dosage: "",
@@ -56,15 +46,30 @@ const EMPTY_FORM = {
 	mealTiming: "",
 };
 
+const resolveInitialCategoryId = (initialData) => {
+	const data = initialData ?? {};
+	if (data.categoryId) return String(data.categoryId);
+	if (data.category?.id) return String(data.category.id);
+	return "";
+};
+
 const fieldClass =
 	"w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50";
 
-export default function MedicineForm({ onCancel, onSubmit, initialData, loading: parentLoading = false }) {
+export default function MedicineForm({
+	onCancel,
+	onSubmit,
+	initialData,
+	loading: parentLoading = false,
+	categories = [],
+	onCategoriesChange,
+}) {
 	const { t } = useLanguage();
 
 	const [formData, setFormData] = useState({
 		...EMPTY_FORM,
-		...initialData,
+		...(initialData ?? {}),
+		categoryId: resolveInitialCategoryId(initialData),
 	});
 
 	const [errors, setErrors] = useState({});
@@ -73,23 +78,12 @@ export default function MedicineForm({ onCancel, onSubmit, initialData, loading:
 	const loading = parentLoading || localLoading;
 	const isEdit = Boolean(initialData?.id);
 
-	const mealTimingOptions = useMemo(
-		() => [
-			{ value: "Before Food", label: t("beforeFood") },
-			{ value: "After Food", label: t("afterFood") },
-			{ value: "With Food", label: t("withFood") },
-			{ value: "Anytime", label: t("anytime") },
-		],
-		[t]
-	);
-
 	const fields = [
 		{
-			name: "type",
+			name: "categoryId",
 			label: t("medicineType"),
-			type: "select",
+			type: "category",
 			required: true,
-			options: MEDICINE_TYPES.map((value) => ({ value, label: value })),
 		},
 		{
 			name: "companyName",
@@ -114,16 +108,26 @@ export default function MedicineForm({ onCancel, onSubmit, initialData, loading:
 		{
 			name: "frequency",
 			label: t("frequency"),
-			type: "select",
+			type: "lookup",
 			required: true,
-			options: FREQUENCY_OPTIONS.map((value) => ({ value, label: value })),
+			api: medicineFrequencyApi,
+			addTitle: t("addNewFrequency"),
+			protectedValues: DEFAULT_FREQUENCIES,
+			deleteTitle: t("deleteFrequency"),
+			deleteConfirmMessage: t("deleteFrequencyConfirm"),
 		},
 		{
 			name: "mealTiming",
 			label: t("mealTiming"),
-			type: "select",
+			type: "lookup",
 			required: true,
-			options: mealTimingOptions,
+			api: medicineMealTimingApi,
+			addTitle: t("addNewMealTiming"),
+			protectedValues: DEFAULT_MEAL_TIMINGS,
+			deleteTitle: t("deleteMealTiming"),
+			deleteConfirmMessage: t("deleteMealTimingConfirm"),
+			getOptionLabel: (name) =>
+				MEAL_TIMING_LABEL_KEYS[name] ? t(MEAL_TIMING_LABEL_KEYS[name]) : name,
 		},
 	];
 
@@ -192,6 +196,8 @@ export default function MedicineForm({ onCancel, onSubmit, initialData, loading:
 										error={errors[field.name]}
 										onChange={updateField}
 										t={t}
+										categories={categories}
+										onCategoriesChange={onCategoriesChange}
 									/>
 								))}
 							</Section>
@@ -253,7 +259,7 @@ function Section({ title, description, children }) {
 	);
 }
 
-function FormField({ field, value, error, onChange, t }) {
+function FormField({ field, value, error, onChange, t, categories, onCategoriesChange }) {
 	return (
 		<div>
 			<label className="mb-1.5 block text-right text-xs font-bold text-slate-700">
@@ -261,7 +267,33 @@ function FormField({ field, value, error, onChange, t }) {
 				{field.required && <span className="mr-1 text-red-500">*</span>}
 			</label>
 
-			{field.type === "select" ? (
+			{field.type === "category" ? (
+				<MedicineCategorySelect
+					value={value}
+					onChange={(nextValue) => onChange(field.name, nextValue)}
+					error={error}
+					t={t}
+					categories={categories}
+					onCategoriesChange={onCategoriesChange}
+				/>
+			) : field.type === "lookup" ? (
+				<AddableSelect
+					value={value}
+					onChange={(nextValue) => onChange(field.name, nextValue)}
+					error={error}
+					t={t}
+					loadOptions={field.api.getAll}
+					createOption={field.api.create}
+					deleteOption={field.api.delete}
+					protectedValues={field.protectedValues}
+					getOptionLabel={field.getOptionLabel}
+					addTitle={field.addTitle}
+					deleteTitle={field.deleteTitle}
+					deleteConfirmMessage={field.deleteConfirmMessage}
+					newItemLabel={t("newItemName")}
+					newItemPlaceholder={t("newItemPlaceholder")}
+				/>
+			) : field.type === "select" ? (
 				<select
 					value={value || ""}
 					onChange={(e) => onChange(field.name, e.target.value)}
@@ -284,7 +316,9 @@ function FormField({ field, value, error, onChange, t }) {
 				/>
 			)}
 
-			{error && <p className="mt-1 text-right text-xs font-medium text-red-600">{error}</p>}
+			{field.type !== "category" && field.type !== "lookup" && error && (
+				<p className="mt-1 text-right text-xs font-medium text-red-600">{error}</p>
+			)}
 		</div>
 	);
 }

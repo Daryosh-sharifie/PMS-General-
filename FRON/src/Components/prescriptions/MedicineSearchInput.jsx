@@ -217,13 +217,13 @@ export default function MedicineSearchInput({
 	};
 
 	return (
-		<div className="relative w-full" ref={dropdownRef}>
-			<div className="flex items-centercol-span-6">
-				<div className="relative flex-1">
+		<div className="relative h-full w-full" ref={dropdownRef}>
+			<div className="flex h-full items-center">
+				<div className="relative h-full flex-1">
 					<Search className="absolute left-0.5 top-1/2 -translate-y-1/2 h-3 w-3 text-blue-500" />
 					<input
 						type="text"
-						className="w-full pl-5 py-2 text-left border border-blue-500 rounded-lg text-sm bg-white/80 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-500 transition"
+						className="h-full w-full pl-5 text-left border border-blue-500 rounded-lg text-sm bg-white/80 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-500 transition"
 						value={searchQuery}
 						onChange={handleInputChange}
 						onKeyDown={handleKeyDown}

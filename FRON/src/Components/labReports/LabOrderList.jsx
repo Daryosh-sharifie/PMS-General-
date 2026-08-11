@@ -48,7 +48,23 @@ export default function LabOrderList({
 		>
 			<div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
 				<div className="space-y-5">
-					<div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+					<div dir="rtl" className="flex flex-col gap-3 lg:flex-row lg:items-center">
+						<div className="flex w-full items-center gap-2 lg:w-72">
+							<Filter className="h-4 w-4 shrink-0 text-slate-500" />
+							<select
+								value={statusFilter}
+								onChange={(event) => setStatusFilter(event.target.value)}
+								className={`${inputClasses} cursor-pointer`}
+								dir={isRtl ? "rtl" : "ltr"}
+							>
+								{LAB_ORDER_STATUS_OPTIONS.map((option) => (
+									<option key={option.value} value={option.value}>
+										{t(option.labelKey)}
+									</option>
+								))}
+							</select>
+						</div>
+
 						<div className="relative flex-1">
 							<Search
 								className={`pointer-events-none absolute top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400 ${
@@ -77,36 +93,6 @@ export default function LabOrderList({
 								{t("orders")}
 							</span>
 						</div>
-					</div>
-
-					<div
-						dir={isRtl ? "rtl" : "ltr"}
-						className="flex flex-wrap items-center gap-3"
-						style={{ justifyContent: "flex-start" }}
-					>
-						<div className="flex items-center gap-2 text-sm font-bold text-slate-600">
-							<Filter className="h-4 w-4" />
-							<span>{t("status")}:</span>
-						</div>
-
-						{LAB_ORDER_STATUS_OPTIONS.map((option) => {
-							const isActive = statusFilter === option.value;
-
-							return (
-								<button
-									key={option.value}
-									type="button"
-									onClick={() => setStatusFilter(option.value)}
-									className={`rounded-full px-3 py-2 text-sm font-bold transition ${
-										isActive
-											? "bg-blue-600 text-white shadow-sm"
-											: "bg-slate-100 text-slate-700 hover:bg-slate-200"
-									}`}
-								>
-									{t(option.labelKey)}
-								</button>
-							);
-						})}
 					</div>
 				</div>
 			</div>

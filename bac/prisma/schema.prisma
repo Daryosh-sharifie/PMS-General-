@@ -265,13 +265,43 @@ model ActivityLog {
   @@index([entity])
 }
 
+model MedicineCategory {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  medicines Medicine[]
+
+  @@index([name])
+}
+
+model MedicineFrequency {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model MedicineMealTiming {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
 model Medicine {
-  id           Int      @id @default(autoincrement())
+  id           Int               @id @default(autoincrement())
   type         String
+  categoryId   Int?
+  category     MedicineCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   companyName  String
   genericName  String
   dosage       String
-  amount       Int      @default(0)
+  amount       Int               @default(0)
   frequency    String
   mealTiming   String?
 
@@ -284,4 +314,5 @@ model Medicine {
   @@index([genericName])
   @@index([companyName])
   @@index([type])
+  @@index([categoryId])
 }

@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
 import MedicineList from "./MedicineList";
 import MedicineForm from "./MedicineForm";
+import MedicineCategoryManager from "./MedicineCategoryManager";
 import medicineApi from "../../api/medicineApi";
+import medicineCategoryApi from "../../api/medicineCategoryApi";
 import { backupApi } from "../../api/backupApi";
 import { useLanguage } from "../../i18n/LanguageContext";
 
@@ -54,6 +56,33 @@ export default function MedicineManagement() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalRecords, setTotalRecords] = useState(0);
+	const [categories, setCategories] = useState([]);
+	const [showCategoryManager, setShowCategoryManager] = useState(false);
+
+	const fetchCategories = useCallback(async () => {
+		try {
+			const list = await medicineCategoryApi.getAllCategories();
+			setCategories(list);
+			return list;
+		} catch {
+			setCategories([]);
+			return [];
+		}
+	}, []);
+
+	useEffect(() => {
+		fetchCategories();
+	}, [fetchCategories]);
+
+	const resolveMedicineCategoryId = (medicine, categoryList = categories) => {
+		if (medicine?.categoryId) return String(medicine.categoryId);
+		if (medicine?.category?.id) return String(medicine.category.id);
+		if (medicine?.type) {
+			const match = categoryList.find((category) => category.name === medicine.type);
+			if (match) return String(match.id);
+		}
+		return "";
+	};
 
 	const fetchMedicines = useCallback(
 		async (page = currentPage, search = searchTerm, type = categoryFilter) => {
@@ -86,8 +115,16 @@ export default function MedicineManagement() {
 		fetchMedicines(currentPage, searchTerm, categoryFilter);
 	}, [currentPage, searchTerm, categoryFilter, fetchMedicines]);
 
-	const openForm = (medicine = null) => {
-		setSelectedMedicine(medicine);
+	const openForm = async (medicine = null) => {
+		const categoryList = categories.length ? categories : await fetchCategories();
+		if (medicine) {
+			setSelectedMedicine({
+				...medicine,
+				categoryId: resolveMedicineCategoryId(medicine, categoryList),
+			});
+		} else {
+			setSelectedMedicine(null);
+		}
 		setView("form");
 		setError("");
 	};
@@ -114,10 +151,19 @@ export default function MedicineManagement() {
 			setLoading(true);
 			setError("");
 
+			const payload = {
+				categoryId: formData.categoryId ? Number(formData.categoryId) : undefined,
+				companyName: formData.companyName,
+				genericName: formData.genericName,
+				dosage: formData.dosage,
+				frequency: formData.frequency,
+				mealTiming: formData.mealTiming,
+			};
+
 			if (selectedMedicine?.id) {
-				await medicineApi.updateMedicine(selectedMedicine.id, formData);
+				await medicineApi.updateMedicine(selectedMedicine.id, payload);
 			} else {
-				await medicineApi.createMedicine(formData);
+				await medicineApi.createMedicine(payload);
 			}
 
 			await fetchMedicines(currentPage, searchTerm, categoryFilter);
@@ -166,6 +212,7 @@ export default function MedicineManagement() {
 			{view === "list" ? (
 				<MedicineList
 					medicines={medicines}
+					categories={categories}
 					searchTerm={searchTerm}
 					setSearchTerm={handleSearchChange}
 					categoryFilter={categoryFilter}
@@ -178,6 +225,7 @@ export default function MedicineManagement() {
 					onEditMedicine={openForm}
 					onDeleteMedicine={handleDeleteMedicine}
 					onBackup={handleBackup}
+					onManageCategories={() => setShowCategoryManager(true)}
 					loading={loading}
 				/>
 			) : (
@@ -186,8 +234,17 @@ export default function MedicineManagement() {
 					onSubmit={handleSubmitMedicine}
 					onCancel={closeForm}
 					loading={loading}
+					categories={categories}
+					onCategoriesChange={setCategories}
 				/>
 			)}
+
+			<MedicineCategoryManager
+				open={showCategoryManager}
+				onClose={() => setShowCategoryManager(false)}
+				onCategoriesChange={setCategories}
+				t={t}
+			/>
 		</>
 	);
 }

@@ -168,6 +168,7 @@ export default function PrescriptionForm({
 	const [addPatientLoading, setAddPatientLoading] = useState(false);
 	const [addPatientError, setAddPatientError] = useState("");
 	const [saving, setSaving] = useState(false);
+	const [printFontBoost, setPrintFontBoost] = useState(0);
 
 	const justSaved = useRef(false);
 
@@ -340,6 +341,7 @@ export default function PrescriptionForm({
 			currentUser,
 			medicines: currentPage?.medicines || [],
 			labTests: selectedLabTests,
+			fontBoost: printFontBoost,
 		});
 	}, [
 		currentPage,
@@ -350,6 +352,7 @@ export default function PrescriptionForm({
 		currentUser,
 		t,
 		selectedLabTests,
+		printFontBoost,
 	]);
 
 	const createLabRequestAfterSave = async (prescriptionId, finalPrescriptionData) => {
@@ -631,8 +634,8 @@ export default function PrescriptionForm({
 						/>
 					</div>
 
-					<div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-12">
-						<div className="xl:col-span-8">
+					<div className="mt-5 grid grid-cols-1 items-stretch gap-5 xl:grid-cols-12">
+						<div className="flex h-full xl:col-span-8">
 							<MedicineTable
 								prescriptionNo={prescriptionNo}
 								currentPage={currentPage}
@@ -643,7 +646,7 @@ export default function PrescriptionForm({
 							/>
 						</div>
 
-						<div className="xl:col-span-4">
+						<div className="flex h-full xl:col-span-4">
 							<ClinicalPanel
 								prescriptionForm={prescriptionForm}
 								setPrescriptionForm={setPrescriptionForm}
@@ -651,6 +654,8 @@ export default function PrescriptionForm({
 								onPrint={handlePrint}
 								onSave={handleSave}
 								saving={saving}
+								printFontBoost={printFontBoost}
+								setPrintFontBoost={setPrintFontBoost}
 							/>
 						</div>
 					</div>

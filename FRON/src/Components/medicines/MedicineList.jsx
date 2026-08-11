@@ -8,6 +8,7 @@ import {
 	Filter,
 	Download,
 	Pill,
+	Tags,
 } from "lucide-react";
 import { useState } from "react";
 import { Card, CardContent } from "../ui/Card";
@@ -15,32 +16,11 @@ import Badge from "../ui/Badge";
 import { inputClasses, buttonPrimary, buttonGhost } from "../../constants/styles";
 import { useLanguage } from "../../i18n/LanguageContext";
 
-const MEDICINE_TYPES = [
-	"Tablet",
-	"Capsule",
-	"Syrup",
-	"Injection",
-	"Drops",
-	"Ointment",
-	"Paste",
-	"Vial",
-	"Suppository",
-	"Inhaler",
-	"Infusion",
-	"Solution",
-	"Serum",
-	"Powder",
-	"Granules",
-	"Lozenge",
-	"Spray",
-	"Patch",
-	"Other",
-];
-
 const ITEMS_PER_PAGE = 20;
 
 export default function MedicineList({
 	medicines,
+	categories = [],
 	searchTerm,
 	setSearchTerm,
 	categoryFilter = "",
@@ -53,10 +33,10 @@ export default function MedicineList({
 	onEditMedicine,
 	onDeleteMedicine,
 	onBackup,
+	onManageCategories,
 	loading = false,
 }) {
-	const { t, language } = useLanguage();
-	const isRtl = language === "fa";
+	const { t } = useLanguage();
 	const [deleteConfirm, setDeleteConfirm] = useState(null);
 
 	const goToPage = (page) => setCurrentPage(Math.max(1, Math.min(page, totalPages)));
@@ -103,6 +83,18 @@ export default function MedicineList({
 				</div>
 
 				<div className="flex flex-wrap gap-2">
+					{onManageCategories && (
+						<button
+							type="button"
+							onClick={onManageCategories}
+							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+							title={t("manageCategories")}
+						>
+							<Tags className="h-4 w-4" />
+							{t("manageCategories")}
+						</button>
+					)}
+
 					{onBackup && (
 						<button
 							type="button"
@@ -124,7 +116,23 @@ export default function MedicineList({
 
 			<Card className="rounded-2xl border border-slate-200 shadow-sm">
 				<CardContent className="space-y-4 p-4">
-					<div className="flex flex-col gap-3 lg:flex-row">
+					<div dir="rtl" className="flex flex-col gap-3 sm:flex-row sm:items-center">
+						<div className="flex w-full items-center gap-2 sm:w-72">
+							<Filter className="h-4 w-4 shrink-0 text-slate-500" />
+							<select
+								value={categoryFilter}
+								onChange={(e) => setCategoryFilter(e.target.value)}
+								className={`${inputClasses} cursor-pointer`}
+							>
+								<option value="">{t("all")} — {t("category")}</option>
+								{categories.map((category) => (
+									<option key={category.id} value={category.name}>
+										{category.name}
+									</option>
+								))}
+							</select>
+						</div>
+
 						<div className="relative flex-1">
 							<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 							<input
@@ -137,37 +145,6 @@ export default function MedicineList({
 								}}
 							/>
 						</div>
-					</div>
-
-					<div
-						dir={isRtl ? "rtl" : "ltr"}
-						className={`flex flex-wrap items-center gap-2 ${
-							isRtl ? "justify-end" : "justify-start"
-						}`}
-					>
-						<div
-							className={`flex items-center gap-2 text-sm font-semibold text-slate-600 ${
-								isRtl ? "flex-row-reverse" : "flex-row"
-							}`}
-						>
-							<Filter className="h-4 w-4 flex-shrink-0 text-slate-500" />
-							<span>{t("category")}:</span>
-						</div>
-
-						<FilterChip
-							active={categoryFilter === ""}
-							label={t("all")}
-							onClick={() => setCategoryFilter("")}
-						/>
-
-						{MEDICINE_TYPES.map((type) => (
-							<FilterChip
-								key={type}
-								active={categoryFilter === type}
-								label={type}
-								onClick={() => setCategoryFilter(categoryFilter === type ? "" : type)}
-							/>
-						))}
 					</div>
 				</CardContent>
 			</Card>
@@ -238,7 +215,7 @@ export default function MedicineList({
 												</td>
 												<td className="px-4 py-4">
 													<Badge className="border-slate-200 bg-slate-100 text-slate-700">
-														{medicine.type || "-"}
+														{medicine.category?.name || medicine.type || "-"}
 													</Badge>
 												</td>
 												<td className="px-4 py-4 text-center text-sm text-slate-500">
@@ -260,22 +237,6 @@ export default function MedicineList({
 				</CardContent>
 			</Card>
 		</div>
-	);
-}
-
-function FilterChip({ active, label, onClick }) {
-	return (
-		<button
-			type="button"
-			onClick={onClick}
-			className={`rounded-full px-3 py-1 text-sm font-semibold transition ${
-				active
-					? "bg-blue-600 text-white shadow-sm"
-					: "bg-slate-100 text-slate-700 hover:bg-slate-200"
-			}`}
-		>
-			{label}
-		</button>
 	);
 }
 

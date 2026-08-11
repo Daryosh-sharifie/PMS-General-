@@ -1,4 +1,4 @@
-import { HeartPulse, Printer, Save } from "lucide-react";
+import { HeartPulse, Printer, Save, Type } from "lucide-react";
 import { VITAL_SIGN_FIELDS } from "./prescriptionForm.constants";
 import { useLanguage } from "../../i18n/LanguageContext";
 
@@ -19,6 +19,8 @@ export default function ClinicalPanel({
 	onPrint,
 	onSave,
 	saving = false,
+	printFontBoost = 0,
+	setPrintFontBoost = () => {},
 }) {
 	const { t, language } = useLanguage();
 	const isRtl = language === "fa";
@@ -50,7 +52,7 @@ export default function ClinicalPanel({
 	return (
 		<aside
 			dir={isRtl ? "rtl" : "ltr"}
-			className="rounded-2xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5"
+			className="flex h-full w-full flex-col rounded-2xl border border-blue-100 bg-white p-4 shadow-sm sm:p-5"
 		>
 			<div className="mb-4 flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
 				<div>
@@ -67,7 +69,7 @@ export default function ClinicalPanel({
 				</span>
 			</div>
 
-			<div className="space-y-4">
+			<div className="min-h-0 flex-1 space-y-4 overflow-y-auto">
 				<section className="rounded-xl border border-blue-100 bg-blue-50/50 p-3">
 					<div className="mb-3 flex items-center justify-between gap-3">
 						<div className="flex items-center gap-2">
@@ -131,7 +133,28 @@ export default function ClinicalPanel({
 				/>
 			</div>
 
-			<div className="mt-6 flex flex-col gap-3 print:hidden sm:flex-row sm:justify-center">
+			<div className="mt-6 shrink-0 flex flex-col gap-3 print:hidden sm:flex-row sm:justify-center">
+				<div className="relative">
+					<Type className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+					<select
+						value={printFontBoost}
+						onChange={(event) => setPrintFontBoost(Number(event.target.value))}
+						className={`appearance-none rounded-xl border py-2 pl-9 pr-8 text-xs font-semibold outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 ${
+							printFontBoost > 0
+								? "border-blue-300 bg-blue-50 text-blue-700"
+								: "border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+						}`}
+						aria-label={t("font")}
+					>
+						<option value={0}>{t("font")}</option>
+						{[1, 2, 3, 4, 5].map((size) => (
+							<option key={size} value={size}>
+								{size}px
+							</option>
+						))}
+					</select>
+				</div>
+
 				<button
 					type="button"
 					onClick={onPrint}

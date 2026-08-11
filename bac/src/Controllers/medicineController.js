@@ -3,6 +3,33 @@ const AppError = require('../utils/AppError');
 const prisma = require('../DBconfig/Prisma');
 const logActivity = require('../utils/logActivity');
 
+const resolveCategory = async (categoryId, type) => {
+  if (categoryId) {
+    const parsedId = parseInt(categoryId, 10);
+    if (!isNaN(parsedId) && parsedId > 0) {
+      const category = await prisma.medicineCategory.findUnique({
+        where: { id: parsedId },
+      });
+      if (category) {
+        return { categoryId: category.id, type: category.name };
+      }
+    }
+  }
+
+  if (type?.trim()) {
+    const trimmedType = type.trim();
+    const category = await prisma.medicineCategory.findUnique({
+      where: { name: trimmedType },
+    });
+    return {
+      categoryId: category?.id ?? null,
+      type: trimmedType,
+    };
+  }
+
+  return null;
+};
+
 // Validation constants
 const VALID_TYPES = ['قرص', 'کپسول', 'سیروپ', 'انجکشن', 'قطره', 'مرهم', 'پماد'];
 const VALID_FREQUENCIES = ['1x1', '1x2', '1x3', '1x4', '2x1', '2x2', '2x3', '3x1', '3x2', '3x3'];
@@ -103,6 +130,9 @@ exports.getAllMedicines = catchAsync(async (req, res, next) => {
       orderBy: { createdAt: 'desc' },
       skip,
       take: limit,
+      include: {
+        category: true,
+      },
     });
 
     // Calculate pagination metadata
@@ -127,11 +157,17 @@ exports.getAllMedicines = catchAsync(async (req, res, next) => {
 
 // POST /api/v1/medicines - Create a new medicine
 exports.createMedicine = catchAsync(async (req, res, next) => {
-  const { type, companyName, genericName, dosage, frequency, mealTiming, amount } = req.body;
+  const { type, categoryId, companyName, genericName, dosage, frequency, mealTiming, amount } = req.body;
+
+  const resolvedCategory = await resolveCategory(categoryId, type);
+  if (!resolvedCategory?.type) {
+    return next(new AppError('Medicine category is required', 400));
+  }
 
   // Trim string fields
   const medicineData = {
-    type: type?.trim(),
+    type: resolvedCategory.type,
+    categoryId: resolvedCategory.categoryId,
     companyName: companyName?.trim(),
     genericName: genericName?.trim(),
     dosage: dosage?.trim(),
@@ -187,6 +223,7 @@ exports.getMedicine = catchAsync(async (req, res, next) => {
 
   const medicine = await prisma.medicine.findUnique({
     where: { id: medicineId },
+    include: { category: true },
   });
 
   if (!medicine) {
@@ -208,11 +245,17 @@ exports.updateMedicine = catchAsync(async (req, res, next) => {
     return next(new AppError('Invalid medicine ID', 400));
   }
 
-  const { type, companyName, genericName, dosage, frequency, mealTiming, amount } = req.body;
+  const { type, categoryId, companyName, genericName, dosage, frequency, mealTiming, amount } = req.body;
+
+  const resolvedCategory = await resolveCategory(categoryId, type);
+  if (!resolvedCategory?.type) {
+    return next(new AppError('Medicine category is required', 400));
+  }
 
   // Trim string fields
   const medicineData = {
-    type: type?.trim(),
+    type: resolvedCategory.type,
+    categoryId: resolvedCategory.categoryId,
     companyName: companyName?.trim(),
     genericName: genericName?.trim(),
     dosage: dosage?.trim(),
