@@ -79,8 +79,8 @@ const getGender = (rawGender) => {
 
 	const lower = gender.toLowerCase();
 
-	if (lower === "male" || gender === "مرد" || gender === "ذکر") return "Male";
-	if (lower === "female" || gender === "زن" || gender === "انثی") return "Female";
+	if (lower === "male" || gender === "مرد" || gender === "ذکور") return "Male";
+	if (lower === "female" || gender === "زن" || gender === "اناث") return "Female";
 
 	return gender;
 };
@@ -237,8 +237,8 @@ const buildMedicineLines = (medicines) => {
 			return `
 				<tr>
 					<td class="col-no">${rowNumber}</td>
-					<td class="col-type"><div class="cell-two-lines" dir="ltr">${formatTextTwoLines(medicine.type, { splitAt: 10 })}</div></td>
-					<td class="col-name"><div class="cell-two-lines" dir="ltr">${formatTextTwoLines(medicine.name)}</div></td>
+					<td class="col-type"><div class="cell-text" dir="ltr">${escapeHtml(medicine.type || "-")}</div></td>
+					<td class="col-name"><div class="cell-text cell-name" dir="ltr">${escapeHtml(medicine.name || "-")}</div></td>
 					<td class="col-qty"><div class="cell-clamp" dir="ltr">${escapeHtml(medicine.amount || "-")}</div></td>
 					<td class="col-dose"><div class="cell-clamp" dir="ltr">${escapeHtml(medicine.dosage || "-")}</div></td>
 					<td class="col-freq"><div class="cell-clamp" dir="ltr">${escapeHtml(medicine.frequency || "-")}</div></td>
@@ -272,13 +272,13 @@ export const printPrescription = ({
 	const cellPaddingY = boost >= 5 ? "0.9mm" : boost > 0 ? "1mm" : "1.2mm";
 	const cellPaddingX = boost >= 5 ? "0.55mm" : "0.7mm";
 	const footerBoxHeight = boost >= 4 ? "12mm" : "16mm";
-	const noColWidth = "6%";
-	const typeColWidth = boost >= 4 ? "20%" : "18%";
-	const nameColWidth = boost >= 4 ? "28%" : "30%";
-	const qtyColWidth = "6%";
-	const doseColWidth = "10%";
-	const freqColWidth = "10%";
-	const mealColWidth = "10%";
+	const noColWidth = "4%";
+	const typeColWidth = boost >= 4 ? "14%" : "12%";
+	const nameColWidth = boost >= 4 ? "38%" : "42%";
+	const qtyColWidth = "5%";
+	const doseColWidth = "11%";
+	const freqColWidth = "12%";
+	const mealColWidth = boost >= 4 ? "16%" : "14%";
 	const printFrame = document.createElement("iframe");
 
 	printFrame.style.position = "fixed";
@@ -654,18 +654,22 @@ export const printPrescription = ({
 					box-sizing: border-box;
 				}
 
-				.medicine-table .cell-two-lines {
+				.medicine-table .cell-text {
 					display: block;
 					overflow: hidden;
 					white-space: normal;
-					word-break: break-word;
+					word-break: normal;
 					overflow-wrap: break-word;
-					line-height: 1.28;
-					min-height: calc(1.28em * 2);
+					line-height: 1.25;
 					width: 100%;
 					direction: ltr;
 					text-align: left;
 					unicode-bidi: embed;
+				}
+
+				.medicine-table .cell-name {
+					font-weight: 700;
+					color: #111;
 				}
 
 				.medicine-table .cell-clamp {
@@ -674,9 +678,9 @@ export const printPrescription = ({
 					-webkit-box-orient: vertical;
 					overflow: hidden;
 					white-space: normal;
-					word-break: break-word;
+					word-break: normal;
 					overflow-wrap: break-word;
-					line-height: 1.28;
+					line-height: 1.25;
 					direction: ltr;
 					text-align: left;
 					unicode-bidi: embed;
@@ -739,7 +743,7 @@ export const printPrescription = ({
 				}
 
 				.medicine-table .col-qty .cell-clamp,
-				.medicine-table .col-qty .cell-two-lines {
+				.medicine-table .col-qty .cell-text {
 					text-align: center;
 				}
 
