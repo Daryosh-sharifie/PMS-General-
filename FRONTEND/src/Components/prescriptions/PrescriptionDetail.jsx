@@ -179,14 +179,18 @@ export default function PrescriptionDetail({
 				medicine.route ??
 				medicine.method ??
 				medicine.routeName ??
-				pickBySubstring(medicine, ["route", "method"]),
+				medicine.type ??
+				pickBySubstring(medicine, ["route", "method", "type"]),
 			type:
 				medicine.type ??
 				medicine.form ??
 				medicine.drugType ??
 				medicine.medicineType ??
 				medicine.typeName ??
-				pickBySubstring(medicine, ["type", "form"]),
+				medicine.route ??
+				medicine.method ??
+				medicine.routeName ??
+				pickBySubstring(medicine, ["type", "form", "route"]),
 			amount:
 				medicine.amount ??
 				medicine.quantity ??

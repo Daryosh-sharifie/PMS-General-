@@ -125,7 +125,8 @@ const normalizeMedicines = (medicines = []) =>
 				medicine.route,
 				medicine.method,
 				medicine.routeName,
-				pickBySubstring(medicine, ["route", "method"])
+				medicine.type,
+				pickBySubstring(medicine, ["route", "method", "type"])
 			),
 			type: pick(
 				medicine.type,
@@ -133,7 +134,10 @@ const normalizeMedicines = (medicines = []) =>
 				medicine.drugType,
 				medicine.medicineType,
 				medicine.typeName,
-				pickBySubstring(medicine, ["type", "form"])
+				medicine.route,
+				medicine.method,
+				medicine.routeName,
+				pickBySubstring(medicine, ["type", "form", "route"])
 			),
 		}));
 
