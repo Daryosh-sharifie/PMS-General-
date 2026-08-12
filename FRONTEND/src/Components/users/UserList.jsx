@@ -15,8 +15,34 @@ import { Card, CardContent } from "../ui/Card";
 import Badge from "../ui/Badge";
 import { inputClasses, buttonPrimary, buttonGhost } from "../../constants/styles";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { APP_SETTINGS_BASE } from "../../api/appSettingApi";
 
 const ITEMS_PER_PAGE = 20;
+
+function resolveAsset(src) {
+	if (!src) return "";
+
+	if (
+		src.startsWith("http://") ||
+		src.startsWith("https://") ||
+		src.startsWith("data:")
+	) {
+		return src;
+	}
+
+	const normalizedSrc = src.replace(/\\/g, "/");
+	const needsSlash = normalizedSrc.startsWith("/") ? "" : "/";
+	return `${APP_SETTINGS_BASE}${needsSlash}${normalizedSrc}`;
+}
+
+function getInitials(name) {
+	if (!name) return "U";
+	const parts = String(name).trim().split(/\s+/).filter(Boolean);
+	if (parts.length >= 2) {
+		return (parts[0][0] + parts[1][0]).toUpperCase();
+	}
+	return name.slice(0, 2).toUpperCase();
+}
 
 function getRoleKey(role) {
 	const value = String(role || "").toLowerCase();
@@ -213,7 +239,7 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 										<Th>{t("role")}</Th>
 										<Th>{t("phone")}</Th>
 										<Th>{t("email")}</Th>
-										<Th align="right">{t("name")}</Th>
+										<Th align="center">{t("name")}</Th>
 										<Th>#</Th>
 									</tr>
 								</thead>
@@ -223,6 +249,7 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 										const roleKey = getRoleKey(user.role);
 										const isAdmin = roleKey === "admin";
 										const isOnlyAdmin = isAdmin && adminCount <= 1;
+										const avatarUrl = resolveAsset(user.avatar || user.photoPreview || user.photo || user.image);
 
 										return (
 											<tr key={user.id} className="transition hover:bg-slate-50">
@@ -275,8 +302,34 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 													{user.email || "-"}
 												</td>
 
-												<td className="px-4 py-4 text-right font-semibold text-slate-900">
-													{user.name || "-"}
+												<td className="px-4 py-4 text-center font-semibold text-slate-900">
+													<div className="flex items-center justify-center gap-3" dir="ltr">
+														<div className="relative h-10 w-10 shrink-0">
+															{avatarUrl ? (
+																<img
+																	src={avatarUrl}
+																	alt={user.name || "User"}
+																	className="h-10 w-10 rounded-full object-cover border-2 border-slate-200 shadow-sm"
+																	onError={(e) => {
+																		e.currentTarget.style.display = "none";
+																		if (e.currentTarget.nextElementSibling) {
+																			e.currentTarget.nextElementSibling.style.display = "flex";
+																		}
+																	}}
+																/>
+															) : null}
+															<div
+																className={`h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-bold text-white shadow-sm border-2 border-white ${
+																	avatarUrl ? "hidden" : "flex"
+																}`}
+															>
+																{getInitials(user.name)}
+															</div>
+														</div>
+														<div className="flex flex-col text-left">
+															<span className="font-bold text-slate-950 text-sm">{user.name || "-"}</span>
+														</div>
+													</div>
 												</td>
 
 												<td className="px-4 py-4 text-center text-sm text-slate-500">

@@ -1,9 +1,20 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Save, Shield, X, AlertCircle, CheckCircle } from "lucide-react";
+import { Save, Shield, X, AlertCircle, CheckCircle, Camera, User } from "lucide-react";
 import { Card, CardContent } from "../ui/Card";
 import { inputClasses, buttonPrimary, buttonSecondary } from "../../constants/styles";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { APP_SETTINGS_BASE } from "../../api/appSettingApi";
+
+function resolveAsset(src) {
+	if (!src) return "";
+	if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:")) {
+		return src;
+	}
+	const normalizedSrc = src.replace(/\\/g, "/");
+	const needsSlash = normalizedSrc.startsWith("/") ? "" : "/";
+	return `${APP_SETTINGS_BASE}${needsSlash}${normalizedSrc}`;
+}
 
 const ROLE_OPTIONS = [
 	{ value: "Doctor", labelKey: "doctor" },
@@ -32,6 +43,11 @@ export default function UserForm({
 		password: "",
 		confirmPassword: "",
 	});
+
+	const [avatarFile, setAvatarFile] = useState(null);
+	const [photoPreview, setPhotoPreview] = useState(
+		user?.avatar ? resolveAsset(user.avatar) : ""
+	);
 
 	const [error, setError] = useState("");
 	const [success, setSuccess] = useState("");
@@ -101,6 +117,16 @@ export default function UserForm({
 		return "";
 	};
 
+	const handlePhotoChange = (event) => {
+		const file = event.target.files?.[0];
+		if (file) {
+			setAvatarFile(file);
+			setPhotoPreview(URL.createObjectURL(file));
+			if (error) setError("");
+			if (success) setSuccess("");
+		}
+	};
+
 	const submit = async (event) => {
 		event.preventDefault();
 
@@ -130,13 +156,13 @@ export default function UserForm({
 				if (!onUpdateUser) {
 					throw new Error(t("updateUserHandlerMissing"));
 				}
-				await onUpdateUser(user.id, payload);
+				await onUpdateUser(user.id, payload, avatarFile);
 				setSuccess(t("userUpdatedSuccessfully"));
 			} else {
 				if (!onAddUser) {
 					throw new Error(t("addUserHandlerMissing"));
 				}
-				await onAddUser(payload);
+				await onAddUser(payload, avatarFile);
 				setSuccess(t("userCreatedSuccessfully"));
 			}
 
@@ -170,11 +196,32 @@ export default function UserForm({
 					</button>
 
 					<form onSubmit={submit} className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
-						<div className="flex items-center justify-center border-b border-slate-100 pb-6 text-center">
-							<div>
-								<div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-									<Shield className="h-7 w-7" />
+						<div className="flex flex-col items-center justify-center border-b border-slate-100 pb-6 text-center">
+							<div className="relative mb-4">
+								<div className="relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 border-slate-100 bg-blue-50 text-blue-700 shadow-md">
+									{photoPreview ? (
+										<img
+											src={photoPreview}
+											alt="Avatar Preview"
+											className="h-full w-full object-cover "
+										/>
+									) : (
+										<User className="h-12 w-12 text-slate-400" />
+									)}
 								</div>
+
+								<label className="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-blue-600 text-white shadow-md transition hover:bg-blue-700">
+									<Camera className="h-4 w-4" />
+									<input
+										type="file"
+										accept="image/*"
+										onChange={handlePhotoChange}
+										className="hidden"
+									/>
+								</label>
+							</div>
+
+							<div>
 								<h2 className="text-3xl font-bold text-slate-950">{title}</h2>
 								<p className="mt-1 text-sm text-slate-500">{subtitle}</p>
 							</div>
