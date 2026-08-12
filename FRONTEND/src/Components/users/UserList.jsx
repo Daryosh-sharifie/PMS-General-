@@ -239,7 +239,12 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 										<Th>{t("role")}</Th>
 										<Th>{t("phone")}</Th>
 										<Th>{t("email")}</Th>
-										<Th align="left">{t("name")}</Th>
+										<th
+											className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500"
+											style={{ direction: "ltr", textAlign: "center" }}
+										>
+											{t("name")}
+										</th>
 										<Th>#</Th>
 									</tr>
 								</thead>
@@ -302,8 +307,14 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 													{user.email || "-"}
 												</td>
 
-												<td className="px-4 py-4 text-left font-semibold text-slate-900">
-													<div className="flex items-center justify-start gap-3" dir="ltr">
+												<td
+													className="px-4 py-4 font-semibold text-slate-900"
+													style={{ direction: "ltr", textAlign: "left" }}
+												>
+													<div
+														className="flex w-full items-center gap-3"
+														style={{ direction: "ltr", justifyContent: "flex-start" }}
+													>
 														<div className="relative h-10 w-10 shrink-0">
 															{avatarUrl ? (
 																<img
@@ -326,8 +337,10 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 																{getInitials(user.name)}
 															</div>
 														</div>
-														<div className="flex flex-col text-left">
-															<span className="font-bold text-slate-950 text-sm">{user.name || "-"}</span>
+														<div className="min-w-0" style={{ textAlign: "left" }}>
+															<span className="block truncate text-sm font-bold text-slate-950">
+																{user.name || "-"}
+															</span>
 														</div>
 													</div>
 												</td>
