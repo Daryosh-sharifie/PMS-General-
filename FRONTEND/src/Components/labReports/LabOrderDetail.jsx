@@ -12,6 +12,7 @@ import LabResultPreviewModal from "./LabResultPreviewModal";
 import { labOrderItemApi } from "../../api/labOrderItemApi";
 import { getLabOrderDisplayName, getLabOrderTestCount } from "./labReportHelpers";
 import { formatAfghanDate } from "../../utils/afghanCalendar";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 const EDITABLE_BULK_STATUSES = ["REQUESTED", "IN_PROGRESS", "COMPLETED"];
 
@@ -29,6 +30,9 @@ function getPrescriptionNo(order) {
 
 export default function LabOrderDetail({ order, loading, error, onReload }) {
 	const navigate = useNavigate();
+	const { t, language } = useLanguage();
+	const isRtl = language === "fa";
+
 	const [showBulkForm, setShowBulkForm] = useState(false);
 	const [showPreview, setShowPreview] = useState(false);
 	const [bulkSaving, setBulkSaving] = useState(false);
@@ -67,11 +71,11 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 				})
 			);
 
-			flash("success", "Lab results saved successfully");
+			flash("success", t("labResultsSavedSuccess"));
 			setShowBulkForm(false);
 			await onReload?.();
 		} catch (err) {
-			flash("error", err.message || "Failed to save lab results");
+			flash("error", err.message || t("failedToSaveLabResults"));
 		} finally {
 			setBulkSaving(false);
 		}
@@ -83,11 +87,11 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 		);
 
 		if (!completedItems.length) {
-			flash("error", "No completed results available for verification");
+			flash("error", t("noCompletedResultsForVerification"));
 			return;
 		}
 
-		const ok = window.confirm("Verify all completed lab results?");
+		const ok = window.confirm(t("confirmVerifyCompletedResults"));
 		if (!ok) return;
 
 		try {
@@ -95,23 +99,23 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 				completedItems.map((item) => labOrderItemApi.verifyLabResult(item.id))
 			);
 
-			flash("success", "Completed lab results verified");
+			flash("success", t("completedLabResultsVerified"));
 			await onReload?.();
 		} catch (err) {
-			flash("error", err.message || "Failed to verify completed results");
+			flash("error", err.message || t("failedToVerifyCompletedResults"));
 		}
 	};
 
 	if (loading) {
-		return <Loader fullHeight message="Loading lab order..." />;
+		return <Loader fullHeight message={t("loadingLabOrder")} />;
 	}
 
 	if (error || !order) {
 		return (
 			<Message
 				type="error"
-				title="Lab order not found"
-				description={error || "The requested order could not be loaded."}
+				title={t("labOrderNotFound")}
+				description={error || t("requestedOrderCouldNotBeLoaded")}
 				fullHeight
 			/>
 		);
@@ -121,7 +125,7 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 
 	return (
 		<>
-			<div className="h-full min-h-0 overflow-y-auto bg-slate-50 p-4 md:p-6 print:hidden">
+			<div dir={isRtl ? "rtl" : "ltr"} className="h-full min-h-0 overflow-y-auto bg-slate-50 p-4 md:p-6 print:hidden">
 				<div className="mx-auto max-w-6xl space-y-6">
 					<div className="flex items-center justify-between gap-3">
 						<button
@@ -129,14 +133,14 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 							onClick={() => navigate(-1)}
 							className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
 						>
-							Back
+							{t("back")}
 						</button>
 
-						<div className="text-right">
+						<div className={isRtl ? "text-left" : "text-right"}>
 							<h2 className="text-2xl font-bold text-slate-900">
 								{getLabOrderDisplayName(order)}
 							</h2>
-							<p className="text-sm text-slate-500">Lab Order Detail</p>
+							<p className="text-sm text-slate-500">{t("labOrderDetail")}</p>
 						</div>
 					</div>
 
@@ -169,7 +173,7 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 												onClick={() => setShowBulkForm(true)}
 												className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700"
 											>
-												Add Results
+												{t("addResults")}
 											</button>
 
 											<button
@@ -177,12 +181,12 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 												onClick={handleVerifyCompleted}
 												className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700"
 											>
-												Verify Completed
+												{t("verifyCompleted")}
 											</button>
 										</div>
 
-										<h3 className="text-right text-lg font-semibold text-gray-900">
-											Assigned Lab Tests
+										<h3 className="text-lg font-semibold text-gray-900">
+											{t("assignedLabTests")}
 										</h3>
 									</div>
 								</CardHeader>
@@ -192,20 +196,20 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 										<table className="w-full min-w-[720px] text-sm">
 											<thead>
 												<tr className="bg-slate-50 text-slate-600">
-													<th className="border-b border-r border-slate-200 px-4 py-3 text-left">
-														Test Name
+													<th className={`border-b border-slate-200 px-4 py-3 ${isRtl ? "border-l text-right" : "border-r text-left"}`}>
+														{t("testName")}
 													</th>
-													<th className="border-b border-r border-slate-200 px-4 py-3 text-left">
-														Category
+													<th className={`border-b border-slate-200 px-4 py-3 ${isRtl ? "border-l text-right" : "border-r text-left"}`}>
+														{t("category")}
 													</th>
-													<th className="border-b border-r border-slate-200 px-4 py-3 text-left">
-														Status
+													<th className={`border-b border-slate-200 px-4 py-3 ${isRtl ? "border-l text-right" : "border-r text-left"}`}>
+														{t("status")}
 													</th>
-													<th className="border-b border-r border-slate-200 px-4 py-3 text-left">
-														Completed At
+													<th className={`border-b border-slate-200 px-4 py-3 ${isRtl ? "border-l text-right" : "border-r text-left"}`}>
+														{t("completedAt")}
 													</th>
 													<th className="border-b border-slate-200 px-4 py-3 text-center">
-														View
+														{t("view")}
 													</th>
 												</tr>
 											</thead>
@@ -214,24 +218,24 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 												{items.length ? (
 													items.map((item) => (
 														<tr key={item.id} className="hover:bg-slate-50">
-															<td className="border-b border-r border-slate-100 px-4 py-3 font-semibold text-slate-900">
-																{item.testNameSnapshot || "Lab Test"}
+															<td className={`border-b border-slate-100 px-4 py-3 font-semibold text-slate-900 ${isRtl ? "border-l" : "border-r"}`}>
+																{item.testNameSnapshot || t("labTest")}
 															</td>
 
-															<td className="border-b border-r border-slate-100 px-4 py-3 text-slate-700">
-																{item.categorySnapshot || "General"}
+															<td className={`border-b border-slate-100 px-4 py-3 text-slate-700 ${isRtl ? "border-l" : "border-r"}`}>
+																{item.categorySnapshot || t("general")}
 															</td>
 
-															<td className="border-b border-r border-slate-100 px-4 py-3">
+															<td className={`border-b border-slate-100 px-4 py-3 ${isRtl ? "border-l" : "border-r"}`}>
 																<LabStatusBadge
 																	status={item.status}
 																	type="item"
 																/>
 															</td>
 
-															<td className="border-b border-r border-slate-100 px-4 py-3 text-slate-700">
+															<td className={`border-b border-slate-100 px-4 py-3 text-slate-700 ${isRtl ? "border-l" : "border-r"}`}>
 																{item.completedAt
-																	? formatAfghanDate(item.completedAt, { englishDigits: true })
+																	? formatAfghanDate(item.completedAt, { englishDigits: !isRtl })
 																	: "-"}
 															</td>
 
@@ -240,7 +244,7 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 																	type="button"
 																	onClick={() => setShowPreview(true)}
 																	className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-700 hover:bg-slate-50"
-																	title="View report"
+																	title={t("viewReport")}
 																>
 																	<Eye className="h-4 w-4" />
 																</button>
@@ -252,8 +256,8 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 														<td colSpan={5} className="px-4 py-8">
 															<Message
 																type="empty"
-																title="No assigned tests"
-																description="This lab order does not contain any tests."
+																title={t("noAssignedTests")}
+																description={t("noTestsInLabOrder")}
 															/>
 														</td>
 													</tr>
@@ -268,66 +272,66 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 						<div className="space-y-6">
 							<Card>
 								<CardHeader>
-									<h3 className="text-right text-lg font-semibold text-gray-900">
-										Order Summary
+									<h3 className="text-lg font-semibold text-gray-900">
+										{t("orderSummary")}
 									</h3>
 								</CardHeader>
 
-								<CardContent className="space-y-3 text-right text-sm text-slate-700">
+								<CardContent className="space-y-3 text-sm text-slate-700">
 									<p>
 										<span className="font-semibold text-slate-900">
-											Lab Number:
+											{t("labNumber")}:
 										</span>{" "}
 										{order.labOrderNo || "-"}
 									</p>
 
 									<p>
 										<span className="font-semibold text-slate-900">
-											Patient:
+											{t("patient")}:
 										</span>{" "}
 										{getPatientName(order)}
 									</p>
 
 									<p>
 										<span className="font-semibold text-slate-900">
-											Doctor:
+											{t("doctor")}:
 										</span>{" "}
 										{getDoctorName(order)}
 									</p>
 
 									<p>
 										<span className="font-semibold text-slate-900">
-											Prescription:
+											{t("prescription")}:
 										</span>{" "}
 										{getPrescriptionNo(order)}
 									</p>
 
 									<p>
 										<span className="font-semibold text-slate-900">
-											Order Date:
+											{t("orderDate")}:
 										</span>{" "}
-										{formatAfghanDate(order.createdAt, { englishDigits: true })}
+										{formatAfghanDate(order.createdAt, { englishDigits: !isRtl })}
 									</p>
 
 									<p>
 										<span className="font-semibold text-slate-900">
-											Tests Count:
+											{t("testsCount")}:
 										</span>{" "}
 										{getLabOrderTestCount(order)}
 									</p>
 
 									<p>
-										<span className="font-semibold text-slate-900">Notes:</span>{" "}
+										<span className="font-semibold text-slate-900">{t("notes")}:</span>{" "}
 										{order.notes || "-"}
 									</p>
 
-									<div className="flex flex-wrap justify-end gap-2 pt-2">
+									<div className="flex flex-wrap gap-2 pt-2">
 										<button
 											type="button"
 											onClick={() => setShowPreview(true)}
 											className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
 										>
-											View Report
+											{t("viewReport")}
 										</button>
 
 										<button
@@ -335,7 +339,7 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 											onClick={() => window.print()}
 											className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
 										>
-											Print Report
+											{t("printReport")}
 										</button>
 
 										<button
@@ -343,7 +347,7 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 											onClick={onReload}
 											className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
 										>
-											Refresh
+											{t("refresh")}
 										</button>
 									</div>
 								</CardContent>

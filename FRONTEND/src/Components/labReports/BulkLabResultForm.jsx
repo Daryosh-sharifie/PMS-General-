@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import LabStatusBadge from "./LabStatusBadge";
 import { formatAfghanDate } from "../../utils/afghanCalendar";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 const EDITABLE_STATUSES = ["REQUESTED", "IN_PROGRESS", "COMPLETED"];
 
@@ -170,6 +171,9 @@ export default function BulkLabResultForm({
 	onSaveAll,
 	onClose,
 }) {
+	const { t, language } = useLanguage();
+	const isRtl = language === "fa";
+
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [resultsByItemId, setResultsByItemId] = useState(() => buildInitialState(order));
 
@@ -263,7 +267,7 @@ export default function BulkLabResultForm({
 	if (!open) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-3 print:hidden">
+		<div dir={isRtl ? "rtl" : "ltr"} className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-3 print:hidden">
 			<div className="flex h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
 				<div className="shrink-0 border-b border-slate-200 bg-white px-5 py-4">
 					<div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -274,7 +278,7 @@ export default function BulkLabResultForm({
 								disabled={saving}
 								className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
 							>
-								Close
+								{t("close")}
 							</button>
 
 							<button
@@ -283,7 +287,7 @@ export default function BulkLabResultForm({
 								disabled={saving || !activeItem || activeReadOnly}
 								className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
 							>
-								{saving ? "Saving..." : "Save Current"}
+								{saving ? t("saving") : t("saveCurrent")}
 							</button>
 
 							<button
@@ -292,7 +296,7 @@ export default function BulkLabResultForm({
 								disabled={saving || !activeItem || activeReadOnly}
 								className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
 							>
-								Save & Next
+								{t("saveNext")}
 							</button>
 
 							<button
@@ -301,40 +305,40 @@ export default function BulkLabResultForm({
 								disabled={saving || !hasEditableItems}
 								className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
 							>
-								{saving ? "Saving..." : "Save All Results"}
+								{saving ? t("saving") : t("saveAllResults")}
 							</button>
 						</div>
 
-						<div className="text-right">
+						<div className={isRtl ? "text-left" : "text-right"}>
 							<h2 className="text-xl font-bold text-slate-950">
-								Blood Test Lab Result Form
+								{t("bloodTestLabResultForm")}
 							</h2>
 							<p className="text-xs text-slate-500">
-								One test at a time. Less scrolling, faster entry, cleaner workflow.
+								{t("bulkFormSubtitle")}
 							</p>
 						</div>
 					</div>
 				</div>
 
 				<div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden lg:grid-cols-[280px_1fr]">
-					<aside className="min-h-0 overflow-y-auto border-b border-slate-200 bg-slate-50 p-4 lg:border-b-0 lg:border-r">
+					<aside className={`min-h-0 overflow-y-auto border-b border-slate-200 bg-slate-50 p-4 lg:border-b-0 ${isRtl ? "lg:border-l" : "lg:border-r"}`}>
 						<div className="rounded-xl border border-slate-200 bg-white p-3 text-sm">
-							<p className="font-bold text-slate-900">Lab No</p>
+							<p className="font-bold text-slate-900">{t("labNumber")}</p>
 							<p className="mb-2 text-slate-600">{order?.labOrderNo || "-"}</p>
 
-							<p className="font-bold text-slate-900">Patient</p>
+							<p className="font-bold text-slate-900">{t("patient")}</p>
 							<p className="mb-2 text-slate-600">{getPatientName(order)}</p>
 
-							<p className="font-bold text-slate-900">Doctor</p>
+							<p className="font-bold text-slate-900">{t("doctor")}</p>
 							<p className="mb-2 text-slate-600">{getDoctorName(order)}</p>
 
-							<p className="font-bold text-slate-900">Prescription</p>
+							<p className="font-bold text-slate-900">{t("prescription")}</p>
 							<p className="text-slate-600">{getPrescriptionNo(order)}</p>
 						</div>
 
 						<div className="mt-4">
-							<p className="mb-2 text-right text-sm font-bold text-slate-900">
-								Assigned Tests
+							<p className="mb-2 text-sm font-bold text-slate-900">
+								{t("assignedTests")}
 							</p>
 
 							<div className="space-y-2">
@@ -346,19 +350,19 @@ export default function BulkLabResultForm({
 											key={item.id}
 											type="button"
 											onClick={() => setActiveIndex(index)}
-											className={`w-full rounded-xl border px-3 py-3 text-right transition ${
+											className={`w-full rounded-xl border px-3 py-3 transition ${isRtl ? "text-right" : "text-left"} ${
 												isActive
 													? "border-blue-300 bg-blue-50"
 													: "border-slate-200 bg-white hover:bg-slate-50"
 											}`}
 										>
 											<p className="truncate text-sm font-bold text-slate-900">
-												{item.testNameSnapshot || "Lab Test"}
+												{item.testNameSnapshot || t("labTest")}
 											</p>
 											<div className="mt-2 flex items-center justify-between gap-2">
 												<LabStatusBadge status={item.status} type="item" />
 												<span className="truncate text-xs text-slate-500">
-													{item.categorySnapshot || "General"}
+													{item.categorySnapshot || t("general")}
 												</span>
 											</div>
 										</button>
@@ -371,42 +375,42 @@ export default function BulkLabResultForm({
 					<main className="min-h-0 overflow-y-auto p-4 md:p-6">
 						<div className="rounded-xl border border-slate-300 bg-white">
 							<div className="border-b border-slate-300 bg-slate-100 px-4 py-2 text-sm font-bold text-slate-900">
-								Patient information
+								{t("patientInformation")}
 							</div>
 
 							<div className="grid grid-cols-1 text-sm md:grid-cols-2">
-								<div className="border-b border-slate-200 px-4 py-2 md:border-r">
-									<span className="font-semibold">Name: </span>
+								<div className={`border-b border-slate-200 px-4 py-2 ${isRtl ? "md:border-l" : "md:border-r"}`}>
+									<span className="font-semibold">{t("patientName")}: </span>
 									{getPatientName(order)}
 								</div>
 								<div className="border-b border-slate-200 px-4 py-2">
-									<span className="font-semibold">Age: </span>
+									<span className="font-semibold">{t("age")}: </span>
 									{getPatientAge(order)}
 								</div>
-								<div className="border-b border-slate-200 px-4 py-2 md:border-r">
-									<span className="font-semibold">Gender: </span>
+								<div className={`border-b border-slate-200 px-4 py-2 ${isRtl ? "md:border-l" : "md:border-r"}`}>
+									<span className="font-semibold">{t("gender")}: </span>
 									{getPatientGender(order)}
 								</div>
 								<div className="border-b border-slate-200 px-4 py-2">
-									<span className="font-semibold">Order date: </span>
-									{formatAfghanDate(order?.createdAt, { englishDigits: true })}
+									<span className="font-semibold">{t("orderDate")}: </span>
+									{formatAfghanDate(order?.createdAt, { englishDigits: !isRtl })}
 								</div>
 							</div>
 						</div>
 
 						{!activeItem ? (
 							<div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
-								No lab test selected.
+								{t("noLabTestSelected")}
 							</div>
 						) : (
 							<div className="mt-4 rounded-xl border border-slate-300 bg-white">
 								<div className="flex flex-col gap-2 border-b border-slate-300 bg-slate-100 px-4 py-3 md:flex-row md:items-center md:justify-between">
 									<div>
 										<h3 className="text-lg font-bold text-slate-950">
-											{activeItem.testNameSnapshot || "Lab Test"}
+											{activeItem.testNameSnapshot || t("labTest")}
 										</h3>
 										<p className="text-xs text-slate-500">
-											{activeItem.categorySnapshot || "General"}
+											{activeItem.categorySnapshot || t("general")}
 										</p>
 									</div>
 
@@ -414,7 +418,7 @@ export default function BulkLabResultForm({
 										<LabStatusBadge status={activeItem.status} type="item" />
 										{activeReadOnly && (
 											<span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-												Read only
+												{t("readOnly")}
 											</span>
 										)}
 									</div>
@@ -425,17 +429,17 @@ export default function BulkLabResultForm({
 										<table className="w-full min-w-[720px] text-sm">
 											<thead>
 												<tr className="bg-white text-slate-700">
-													<th className="w-[30%] border-b border-r border-slate-200 px-3 py-2 text-left">
-														Test Parameter
+													<th className={`w-[30%] border-b border-slate-200 px-3 py-2 ${isRtl ? "border-l text-right" : "border-r text-left"}`}>
+														{t("testParameter")}
 													</th>
-													<th className="w-[30%] border-b border-r border-slate-200 px-3 py-2 text-left">
-														Result Value
+													<th className={`w-[30%] border-b border-slate-200 px-3 py-2 ${isRtl ? "border-l text-right" : "border-r text-left"}`}>
+														{t("resultValue")}
 													</th>
-													<th className="w-[18%] border-b border-r border-slate-200 px-3 py-2 text-left">
-														Unit
+													<th className={`w-[18%] border-b border-slate-200 px-3 py-2 ${isRtl ? "border-l text-right" : "border-r text-left"}`}>
+														{t("unit")}
 													</th>
-													<th className="w-[22%] border-b border-slate-200 px-3 py-2 text-left">
-														Normal Range
+													<th className="w-[22%] border-b border-slate-200 px-3 py-2">
+														{t("normalRange")}
 													</th>
 												</tr>
 											</thead>
@@ -448,14 +452,14 @@ export default function BulkLabResultForm({
 
 													return (
 														<tr key={field.key}>
-															<td className="border-b border-r border-slate-200 px-3 py-2 font-semibold text-slate-800">
+															<td className={`border-b border-slate-200 px-3 py-2 font-semibold text-slate-800 ${isRtl ? "border-l" : "border-r"}`}>
 																{field.label || field.key}
 																{field.required && (
 																	<span className="ml-1 text-rose-500">*</span>
 																)}
 															</td>
 
-															<td className="border-b border-r border-slate-200 p-0">
+															<td className={`border-b border-slate-200 p-0 ${isRtl ? "border-l" : "border-r"}`}>
 																<FieldInput
 																	field={field}
 																	value={value}
@@ -470,7 +474,7 @@ export default function BulkLabResultForm({
 																/>
 															</td>
 
-															<td className="border-b border-r border-slate-200 px-3 py-2 text-slate-700">
+															<td className={`border-b border-slate-200 px-3 py-2 text-slate-700 ${isRtl ? "border-l" : "border-r"}`}>
 																{field.unit || "-"}
 															</td>
 
@@ -485,20 +489,20 @@ export default function BulkLabResultForm({
 									</div>
 								) : (
 									<div className="px-4 py-6 text-center text-sm text-slate-500">
-										No result template found for this test.
+										{t("noTemplateFound")}
 									</div>
 								)}
 
 								<div className="px-4 py-4">
 									<label className="mb-1 block text-sm font-semibold text-slate-800">
-										Remarks
+										{t("remarks")}
 									</label>
 									<textarea
 										value={activeState.remarks || ""}
 										disabled={saving || activeReadOnly}
 										onChange={(e) => updateRemarks(activeItem.id, e.target.value)}
 										rows={3}
-										placeholder="Enter remarks for this test"
+										placeholder={t("enterRemarksPlaceholder")}
 										className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-50 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
 									/>
 								</div>
@@ -510,7 +514,7 @@ export default function BulkLabResultForm({
 				<div className="shrink-0 border-t border-slate-200 bg-white px-5 py-3">
 					<div className="flex flex-wrap items-center justify-between gap-3">
 						<p className="text-sm text-slate-500">
-							Editable tests:{" "}
+							{t("editableTests")}:{" "}
 							<span className="font-semibold text-slate-900">
 								{editableItems.length}
 							</span>
@@ -523,7 +527,7 @@ export default function BulkLabResultForm({
 								disabled={saving}
 								className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
 							>
-								Close
+								{t("close")}
 							</button>
 
 							<button
@@ -532,7 +536,7 @@ export default function BulkLabResultForm({
 								disabled={saving || !activeItem || activeReadOnly}
 								className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-60"
 							>
-								Save Current
+								{saving ? t("saving") : t("saveCurrent")}
 							</button>
 
 							<button
@@ -541,7 +545,7 @@ export default function BulkLabResultForm({
 								disabled={saving || !activeItem || activeReadOnly}
 								className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
 							>
-								Save & Next
+								{t("saveNext")}
 							</button>
 
 							<button
@@ -550,7 +554,7 @@ export default function BulkLabResultForm({
 								disabled={saving || !hasEditableItems}
 								className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
 							>
-								{saving ? "Saving..." : "Save All Results"}
+								{saving ? t("saving") : t("saveAllResults")}
 							</button>
 						</div>
 					</div>
