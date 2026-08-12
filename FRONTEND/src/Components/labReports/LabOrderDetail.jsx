@@ -128,6 +128,13 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 			<div dir={isRtl ? "rtl" : "ltr"} className="h-full min-h-0 overflow-y-auto bg-slate-50 p-4 md:p-6 print:hidden">
 				<div className="mx-auto max-w-6xl space-y-6">
 					<div className="flex items-center justify-between gap-3">
+						<div className={isRtl ? "text-right" : "text-left"}>
+							<h2 className="text-2xl font-bold text-slate-900">
+								{getLabOrderDisplayName(order)}
+							</h2>
+							<p className="text-sm text-slate-500">{t("labOrderDetail")}</p>
+						</div>
+
 						<button
 							type="button"
 							onClick={() => navigate(-1)}
@@ -135,13 +142,6 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 						>
 							{t("back")}
 						</button>
-
-						<div className={isRtl ? "text-left" : "text-right"}>
-							<h2 className="text-2xl font-bold text-slate-900">
-								{getLabOrderDisplayName(order)}
-							</h2>
-							<p className="text-sm text-slate-500">{t("labOrderDetail")}</p>
-						</div>
 					</div>
 
 					{message && (

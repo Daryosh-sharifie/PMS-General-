@@ -125,8 +125,7 @@ const normalizeMedicines = (medicines = []) =>
 				medicine.route,
 				medicine.method,
 				medicine.routeName,
-				medicine.type,
-				pickBySubstring(medicine, ["route", "method", "type"])
+				pickBySubstring(medicine, ["route", "method"])
 			),
 			type: pick(
 				medicine.type,
@@ -134,10 +133,7 @@ const normalizeMedicines = (medicines = []) =>
 				medicine.drugType,
 				medicine.medicineType,
 				medicine.typeName,
-				medicine.route,
-				medicine.method,
-				medicine.routeName,
-				pickBySubstring(medicine, ["type", "form", "route"])
+				pickBySubstring(medicine, ["type", "form"])
 			),
 		}));
 
@@ -277,8 +273,8 @@ export const printPrescription = ({
 	const cellPaddingX = boost >= 5 ? "0.55mm" : "0.7mm";
 	const footerBoxHeight = boost >= 4 ? "12mm" : "16mm";
 	const noColWidth = "4%";
-	const typeColWidth = boost >= 4 ? "14%" : "12%";
-	const nameColWidth = boost >= 4 ? "38%" : "42%";
+	const typeColWidth = boost >= 4 ? "22%" : "20%";
+	const nameColWidth = boost >= 4 ? "30%" : "34%";
 	const qtyColWidth = "5%";
 	const doseColWidth = "11%";
 	const freqColWidth = "12%";
@@ -710,9 +706,16 @@ export const printPrescription = ({
 
 				.medicine-table .col-type {
 					width: ${typeColWidth};
-					padding-left: 0.4mm;
-					padding-right: 1.6mm;
+					padding-left: 0.3mm;
+					padding-right: 0.8mm;
 					font-weight: 800;
+					white-space: nowrap;
+					letter-spacing: -0.25px;
+				}
+
+				.medicine-table .col-type .cell-text {
+					white-space: nowrap;
+					letter-spacing: -0.25px;
 				}
 
 				.medicine-table .col-name {
