@@ -26,7 +26,7 @@ export default function Login({ hospitalSettings }) {
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-tr from-blue-100 via-white to-blue-200 p-4"
-			dir="rtl">
+		dir="rtl">
 			<Card className="w-full max-w-md p-2 pb-6 shadow-xl">
 				<CardHeader className="text-center">
 					<div className=" flex justify-center">
