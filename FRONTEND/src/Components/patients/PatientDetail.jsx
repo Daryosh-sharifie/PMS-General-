@@ -68,6 +68,7 @@ export default function PatientDetail({
 	currentUser,
 }) {
 	const { t, language } = useLanguage();
+	const isRtl = language === "fa";
 
 	if (!patient) return null;
 
@@ -75,24 +76,47 @@ export default function PatientDetail({
 		currentUser?.role === "admin" || currentUser?.role === "doctor";
 
 	return (
-		<div className="space-y-6 p-4 md:p-6">
-			<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-				<button type="button" className={buttonGhost} onClick={onBack}>
-					← {t("back")}
-				</button>
+		<div dir={isRtl ? "rtl" : "ltr"} className="space-y-6 p-4 md:p-6">
+			<div className="flex items-center justify-between gap-4">
+				{isRtl ? (
+					<>
+						<div className="flex items-center gap-3 text-right">
+							<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+								<User className="h-6 w-6" />
+							</div>
 
-				<div className="flex items-center justify-end gap-3 text-right">
-					<div>
-						<h2 className="text-3xl font-bold text-slate-900">
-							{patient.name || patient.fullname || "-"}
-						</h2>
-						<p className="mt-1 text-sm text-slate-500">{t("patientDetails")}</p>
-					</div>
+							<div>
+								<h2 className="text-3xl font-bold text-slate-900">
+									{patient.name || patient.fullname || "-"}
+								</h2>
+								<p className="mt-1 text-sm text-slate-500">{t("patientDetails")}</p>
+							</div>
+						</div>
 
-					<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-						<User className="h-6 w-6" />
-					</div>
-				</div>
+						<button type="button" className={buttonGhost} onClick={onBack}>
+							{t("back")} ←
+						</button>
+					</>
+				) : (
+					<>
+						<button type="button" className={buttonGhost} onClick={onBack}>
+							← {t("back")}
+						</button>
+
+						<div className="flex items-center gap-3 text-right">
+							<div>
+								<h2 className="text-3xl font-bold text-slate-900">
+									{patient.name || patient.fullname || "-"}
+								</h2>
+								<p className="mt-1 text-sm text-slate-500">{t("patientDetails")}</p>
+							</div>
+
+							<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+								<User className="h-6 w-6" />
+							</div>
+						</div>
+					</>
+				)}
 			</div>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
