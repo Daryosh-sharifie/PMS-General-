@@ -10,6 +10,7 @@ import {
 	FileText,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "../ui/Card";
 import { inputClasses, buttonPrimary, buttonGhost } from "../../constants/styles";
 import { getStatusColor, formatDate, getStatusLabel } from "../../utils/helpers";
@@ -61,12 +62,22 @@ export default function PrescriptionList({
 		prescriptionsTotalRecords,
 	} = useStore();
 
+	const [searchParams] = useSearchParams();
+	const initialStatus = searchParams.get("status") || "all";
+
 	const [prescriptionSearch, setPrescriptionSearch] = useState("");
-	const [statusFilter, setStatusFilter] = useState("all");
+	const [statusFilter, setStatusFilter] = useState(initialStatus);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [rejectPopup, setRejectPopup] = useState(null);
 	const [viewReason, setViewReason] = useState(null);
 	const [backupLoading, setBackupLoading] = useState(false);
+
+	useEffect(() => {
+		const paramStatus = searchParams.get("status");
+		if (paramStatus) {
+			setStatusFilter(paramStatus);
+		}
+	}, [searchParams]);
 
 	const hasPrescriptions = Array.isArray(prescriptions) && prescriptions.length > 0;
 	const totalPages = Math.max(Number(prescriptionsTotalPages || 1), 1);

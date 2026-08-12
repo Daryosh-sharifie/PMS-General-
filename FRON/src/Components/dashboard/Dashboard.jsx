@@ -226,9 +226,9 @@ export default function Dashboard({
 	const navigate = useNavigate();
 
 	const goToModule = useCallback(
-		(module) => {
+		(module, extra) => {
 			if (onNavigate) {
-				onNavigate(module);
+				onNavigate(module, extra);
 				return;
 			}
 
@@ -240,7 +240,13 @@ export default function Dashboard({
 				labReports: "/lab-reports",
 			};
 
-			navigate(routeMap[module] || "/dashboard");
+			let target = routeMap[module] || "/dashboard";
+			if (extra && typeof extra === "object") {
+				const search = new URLSearchParams(extra).toString();
+				if (search) target += `?${search}`;
+			}
+
+			navigate(target);
 		},
 		[navigate, onNavigate]
 	);
@@ -511,6 +517,7 @@ export default function Dashboard({
 					trend={periodTrend}
 					iconColor="text-sky-600"
 					accent="bg-sky-50"
+					onClick={() => goToModule("prescriptions", { status: "dispensed" })}
 				/>
 
 				<StatCard
@@ -520,6 +527,7 @@ export default function Dashboard({
 					trend={periodTrend}
 					iconColor="text-red-600"
 					accent="bg-red-50"
+					onClick={() => goToModule("prescriptions", { status: "rejected" })}
 				/>
 			</div>
 
