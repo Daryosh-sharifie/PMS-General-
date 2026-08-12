@@ -1,9 +1,4 @@
-import DateObject from "react-date-object";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
-
-const toEnglishDigits = (value = "") =>
-	String(value).replace(/[۰-۹]/g, (digit) => "۰۱۲۳۴۵۶۷۸۹".indexOf(digit));
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 
 const escapeHtml = (value = "") =>
 	String(value ?? "")
@@ -75,20 +70,7 @@ const pickBySubstring = (obj, substrings) => {
 	return "";
 };
 
-const getJalaliDate = (date) => {
-	try {
-		const jalali = new DateObject({
-			date: date || new Date().toISOString(),
-			calendar: persian,
-			locale: persian_fa,
-			format: "YYYY/MM/DD",
-		});
-
-		return toEnglishDigits(jalali.format("YYYY/MM/DD"));
-	} catch {
-		return "";
-	}
-};
+const getJalaliDate = (date) => formatAfghanDate(date, { englishDigits: true });
 
 const getGender = (rawGender) => {
 	const gender = String(rawGender || "").trim();
@@ -197,19 +179,18 @@ const buildLabExaminationHtml = (labTestItems = []) => {
 	return `
 		<ul class="lab-examination-list">
 			${labTestItems
-				.map(
-					(test) => `
+			.map(
+				(test) => `
 				<li class="lab-examination-item">
 					<span class="lab-examination-name">${escapeHtml(test.name)}</span>
-					${
-						test.category
-							? `<span class="lab-examination-category">${escapeHtml(test.category)}</span>`
-							: ""
+					${test.category
+						? `<span class="lab-examination-category">${escapeHtml(test.category)}</span>`
+						: ""
 					}
 				</li>
 			`
-				)
-				.join("")}
+			)
+			.join("")}
 		</ul>
 	`;
 };

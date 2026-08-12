@@ -1,7 +1,6 @@
-import { Calendar, Mail, Phone, Plus, Search, User, X } from "lucide-react";
+import { Calendar, Mail, Phone, Search, User, X } from "lucide-react";
 import DatePicker from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
+import { afghanCalendar, afghanLocale } from "../../utils/afghanCalendar";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { displayPatientAge, formatDate } from "../../utils/helpers";
 
@@ -34,7 +33,6 @@ export default function PatientSelector({
 	setShowPatientDropdown,
 	filteredPatients = [],
 	isSearching,
-	onOpenAddPatient,
 }) {
 	const { t, language } = useLanguage();
 	const isFa = language === "fa";
@@ -73,7 +71,7 @@ export default function PatientSelector({
 						</div>
 					</div>
 
-					<div className="grid flex-1 grid-cols-2 gap-3 text-sm md:grid-cols-3 xl:grid-cols-6">
+					<div className="grid flex-1 grid-cols-1 gap-2.5 text-sm sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
 						<Info label={t("id")} value={`#${selectedPatient.id}`} strong />
 						<Info label={t("patientName")} value={selectedName} />
 						<Info label={t("fatherName")} value={selectedFatherName} />
@@ -91,8 +89,8 @@ export default function PatientSelector({
 							<DatePicker
 								{...(isFa
 									? {
-											calendar: persian,
-											locale: persian_fa,
+											calendar: afghanCalendar,
+											locale: afghanLocale,
 									  }
 									: {})}
 								calendarPosition="bottom-right"
@@ -139,16 +137,6 @@ export default function PatientSelector({
 						<Search className="h-5 w-5" />
 					</div>
 				</div>
-
-				<button
-					type="button"
-					onClick={onOpenAddPatient}
-					className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-					title={t("addPatient")}
-				>
-					<Plus className="h-4 w-4" />
-					<span className="sm:hidden">{t("addPatient")}</span>
-				</button>
 			</div>
 
 			{(showPatientDropdown || patientSearch) && (

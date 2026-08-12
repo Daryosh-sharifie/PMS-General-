@@ -23,8 +23,10 @@ import { jsPDF } from "jspdf";
 import { activityApi } from "../../api/activityApi";
 import { Card, CardContent } from "../ui/Card";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { fixRtlParentheses, isParentheticalSegment, splitParentheticalText } from "../../utils/helpers";
 
 const LIMIT = 30;
+const PDF_ROWS_PER_PAGE = 30;
 
 const ACTION_MAP = {
 	LOGIN: {
@@ -196,42 +198,113 @@ const escapeHtml = (value = "") =>
 		.replace(/"/g, "&quot;")
 		.replace(/'/g, "&#039;");
 
-async function downloadLogsAsPdf({ logs, t, language, filterLabel, total }) {
-	if (!logs.length) {
-		throw new Error(t("noActivityLogsFound"));
+function formatDescriptionHtml(text, isRtl) {
+	if (!text) return escapeHtml("-");
+	if (!isRtl) return escapeHtml(text);
+
+	return splitParentheticalText(text)
+		.map((part) => {
+			if (isParentheticalSegment(part)) {
+				return `<bdo dir="ltr" class="ltr-value" style="direction:ltr;unicode-bidi:isolate;display:inline-block">${escapeHtml(part)}</bdo>`;
+			}
+
+			return escapeHtml(part);
+		})
+		.join("");
+}
+
+function descriptionBodyCell(text, isRtl, extra = "") {
+	return `<td style="border:1px solid #cbd5e1;padding:6px 5px;text-align:center;vertical-align:middle;font-size:10px;line-height:1.4;color:#111827;background:inherit;${extra}">${formatDescriptionHtml(clipText(text, 55), isRtl)}</td>`;
+}
+
+function clipText(value, max = 70) {
+	const text = String(value ?? "").trim() || "-";
+	if (text.length <= max) return text;
+	return `${text.slice(0, max - 1)}…`;
+}
+
+function ReportDescription({ text, isRtl }) {
+	if (!text) return "-";
+
+	if (!isRtl) return text;
+
+	return (
+		<>
+			{splitParentheticalText(text).map((part, index) =>
+				isParentheticalSegment(part) ? (
+					<bdo key={index} dir="ltr" className="ltr-value inline-block">
+						{part}
+					</bdo>
+				) : (
+					<span key={index}>{part}</span>
+				)
+			)}
+		</>
+	);
+}
+
+async function fetchAllActivityLogs(filters) {
+	const first = await activityApi.getLogs(1, LIMIT, filters);
+	const firstNormalized = extractLogsResponse(first);
+	const allLogs = [...firstNormalized.logs];
+
+	for (let pageNum = 2; pageNum <= firstNormalized.totalPages; pageNum += 1) {
+		const next = await activityApi.getLogs(pageNum, LIMIT, filters);
+		allLogs.push(...extractLogsResponse(next).logs);
 	}
 
+	return allLogs;
+}
+
+function chunkLogs(logs, size = PDF_ROWS_PER_PAGE) {
+	const chunks = [];
+	for (let i = 0; i < logs.length; i += size) {
+		chunks.push({ logs: logs.slice(i, i + size), startIndex: i });
+	}
+	return chunks;
+}
+
+async function renderPdfPageCanvas({
+	pageLogs,
+	startIndex,
+	pageNumber,
+	totalPages,
+	totalRecords,
+	t,
+	language,
+	filterLabel,
+	generatedAt,
+	dateStamp,
+}) {
 	const isRtl = language === "fa";
-	const textAlign = isRtl ? "right" : "left";
-	const centerAlign = "center";
+	const numberLocale = language === "fa" ? "fa-IR" : "en-US";
 
 	const headerCell = (label) =>
-		`<th style="background:#f1f5f9;border:1px solid #cbd5e1;padding:7px 5px;font-weight:800;color:#334155;text-align:${centerAlign};font-size:11px;">${escapeHtml(label)}</th>`;
+		`<th style="background:#0f3d7a;color:#ffffff;border:1px solid #0b2f5e;padding:7px 5px;font-weight:700;text-align:center;vertical-align:middle;font-size:10px;white-space:nowrap;">${escapeHtml(label)}</th>`;
 
 	const bodyCell = (value, extra = "") =>
-		`<td style="border:1px solid #e2e8f0;padding:6px 5px;text-align:${centerAlign};vertical-align:top;font-size:11px;word-break:break-word;${extra}">${escapeHtml(value)}</td>`;
+		`<td style="border:1px solid #cbd5e1;padding:6px 5px;text-align:center;vertical-align:middle;font-size:10px;line-height:1.4;color:#111827;background:inherit;${extra}">${escapeHtml(value)}</td>`;
 
-	const rows = logs
+	const rows = pageLogs
 		.map((log, index) => {
 			const actionInfo = getActionInfo(log.action);
 			const roleKey = getRoleKey(log.userRole);
+			const rowNumber = startIndex + index + 1;
+			const rowBg = index % 2 === 0 ? "#ffffff" : "#f1f5f9";
 
 			return `
-				<tr>
-					${bodyCell(String(index + 1), "font-weight:700;")}
+				<tr style="background-color:${rowBg};">
+					${bodyCell(String(rowNumber), "font-weight:700;color:#0f3d7a;")}
 					${bodyCell(formatActivityDate(log.createdAt, language))}
-					${bodyCell(t(actionInfo.labelKey))}
-					${bodyCell(log.description || "-", `text-align:${textAlign};max-width:280px;`)}
-					${bodyCell(log.userName || "-")}
-					${bodyCell(roleKey ? t(roleKey) : "-")}
-					${bodyCell(getEntityLabel(log.entity, t))}
+					${bodyCell(clipText(t(actionInfo.labelKey), 28), "font-weight:600;")}
+					${descriptionBodyCell(log.description || "-", isRtl)}
+					${bodyCell(clipText(log.userName || "-", 18), "font-weight:600;")}
+					${bodyCell(clipText(roleKey ? t(roleKey) : "-", 16))}
+					${bodyCell(clipText(getEntityLabel(log.entity, t), 16))}
 				</tr>
 			`;
 		})
 		.join("");
-
-	const generatedAt = formatActivityDate(new Date().toISOString(), language);
-	const dateStamp = new Date().toISOString().slice(0, 10);
 
 	const wrapper = document.createElement("div");
 	wrapper.setAttribute("dir", isRtl ? "rtl" : "ltr");
@@ -242,35 +315,69 @@ async function downloadLogsAsPdf({ logs, t, language, filterLabel, total }) {
 		top: "0",
 		width: "1100px",
 		background: "#ffffff",
-		color: "#1e293b",
-		padding: "16px",
-		zIndex: "999999",
-		fontFamily: "'Vazirmatn', Arial, Helvetica, sans-serif",
+		color: "#111827",
+		padding: "0",
+		opacity: "1",
+		pointerEvents: "none",
+		zIndex: "2147483646",
+		fontFamily: "Tahoma, 'Vazirmatn', Arial, Helvetica, sans-serif",
 	});
 
 	wrapper.innerHTML = `
-		<div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #1e293b;padding-bottom:10px;margin-bottom:14px;">
-			<div style="font-size:22px;font-weight:900;color:#1e293b;">${escapeHtml(t("activityLogs"))}</div>
-			<div style="font-size:11px;color:#475569;line-height:1.7;text-align:${isRtl ? "left" : "right"};">
-				${escapeHtml(t("total"))}: ${escapeHtml(String(total))} ${escapeHtml(t("eventsRecorded"))}<br />
-				${escapeHtml(t("filter"))}: ${escapeHtml(filterLabel)}<br />
-				${escapeHtml(generatedAt)}
-			</div>
-		</div>
-		<table style="width:100%;border-collapse:collapse;color:#1e293b;">
-			<thead>
+		<div style="background-color:#0f3d7a;padding:12px 16px;color:#ffffff;">
+			<table style="width:100%;border-collapse:collapse;color:#ffffff;">
 				<tr>
-					${headerCell("#")}
-					${headerCell(t("dateAndTime"))}
-					${headerCell(t("action"))}
-					${headerCell(t("description"))}
-					${headerCell(t("user"))}
-					${headerCell(t("role"))}
-					${headerCell(t("entity"))}
+					<td style="text-align:${isRtl ? "right" : "left"};vertical-align:middle;color:#ffffff;">
+						<div style="font-size:18px;font-weight:800;color:#ffffff;">${escapeHtml(t("activityLogs"))}</div>
+						<div style="margin-top:4px;font-size:11px;color:#dbeafe;">
+							${escapeHtml(t("reportsPerPdfPage").replace("{count}", String(PDF_ROWS_PER_PAGE)))}
+						</div>
+					</td>
+					<td style="text-align:${isRtl ? "left" : "right"};vertical-align:middle;font-size:11px;line-height:1.6;color:#ffffff;">
+						<div style="color:#ffffff;">${escapeHtml(t("totalReports"))}: <b style="color:#ffffff;">${totalRecords.toLocaleString(numberLocale)}</b></div>
+						<div style="color:#ffffff;">${escapeHtml(t("filter"))}: <b style="color:#ffffff;">${escapeHtml(filterLabel)}</b></div>
+						<div style="color:#ffffff;">${escapeHtml(t("generatedOn"))}: ${escapeHtml(generatedAt)}</div>
+					</td>
 				</tr>
-			</thead>
-			<tbody>${rows}</tbody>
-		</table>
+			</table>
+		</div>
+		<div style="padding:10px 12px 0;background:#ffffff;">
+			<table style="width:100%;border-collapse:collapse;table-layout:fixed;color:#111827;background:#ffffff;">
+				<colgroup>
+					<col style="width:5%;" />
+					<col style="width:14%;" />
+					<col style="width:13%;" />
+					<col style="width:32%;" />
+					<col style="width:12%;" />
+					<col style="width:12%;" />
+					<col style="width:12%;" />
+				</colgroup>
+				<thead>
+					<tr>
+						${headerCell("#")}
+						${headerCell(t("dateAndTime"))}
+						${headerCell(t("action"))}
+						${headerCell(t("description"))}
+						${headerCell(t("user"))}
+						${headerCell(t("role"))}
+						${headerCell(t("entity"))}
+					</tr>
+				</thead>
+				<tbody>${rows}</tbody>
+			</table>
+		</div>
+		<div style="border-top:1px solid #cbd5e1;margin-top:10px;padding:12px 14px 28px;font-size:10px;color:#334155;background:#ffffff;">
+			<table style="width:100%;border-collapse:collapse;color:#334155;">
+				<tr>
+					<td style="text-align:${isRtl ? "right" : "left"};color:#334155;padding-bottom:6px;">${escapeHtml(t("activityLogs"))} • ${escapeHtml(dateStamp)}</td>
+					<td style="text-align:${isRtl ? "left" : "right"};font-weight:700;color:#0f3d7a;padding-bottom:6px;">
+						${escapeHtml(t("pdfPage"))} ${pageNumber.toLocaleString(numberLocale)} ${escapeHtml(t("pdfOf"))} ${totalPages.toLocaleString(numberLocale)}
+						• ${pageLogs.length.toLocaleString(numberLocale)} ${escapeHtml(t("reportsOnPage"))}
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div style="height:18px;background:#ffffff;"></div>
 	`;
 
 	document.body.appendChild(wrapper);
@@ -279,56 +386,90 @@ async function downloadLogsAsPdf({ logs, t, language, filterLabel, total }) {
 		if (document.fonts?.ready) {
 			await document.fonts.ready;
 		}
-
-		await new Promise((resolve) => setTimeout(resolve, 150));
+		await new Promise((resolve) => setTimeout(resolve, 200));
 
 		const canvas = await html2canvas(wrapper, {
 			scale: 2,
 			useCORS: true,
+			allowTaint: true,
 			backgroundColor: "#ffffff",
 			logging: false,
+			foreignObjectRendering: false,
 			width: wrapper.scrollWidth,
 			height: wrapper.scrollHeight,
 			windowWidth: wrapper.scrollWidth,
 			windowHeight: wrapper.scrollHeight,
+			onclone: (clonedDoc) => {
+				const cloned = clonedDoc.querySelector('[data-pdf-export="true"]');
+				if (cloned) {
+					cloned.style.opacity = "1";
+					cloned.style.visibility = "visible";
+					cloned.style.color = "#111827";
+				}
+			},
 		});
 
 		if (!canvas.width || !canvas.height) {
 			throw new Error("Failed to render PDF content");
 		}
 
-		const pdf = new jsPDF({
-			orientation: "landscape",
-			unit: "mm",
-			format: "a4",
-		});
-
-		const pageWidth = pdf.internal.pageSize.getWidth();
-		const pageHeight = pdf.internal.pageSize.getHeight();
-		const margin = 8;
-		const contentWidth = pageWidth - margin * 2;
-		const contentHeight = pageHeight - margin * 2;
-		const imgWidth = contentWidth;
-		const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-		let heightLeft = imgHeight;
-		let position = margin;
-		const imgData = canvas.toDataURL("image/jpeg", 0.95);
-
-		pdf.addImage(imgData, "JPEG", margin, position, imgWidth, imgHeight);
-		heightLeft -= contentHeight;
-
-		while (heightLeft > 0) {
-			position = margin - (imgHeight - heightLeft);
-			pdf.addPage();
-			pdf.addImage(imgData, "JPEG", margin, position, imgWidth, imgHeight);
-			heightLeft -= contentHeight;
-		}
-
-		pdf.save(`reports-${dateStamp}.pdf`);
+		return canvas;
 	} finally {
 		document.body.removeChild(wrapper);
 	}
+}
+
+async function downloadLogsAsPdf({ logs, t, language, filterLabel, total }) {
+	if (!logs.length) {
+		throw new Error(t("noActivityLogsFound"));
+	}
+
+	const generatedAt = formatActivityDate(new Date().toISOString(), language);
+	const dateStamp = new Date().toISOString().slice(0, 10);
+	const chunks = chunkLogs(logs, PDF_ROWS_PER_PAGE);
+	const pdfPages = chunks.length;
+
+	const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+	const pageWidth = pdf.internal.pageSize.getWidth();
+	const pageHeight = pdf.internal.pageSize.getHeight();
+	const marginX = 6;
+	const marginTop = 5;
+	const marginBottom = 16;
+	const contentWidth = pageWidth - marginX * 2;
+	const contentHeight = pageHeight - marginTop - marginBottom;
+
+	for (let i = 0; i < chunks.length; i += 1) {
+		const { logs: pageLogs, startIndex } = chunks[i];
+		const canvas = await renderPdfPageCanvas({
+			pageLogs,
+			startIndex,
+			pageNumber: i + 1,
+			totalPages: pdfPages,
+			totalRecords: total,
+			t,
+			language,
+			filterLabel,
+			generatedAt,
+			dateStamp,
+		});
+
+		if (i > 0) pdf.addPage();
+
+		const imgWidth = contentWidth;
+		const imgHeight = (canvas.height * imgWidth) / canvas.width;
+		const scale = imgHeight > contentHeight ? contentHeight / imgHeight : 1;
+		const finalWidth = imgWidth * scale;
+		const finalHeight = imgHeight * scale;
+		const xOffset = marginX + (contentWidth - finalWidth) / 2;
+		const yOffset = marginTop;
+		const imgData = canvas.toDataURL("image/jpeg", 0.94);
+
+		// Keep content inside printable area so the last row and footer stay fully visible
+		pdf.addImage(imgData, "JPEG", xOffset, yOffset, finalWidth, Math.min(finalHeight, contentHeight));
+	}
+
+	pdf.save(`reports-${dateStamp}.pdf`);
+	return pdfPages;
 }
 
 export default function ActivityLog() {
@@ -392,21 +533,35 @@ export default function ActivityLog() {
 		try {
 			setExporting(true);
 			setError("");
+			setSuccess("");
 
 			const filters = {};
 			if (entityFilter) filters.entity = entityFilter;
 
-			const result = await activityApi.getLogs(1, 1000, filters);
-			const normalized = extractLogsResponse(result);
-			const exportLogs = normalized.logs.length ? normalized.logs : logs;
+			const exportLogs = await fetchAllActivityLogs(filters);
+			const finalLogs = exportLogs.length ? exportLogs : logs;
 
-			await downloadLogsAsPdf({
-				logs: exportLogs,
+			if (!finalLogs.length) {
+				throw new Error(t("noActivityLogsFound"));
+			}
+
+			const pagesCreated = await downloadLogsAsPdf({
+				logs: finalLogs,
 				t,
 				language,
 				filterLabel: currentFilterLabel,
-				total: exportLogs.length,
+				total: finalLogs.length,
 			});
+
+			setSuccess(
+				fixRtlParentheses(
+					t("pdfExportedSuccessfully")
+						.replace("{pages}", String(pagesCreated))
+						.replace("{count}", String(finalLogs.length)),
+					isRtl
+				)
+			);
+			setTimeout(() => setSuccess(""), 4000);
 		} catch (err) {
 			setError(err.message || t("failedToLoadActivityLogs"));
 		} finally {
@@ -460,40 +615,39 @@ export default function ActivityLog() {
 				t={t}
 			/>
 
-			<div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-				<div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-					<div className="flex items-center justify-end gap-3 text-right">
+			<div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+				<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+					<div className={`flex items-center gap-4 ${isRtl ? "flex-row-reverse text-right" : "text-left"}`}>
+						<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-sm">
+							<Clock className="h-6 w-6" />
+						</div>
 						<div>
-							<h2 className="flex items-center justify-end gap-3 text-3xl font-bold text-slate-950">
-								{t("activityLogs")}
-								<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-									<Clock className="h-6 w-6" />
-								</div>
-							</h2>
+							<h2 className="text-2xl font-bold text-slate-950">{t("activityLogs")}</h2>
 							<p className="mt-1 text-sm text-slate-500">
-								{t("total")}: {total.toLocaleString(numberLocale)}{" "}
-								{t("eventsRecorded")} • {t("filter")}: {currentFilterLabel}
+								{t("total")}: {total.toLocaleString(numberLocale)} {t("eventsRecorded")}
+							</p>
+							<p className="text-xs text-slate-400">
+								{t("filter")}: {currentFilterLabel} • {t("reportsPerPdfPage").replace("{count}", String(PDF_ROWS_PER_PAGE))}
 							</p>
 						</div>
-
-						
 					</div>
-					<div className="flex flex-wrap gap-2">
+
+					<div className="flex flex-wrap items-center gap-2">
 						<button
 							type="button"
 							onClick={handleExportPdf}
 							disabled={exporting || loading || total === 0}
-							className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+							className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
 						>
 							<FileDown className={`h-4 w-4 ${exporting ? "animate-pulse" : ""}`} />
-							{t("exportPdf")}
+							{exporting ? t("exportingPdf") : t("exportPdf")}
 						</button>
 
 						<button
 							type="button"
 							onClick={fetchLogs}
 							disabled={loading}
-							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
 						>
 							<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
 							{t("refresh")}
@@ -503,13 +657,12 @@ export default function ActivityLog() {
 							type="button"
 							onClick={() => setShowDeleteModal(true)}
 							disabled={deleting || total === 0}
-							className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40"
+							className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40"
 						>
 							<Trash2 className={`h-4 w-4 ${deleting ? "animate-pulse" : ""}`} />
 							{t("deleteAll")}
 						</button>
 					</div>
-
 				</div>
 			</div>
 
@@ -569,9 +722,9 @@ export default function ActivityLog() {
 						<table className="min-w-full">
 							<thead className="border-b border-slate-200 bg-slate-50">
 								<tr>
-									<Th align="right">{t("dateAndTime")}</Th>
+									<Th>{t("dateAndTime")}</Th>
 									<Th>{t("action")}</Th>
-									<Th align="right">{t("description")}</Th>
+									<Th>{t("description")}</Th>
 									<Th>{t("user")}</Th>
 									<Th>{t("role")}</Th>
 									<Th>{t("entity")}</Th>
@@ -602,35 +755,35 @@ export default function ActivityLog() {
 
 										return (
 											<tr key={log.id} className="transition hover:bg-slate-50">
-												<td className="whitespace-nowrap px-4 py-4 text-right text-sm text-slate-500">
+												<td className="whitespace-nowrap px-4 py-4 text-center align-middle text-sm text-slate-500">
 													{formatActivityDate(log.createdAt, language)}
 												</td>
 
-												<td className="px-4 py-4 text-center">
+												<td className="px-4 py-4 text-center align-middle">
 													<span
-														className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold ${actionInfo.color}`}
+														className={`inline-flex items-center justify-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold ${actionInfo.color}`}
 													>
 														<EntityIcon className="h-3.5 w-3.5" />
 														{t(actionInfo.labelKey)}
 													</span>
 												</td>
 
-												<td className="max-w-md px-4 py-4 text-right text-sm text-slate-800">
-													{log.description || "-"}
+												<td className="max-w-md px-4 py-4 text-center align-middle text-sm text-slate-800">
+													<ReportDescription text={log.description || "-"} isRtl={isRtl} />
 												</td>
 
-												<td className="px-4 py-4 text-center text-sm font-semibold text-slate-900">
+												<td className="px-4 py-4 text-center align-middle text-sm font-semibold text-slate-900">
 													{log.userName || "-"}
 												</td>
 
-												<td className="px-4 py-4 text-center">
-													<span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+												<td className="px-4 py-4 text-center align-middle">
+													<span className="inline-flex items-center justify-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
 														<ShieldCheck className="h-3 w-3" />
 														{roleKey ? t(roleKey) : "-"}
 													</span>
 												</td>
 
-												<td className="px-4 py-4 text-center text-xs font-semibold text-slate-500">
+												<td className="px-4 py-4 text-center align-middle text-xs font-semibold text-slate-500">
 													{getEntityLabel(log.entity, t)}
 												</td>
 											</tr>
@@ -692,11 +845,9 @@ export default function ActivityLog() {
 	);
 }
 
-function Th({ children, align = "center" }) {
+function Th({ children }) {
 	return (
-		<th
-			className={`px-4 py-3 text-${align} text-xs font-bold uppercase tracking-wide text-slate-500`}
-		>
+		<th className="px-4 py-3 text-center align-middle text-xs font-bold uppercase tracking-wide text-slate-500">
 			{children}
 		</th>
 	);

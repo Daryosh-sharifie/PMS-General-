@@ -5,7 +5,7 @@ import Loader from "../ui/Loader";
 import LabStatusBadge from "../labReports/LabStatusBadge";
 import LabResultPreviewModal from "../labReports/LabResultPreviewModal";
 import { labOrderApi } from "../../api/labOrderApi";
-import { formatDate } from "../../utils/helpers";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 import { useLanguage } from "../../i18n/LanguageContext";
 
 function extractOrders(response) {
@@ -171,7 +171,7 @@ export default function PrescriptionLabResultsPanel({ prescriptionId }) {
 												</td>
 
 												<td className="border-b border-slate-100 px-4 py-3 text-slate-700">
-													{formatDate(order.createdAt, language)}
+													{formatAfghanDate(order.createdAt, { englishDigits: language !== "fa" })}
 												</td>
 
 												<td className="ltr-value border-b border-slate-100 px-4 py-3 font-semibold text-slate-900">
@@ -218,7 +218,7 @@ export default function PrescriptionLabResultsPanel({ prescriptionId }) {
 
 												<td className="border-b border-slate-100 px-4 py-3 text-slate-700">
 													{testIndex === 0
-														? formatDate(order.createdAt, language)
+														? formatAfghanDate(order.createdAt, { englishDigits: language !== "fa" })
 														: ""}
 												</td>
 

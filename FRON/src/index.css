@@ -46,13 +46,21 @@ html[dir="rtl"] body {
 	text-align: right;
 }
 
-/* App shell must stay flex-row.
-   Do not use flex-row-reverse in App.jsx.
-   Because dir="rtl" already places first flex item on the right. */
-html[dir="ltr"] .app-shell,
-html[dir="rtl"] .app-shell {
-	display: flex;
-	flex-direction: row;
+/* App shell flex layout */
+@media (min-width: 768px) {
+	html[dir="ltr"] .app-shell,
+	html[dir="rtl"] .app-shell {
+		display: flex;
+		flex-direction: row;
+	}
+}
+
+@media (max-width: 767px) {
+	html[dir="ltr"] .app-shell,
+	html[dir="rtl"] .app-shell {
+		display: flex;
+		flex-direction: column;
+	}
 }
 
 /* Main page direction */
@@ -222,6 +230,13 @@ html[dir="ltr"] .app-main table .ltr-value,
 html[dir="rtl"] .app-main table .ltr-value {
 	direction: ltr !important;
 	text-align: left !important;
+	unicode-bidi: isolate;
+}
+
+html[dir="rtl"] .app-main table bdo[dir="ltr"] {
+	direction: ltr !important;
+	unicode-bidi: isolate;
+	display: inline-block;
 }
 
 /* -------------------------------------------------------

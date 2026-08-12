@@ -1,4 +1,4 @@
-import { formatDate } from "../../utils/helpers";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 
 export function normalizeLabOrder(order) {
 	if (!order) return null;
@@ -42,7 +42,7 @@ export function getLabOrderTestCount(order) {
 }
 
 export function getLabOrderCreatedDate(order) {
-	return order?.createdAt ? formatDate(order.createdAt) : "-";
+	return formatAfghanDate(order?.createdAt, { englishDigits: true });
 }
 
 export function getLabOrderPatientLabel(order) {

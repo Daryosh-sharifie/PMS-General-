@@ -31,12 +31,18 @@ app.use(morgan('dev'));
 const allowedOrigins = [
   'http://localhost:5173',
   'https://4dk6jdrq-5173.euw.devtunnels.ms',
+  'http://192.168.0.195:5173',
+  /^http:\/\/192\.168\.\d{1,3}\.\d{1,3}:5173$/,
+  /^http:\/\/10\.\d{1,3}\.\d{1,3}\.\d{1,3}:5173$/,
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // Allow non-browser tools
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (!origin) return callback(null, true);
+    const allowed = allowedOrigins.some((entry) =>
+      entry instanceof RegExp ? entry.test(origin) : entry === origin
+    );
+    if (allowed) return callback(null, true);
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,

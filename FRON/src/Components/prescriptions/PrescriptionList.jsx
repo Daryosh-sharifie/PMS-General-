@@ -166,32 +166,32 @@ export default function PrescriptionList({
 	};
 
 	return (
-		<div className="space-y-6 p-4 md:p-6">
-			<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-				<div className="flex items-center justify-end gap-3 text-right">
+		<div className="space-y-5 p-3 sm:p-6">
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex items-center gap-3">
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12">
+						<FileText className="h-5 w-5 sm:h-6 sm:w-6" />
+					</div>
+
 					<div>
-						<h2 className="text-3xl font-bold text-slate-900">
+						<h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
 							{t("prescriptions")}
 						</h2>
-						<p className="mt-1 text-sm text-blue-600">
+						<p className="mt-0.5 text-xs text-blue-600 sm:text-sm">
 							{prescriptionsTotalRecords > 0
 								? `${t("total")}: ${prescriptionsTotalRecords} ${t("prescriptionsCount")}`
 								: t("managePrescriptionsSubtitle")}
 						</p>
 					</div>
-
-					<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-						<FileText className="h-6 w-6" />
-					</div>
 				</div>
 				
-				<div className="flex flex-wrap gap-2">
+				<div className="flex flex-wrap items-center gap-2">
 					{canBackup && (
 						<button
 							type="button"
 							onClick={handleBackup}
 							disabled={backupLoading}
-							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:text-sm"
 							title={t("downloadPrescriptionsBackup")}
 						>
 							<Download className="h-4 w-4" />
@@ -199,17 +199,15 @@ export default function PrescriptionList({
 						</button>
 					)}
 				</div>
-
-				
 			</div>
 
 			<Card className="rounded-2xl border border-slate-200 shadow-sm">
-				<CardContent className="p-4">
-					<div className="flex flex-col gap-3 lg:flex-row">
+				<CardContent className="p-3 sm:p-4">
+					<div className="flex flex-col gap-2.5 sm:flex-row">
 						<select
 							value={statusFilter}
 							onChange={(e) => handleStatusChange(e.target.value)}
-							className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-50"
+							className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-50 sm:text-sm"
 						>
 							{STATUS_OPTIONS.map((option) => (
 								<option key={option.value} value={option.value}>
@@ -220,7 +218,7 @@ export default function PrescriptionList({
 
 						<div className="relative flex-1">
 							<input
-								className={`${inputClasses} pl-10 text-right`}
+								className={`${inputClasses} pl-10 text-right text-xs sm:text-sm`}
 								placeholder={t("searchPrescriptionsPlaceholder")}
 								value={prescriptionSearch}
 								onChange={(e) => handleSearchChange(e.target.value)}
@@ -232,7 +230,7 @@ export default function PrescriptionList({
 							<button
 								type="button"
 								onClick={onCreatePrescription}
-								className={`${buttonPrimary} justify-center`}
+								className={`${buttonPrimary} justify-center text-xs sm:text-sm`}
 							>
 								<Plus className="mr-2 h-4 w-4" />
 								{t("createPrescription")}
@@ -281,7 +279,7 @@ export default function PrescriptionList({
 							}
 						/>
 					) : (
-						<div className="overflow-x-auto">
+						<div className="overflow-x-auto touch-pan-x pb-2">
 							<table className="min-w-full">
 								<thead className="border-b border-slate-200 bg-slate-50">
 									<tr>

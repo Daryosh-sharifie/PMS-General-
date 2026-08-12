@@ -108,7 +108,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
     action: 'LOGIN',
     entity: 'Auth',
     entityId: user.id,
-    description: `کاربر وارد سیستم شد: ${user.name} (${user.role})`,
+    description: `کاربر وارد سیستم شد: ${user.name} — ${user.role}`,
     userId: user.id,
     userName: user.name,
     userRole: user.role,

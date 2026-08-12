@@ -1,4 +1,4 @@
-import { formatDate } from "../../utils/helpers";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 
 function normalizeTemplate(templateSnapshot) {
 	if (!templateSnapshot) return [];
@@ -145,7 +145,7 @@ export default function LabReportPrintView({ order, mode = "print" }) {
 							</p>
 							<p>
 								<span className="font-bold text-slate-800">Date:</span>{" "}
-								{formatDate(order?.createdAt)}
+								{formatAfghanDate(order?.createdAt, { englishDigits: true })}
 							</p>
 						</div>
 					</div>

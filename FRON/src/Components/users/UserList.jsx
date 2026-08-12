@@ -123,7 +123,7 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 	};
 
 	return (
-		<div className="space-y-6 p-4 md:p-6">
+		<div className="space-y-5 p-3 sm:p-6">
 			<DeleteModal
 				open={Boolean(deleteConfirm)}
 				user={deleteConfirm}
@@ -133,27 +133,28 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 				t={t}
 			/>
 
-			<div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-				<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-					<div className="flex items-center justify-end gap-3 text-right">
+			<div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+					<div className="flex items-center gap-3">
+						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12">
+							<Users className="h-5 w-5 sm:h-6 sm:w-6" />
+						</div>
+
 						<div>
-							<h2 className="text-3xl font-bold text-slate-950">{t("users")}</h2>
-							<p className="mt-1 text-sm text-slate-500">
+							<h2 className="text-2xl font-bold text-slate-950 sm:text-3xl">{t("users")}</h2>
+							<p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
 								{t("total")}:{" "}
 								{users.length.toLocaleString(language === "fa" ? "fa-IR" : "en-US")}{" "}
 								{t("usersCount")} • {t("doctors")}:{" "}
 								{doctorCount.toLocaleString(language === "fa" ? "fa-IR" : "en-US")}
 							</p>
 						</div>
-
-						<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-							<Users className="h-6 w-6" />
-						</div>
 					</div>
-					<div className="flex flex-wrap gap-2">
+
+					<div className="flex flex-wrap items-center gap-2">
 						<button
 							type="button"
-							className={buttonPrimary}
+							className={`${buttonPrimary} text-xs sm:text-sm`}
 							onClick={() => navigate("/users/add")}
 							disabled={loading}
 						>
@@ -204,7 +205,7 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 							</p>
 						</div>
 					) : (
-						<div className="overflow-x-auto">
+						<div className="overflow-x-auto touch-pan-x pb-2">
 							<table className="min-w-full">
 								<thead className="border-b border-slate-200 bg-slate-50">
 									<tr>

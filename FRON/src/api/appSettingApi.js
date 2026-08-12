@@ -1,4 +1,6 @@
-const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/app-settings`
+import { getApiOrigin } from './baseUrl';
+
+const API_URL = `${getApiOrigin()}/api/v1/app-settings`
 
 // Expose base origin for building absolute asset URLs (e.g., /uploads/...)
 export const APP_SETTINGS_BASE = API_URL.replace(/\/api\/v1\/app-settings.*/, '');

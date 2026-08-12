@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import LabStatusBadge from "./LabStatusBadge";
-import { formatDate } from "../../utils/helpers";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 
 const EDITABLE_STATUSES = ["REQUESTED", "IN_PROGRESS", "COMPLETED"];
 
@@ -389,7 +389,7 @@ export default function BulkLabResultForm({
 								</div>
 								<div className="border-b border-slate-200 px-4 py-2">
 									<span className="font-semibold">Order date: </span>
-									{formatDate(order?.createdAt)}
+									{formatAfghanDate(order?.createdAt, { englishDigits: true })}
 								</div>
 							</div>
 						</div>

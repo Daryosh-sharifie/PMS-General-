@@ -391,39 +391,39 @@ export default function Dashboard({
 	}, [loadDashboardData]);
 
 	return (
-		<div className="space-y-6 p-4 text-right md:p-6">
-			<div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-				<div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+		<div className="space-y-5 p-3 text-right sm:p-6">
+			<div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+				<div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
 					<div className="text-right">
 						<div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
 							<Activity className="h-3.5 w-3.5" />
 							{t("liveOverview")}
 						</div>
 
-						<h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
+						<h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
 							{t("dashboard")}
 						</h2>
 
-						<p className="mt-1 text-sm text-slate-500">
+						<p className="mt-1 text-xs text-slate-500 sm:text-sm">
 							{currentUser?.name
 								? `${t("welcomeBack")}, ${currentUser.name}`
 								: t("dashboardSubtitle")}
 						</p>
 					</div>
 					
-					<div className="flex flex-wrap items-center gap-2">
+					<div className="flex items-center gap-2 overflow-x-auto pb-1 touch-pan-x">
 						<LanguageSwitcher />
 						<button
 							type="button"
 							onClick={loadDashboardData}
 							disabled={loading}
-							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+							className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:text-sm"
 						>
 							<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
 							{t("refresh")}
 						</button>
 
-						<div className="flex items-center gap-1 rounded-xl bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-500">
+						<div className="flex shrink-0 items-center gap-1 rounded-xl bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 sm:text-sm">
 							<Filter className="h-4 w-4" />
 							<span>{t("filter")}</span>
 						</div>
@@ -433,7 +433,7 @@ export default function Dashboard({
 								key={filter.value}
 								type="button"
 								onClick={() => setPeriodFilter(filter.value)}
-								className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
+								className={`shrink-0 rounded-xl px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
 									periodFilter === filter.value
 										? "bg-blue-600 text-white shadow-sm"
 										: "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
@@ -443,8 +443,6 @@ export default function Dashboard({
 							</button>
 						))}
 					</div>
-
-					
 				</div>
 			</div>
 
@@ -462,7 +460,7 @@ export default function Dashboard({
 			)}
 
 			<div
-				className={`grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-6 ${
+				className={`grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-6 ${
 					loading ? "pointer-events-none opacity-50" : ""
 				}`}
 			>

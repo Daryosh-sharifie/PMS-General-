@@ -8,7 +8,6 @@ import { useLanguage } from "../../i18n/LanguageContext";
 
 import PrescriptionTopBar from "./PrescriptionTopBar";
 import PatientSelector from "./PatientSelector";
-import QuickAddPatientModal from "./QuickAddPatientModal";
 import MedicineTable from "./MedicineTable";
 import ClinicalPanel from "./ClinicalPanel";
 import PageControls from "./PageControls";
@@ -158,22 +157,12 @@ export default function PrescriptionForm({
 	const [currentPageId, setCurrentPageId] = useState(1);
 	const [prescriptionNo, setPrescriptionNo] = useState(initialPrescriptionNo || null);
 
-	const [showAddPatient, setShowAddPatient] = useState(false);
-	const [quickPatient, setQuickPatient] = useState({
-		fullname: "",
-		fathername: "",
-		age: "",
-		gender: "",
-	});
-	const [addPatientLoading, setAddPatientLoading] = useState(false);
-	const [addPatientError, setAddPatientError] = useState("");
 	const [saving, setSaving] = useState(false);
 	const [printFontBoost, setPrintFontBoost] = useState(0);
 
 	const justSaved = useRef(false);
 
 	const prescriptions = useStore((state) => state.prescriptions);
-	const addPatient = useStore((state) => state.addPatient);
 	const resetPrescriptionForm = useStore((state) => state.resetPrescriptionForm);
 	const updatePrescriptionForm = useStore((state) => state.updatePrescriptionForm);
 	const fetchPrescriptions = useStore((state) => state.fetchPrescriptions);
@@ -181,7 +170,7 @@ export default function PrescriptionForm({
 	const patientSelector = usePrescriptionPatients(patients, prescriptionForm);
 	const labSelector = useLabTestSelector(initialLabTestIds, initialLabTests);
 
-	const { selectedPatient, setLatestPatients } = patientSelector;
+	const { selectedPatient } = patientSelector;
 	const {
 		selectedLabTestIds,
 		selectedLabTests,
@@ -543,53 +532,10 @@ export default function PrescriptionForm({
 		if (fields[nextIndex]) fields[nextIndex].focus();
 	};
 
-	const handleQuickAddPatient = async (event) => {
-		event.preventDefault();
-
-		try {
-			setAddPatientLoading(true);
-			setAddPatientError("");
-
-			const newPatient = await addPatient({
-				fullname: quickPatient.fullname,
-				fathername: quickPatient.fathername,
-				age: quickPatient.age,
-				gender: quickPatient.gender,
-				phone: "",
-				email: "",
-				bloodGroup: "",
-				address: "",
-				knownallergies: "",
-			});
-
-			if (newPatient) {
-				setPrescriptionForm({
-					...prescriptionForm,
-					patientId: String(newPatient.id),
-					patientName: newPatient.fullname,
-					patientGender: newPatient.gender,
-					patientAge: newPatient.age,
-					patientFathername: newPatient.fathername,
-				});
-
-				setLatestPatients((prev) =>
-					[{ ...newPatient, name: newPatient.fullname }, ...prev].slice(0, 10)
-				);
-
-				setShowAddPatient(false);
-				setQuickPatient({ fullname: "", fathername: "", age: "", gender: "" });
-			}
-		} catch (error) {
-			setAddPatientError(error.message || t("failedToCreatePatient"));
-		} finally {
-			setAddPatientLoading(false);
-		}
-	};
-
 	return (
 		<div
 			dir={isRtl ? "rtl" : "ltr"}
-			className="mx-auto my-6 w-full max-w-7xl rounded-2xl bg-slate-50 p-3 text-gray-900 shadow-xl ring-1 ring-slate-200 sm:my-10 sm:p-4"
+			className="mx-auto my-2 w-full max-w-7xl rounded-2xl bg-slate-50 p-2.5 text-gray-900 shadow-xl ring-1 ring-slate-200 sm:my-6 sm:p-4"
 		>
 			<PrescriptionTopBar
 				onBack={handleBack}
@@ -618,7 +564,6 @@ export default function PrescriptionForm({
 						setPrescriptionForm={setPrescriptionForm}
 						onSelectPatient={applyPatientSelection}
 						onClearPatientSelection={resetClinicalState}
-						onOpenAddPatient={() => setShowAddPatient(true)}
 					/>
 
 					<div className="mt-5">
@@ -668,20 +613,6 @@ export default function PrescriptionForm({
 				setCurrentPageId={setCurrentPageId}
 				handleAddPage={handleAddPage}
 				handleRemovePage={handleRemovePage}
-			/>
-
-			<QuickAddPatientModal
-				open={showAddPatient}
-				onClose={() => {
-					setShowAddPatient(false);
-					setAddPatientError("");
-					setQuickPatient({ fullname: "", fathername: "", age: "", gender: "" });
-				}}
-				quickPatient={quickPatient}
-				setQuickPatient={setQuickPatient}
-				addPatientLoading={addPatientLoading}
-				addPatientError={addPatientError}
-				onSubmit={handleQuickAddPatient}
 			/>
 		</div>
 	);

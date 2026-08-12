@@ -1,5 +1,7 @@
+import { getApiOrigin } from './baseUrl';
+
 const createLookupApi = (resourcePath) => {
-  const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api/v1/${resourcePath}`;
+  const API_BASE_URL = `${getApiOrigin()}/api/v1/${resourcePath}`;
 
   const getAuthHeaders = () => ({
     'Content-Type': 'application/json',

@@ -1,4 +1,6 @@
-const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api/v1/medicine-categories`;
+import { getApiOrigin } from './baseUrl';
+
+const API_BASE_URL = `${getApiOrigin()}/api/v1/medicine-categories`;
 
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',

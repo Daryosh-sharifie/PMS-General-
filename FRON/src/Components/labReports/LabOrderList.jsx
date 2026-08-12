@@ -4,7 +4,7 @@ import Loader from "../ui/Loader";
 import LabOrderCard from "./LabOrderCard";
 import LabStatusBadge from "./LabStatusBadge";
 import { LAB_ORDER_STATUS_OPTIONS } from "./labReportConstants";
-import { formatDate } from "../../utils/helpers";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { inputClasses } from "../../constants/styles";
 
@@ -172,7 +172,7 @@ export default function LabOrderList({
 									</td>
 
 									<td className="truncate px-4 py-4 text-slate-700">
-										{formatDate(order.createdAt, language)}
+										{formatAfghanDate(order.createdAt, { englishDigits: language !== "fa" })}
 									</td>
 
 									<td className="px-4 py-4 text-center text-slate-700">

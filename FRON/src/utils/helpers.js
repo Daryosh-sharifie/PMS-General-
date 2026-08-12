@@ -23,6 +23,21 @@ export const toPersianDigits = (value) => {
 	return String(value).replace(/\d/g, (digit) => PERSIAN_DIGITS[Number(digit)]);
 };
 
+/** Keep (text) readable in RTL — prevents bidi from mirroring to )( */
+export const fixRtlParentheses = (text, isRtl = true) => {
+	if (!isRtl || text == null || text === "") return text ?? "";
+
+	return String(text).replace(/\(/g, "\uFF08").replace(/\)/g, "\uFF09");
+};
+
+export const splitParentheticalText = (text) => {
+	if (text == null || text === "") return [];
+
+	return String(text).split(/(\([^)]*\))/g).filter(Boolean);
+};
+
+export const isParentheticalSegment = (segment) => /^\([^)]*\)$/.test(segment);
+
 export const parseLocalizedInt = (value) => {
 	const normalized = toEnglishDigits(value).replace(/\D/g, "");
 	return normalized ? parseInt(normalized, 10) : NaN;

@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardContent } from "../ui/Card";
 import Message from "../ui/Message";
 import LabStatusBadge from "./LabStatusBadge";
-import { formatDate } from "../../utils/helpers";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 
 export default function LabOrdersSummary({ title = "Lab Reports", orders = [], onOpenOrder, onPrintOrder, emptyText = "No lab reports found." }) {
 	return (
@@ -17,7 +17,7 @@ export default function LabOrdersSummary({ title = "Lab Reports", orders = [], o
 								<div className="flex items-start justify-between gap-3">
 									<div className="space-y-1 text-right">
 										<p className="text-sm font-bold text-slate-900">{order.labOrderNo}</p>
-										<p className="text-xs text-slate-500">{order.patientName || order.patient?.fullname || "-"} • {formatDate(order.createdAt)}</p>
+										<p className="text-xs text-slate-500">{order.patientName || order.patient?.fullname || "-"} • {formatAfghanDate(order.createdAt, { englishDigits: true })}</p>
 									</div>
 									<LabStatusBadge status={order.status} />
 								</div>

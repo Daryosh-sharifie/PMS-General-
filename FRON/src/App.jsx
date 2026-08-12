@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import { getSocketOrigin } from "./api/baseUrl";
 
 import Login from "./Components/auth/Login";
 import Unauthorized from "./Components/auth/Unauthorized";
@@ -159,7 +160,7 @@ function App() {
 
 	useEffect(() => {
 		if (isAuthenticated && authChecked) {
-			getAppSetting().catch(() => {});
+			getAppSetting().catch(() => { });
 		}
 	}, [isAuthenticated, authChecked, getAppSetting]);
 
@@ -167,7 +168,7 @@ function App() {
 		if (isAuthenticated && authChecked) {
 			fetchPatients();
 			fetchPrescriptions();
-			fetchUsers().catch(() => {});
+			fetchUsers().catch(() => { });
 		}
 	}, [
 		isAuthenticated,
@@ -180,7 +181,7 @@ function App() {
 	useEffect(() => {
 		if (!isAuthenticated || !authChecked || !currentUser?.id) return;
 
-		const socketUrl = import.meta.env.VITE_SOCKET_URL;
+		const socketUrl = getSocketOrigin();
 
 		if (!socketUrl) return;
 
@@ -254,7 +255,7 @@ function App() {
 		<div
 			dir={isRtl ? "rtl" : "ltr"}
 			data-dir={isRtl ? "rtl" : "ltr"}
-			className="app-shell flex h-screen flex-row overflow-hidden bg-gray-50"
+			className="app-shell flex h-screen flex-row overflow-hidden bg-slate-50"
 		>
 			<Sidebar
 				currentUser={currentUser}

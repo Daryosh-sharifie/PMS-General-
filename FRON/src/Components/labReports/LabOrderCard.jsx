@@ -1,5 +1,5 @@
 import LabStatusBadge from "./LabStatusBadge";
-import { formatDate } from "../../utils/helpers";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 import { getLabOrderDisplayName, getLabOrderPatientLabel, getLabOrderPrescriptionLabel, getLabOrderDoctorLabel, getLabOrderTestCount } from "./labReportHelpers";
 
 export default function LabOrderCard({ order, onOpen }) {
@@ -19,8 +19,8 @@ export default function LabOrderCard({ order, onOpen }) {
 				<Meta label="Doctor" value={getLabOrderDoctorLabel(order)} />
 				<Meta label="Prescription" value={getLabOrderPrescriptionLabel(order)} />
 				<Meta label="Tests" value={getLabOrderTestCount(order)} />
-				<Meta label="Requested" value={formatDate(order.createdAt)} />
-				<Meta label="Updated" value={formatDate(order.updatedAt || order.createdAt)} />
+				<Meta label="Requested" value={formatAfghanDate(order.createdAt, { englishDigits: true })} />
+				<Meta label="Updated" value={formatAfghanDate(order.updatedAt || order.createdAt, { englishDigits: true })} />
 			</div>
 
 			<div className="mt-4 flex justify-end">

@@ -11,7 +11,7 @@ import LabReportPrintView from "./LabReportPrintView";
 import LabResultPreviewModal from "./LabResultPreviewModal";
 import { labOrderItemApi } from "../../api/labOrderItemApi";
 import { getLabOrderDisplayName, getLabOrderTestCount } from "./labReportHelpers";
-import { formatDate } from "../../utils/helpers";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 
 const EDITABLE_BULK_STATUSES = ["REQUESTED", "IN_PROGRESS", "COMPLETED"];
 
@@ -231,7 +231,7 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 
 															<td className="border-b border-r border-slate-100 px-4 py-3 text-slate-700">
 																{item.completedAt
-																	? formatDate(item.completedAt)
+																	? formatAfghanDate(item.completedAt, { englishDigits: true })
 																	: "-"}
 															</td>
 
@@ -306,7 +306,7 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 										<span className="font-semibold text-slate-900">
 											Order Date:
 										</span>{" "}
-										{formatDate(order.createdAt)}
+										{formatAfghanDate(order.createdAt, { englishDigits: true })}
 									</p>
 
 									<p>

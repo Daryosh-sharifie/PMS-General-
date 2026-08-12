@@ -285,17 +285,17 @@ export default function PrescriptionDetail({
 	};
 
 	return (
-		<div className="space-y-6 p-6 md:p-8">
+		<div className="space-y-6 p-3 sm:p-6 md:p-8">
 			<div className="flex items-center justify-between gap-4">
 				<button type="button" className={buttonGhost} onClick={onBack}>
 					← {t("back")}
 				</button>
 
 				<div className="text-right">
-					<h2 className="text-3xl font-bold text-gray-900">
+					<h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
 						{prescription.prescriptionNo || prescription.id}
 					</h2>
-					<p className="mt-1 text-gray-600">{t("prescriptionDetails")}</p>
+					<p className="mt-1 text-xs text-gray-600 sm:text-sm">{t("prescriptionDetails")}</p>
 				</div>
 			</div>
 
@@ -303,7 +303,7 @@ export default function PrescriptionDetail({
 				<div className="space-y-6 lg:col-span-2">
 					<Card>
 						<CardHeader>
-							<div className="flex items-center justify-between">
+							<div className="flex flex-wrap items-center justify-between gap-2">
 								<Badge className={getStatusColor(prescription.status)}>
 									{getTranslatedStatus(prescription.status)}
 								</Badge>
@@ -320,7 +320,7 @@ export default function PrescriptionDetail({
 									{t("patientDetails")}
 								</h3>
 
-								<div className="grid gap-4 md:grid-cols-3">
+								<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
 									<InfoItem
 										label={t("patientName")}
 										value={prescription.patientName || patient?.fullname || "-"}
@@ -370,7 +370,7 @@ export default function PrescriptionDetail({
 									{t("vitalSigns")}
 								</p>
 
-								<div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+								<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
 									{[
 										["bloodPressure", "bloodPressure"],
 										["respiratoryRate", "respiratoryRate"],
@@ -413,7 +413,7 @@ export default function PrescriptionDetail({
 										<div
 											className="normal-dir-table mb-2 grid rounded-lg bg-gray-100 p-3 text-sm font-bold text-gray-700"
 											style={{
-												gridTemplateColumns: "50px 2fr 1fr 1fr 80px 100px 2fr",
+												gridTemplateColumns: "50px 2fr 1fr 1fr 80px 2fr",
 											}}
 										>
 											<div className="text-center">#</div>
@@ -421,7 +421,6 @@ export default function PrescriptionDetail({
 											<div>{t("dose")}</div>
 											<div>{t("frequency")}</div>
 											<div className="text-center">{t("qty")}</div>
-											<div>{t("duration")}</div>
 											<div>{t("instructions")}</div>
 										</div>
 
@@ -431,7 +430,7 @@ export default function PrescriptionDetail({
 													key={index}
 													className="normal-dir-table grid items-center rounded-lg border border-gray-200 bg-white p-3 text-sm transition hover:shadow-sm"
 													style={{
-														gridTemplateColumns: "50px 2fr 1fr 1fr 80px 100px 2fr",
+														gridTemplateColumns: "50px 2fr 1fr 1fr 80px 2fr",
 													}}
 												>
 													<div className="text-center text-gray-500">{index + 1}</div>
@@ -462,10 +461,6 @@ export default function PrescriptionDetail({
 
 													<div className="text-center text-gray-900">
 														{medicine.amount ?? "-"}
-													</div>
-
-													<div className="text-gray-900">
-														{medicine.duration || "-"}
 													</div>
 
 													<div

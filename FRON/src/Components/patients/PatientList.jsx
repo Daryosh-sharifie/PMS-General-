@@ -1,4 +1,4 @@
-﻿import {
+import {
 	Search,
 	Plus,
 	Eye,
@@ -99,7 +99,7 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 	};
 
 	return (
-		<div dir={isRtl ? "rtl" : "ltr"} className="space-y-6 p-4 md:p-6">
+		<div dir={isRtl ? "rtl" : "ltr"} className="space-y-5 p-3 sm:p-6">
 			<DeleteModal
 				open={Boolean(deleteConfirm)}
 				onCancel={() => setDeleteConfirm(null)}
@@ -108,17 +108,17 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 				isRtl={isRtl}
 			/>
 
-			<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-3">
-					<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-						<Users className="h-6 w-6" />
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12">
+						<Users className="h-5 w-5 sm:h-6 sm:w-6" />
 					</div>
 
 					<div className={isRtl ? "text-right" : "text-left"}>
-						<h2 className="text-3xl font-bold text-slate-900">
+						<h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
 							{t("patients")}
 						</h2>
-						<p className="mt-1 text-sm text-slate-500">
+						<p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
 							{patientsTotalRecords > 0
 								? `${t("total")}: ${Number(patientsTotalRecords).toLocaleString(
 										isRtl ? "fa-IR" : "en-US"
@@ -128,19 +128,19 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 					</div>
 				</div>
 
-				<div className="flex flex-wrap gap-2">
+				<div className="flex flex-wrap items-center gap-2">
 					<button
 						type="button"
 						onClick={handleBackup}
 						disabled={backupLoading}
-						className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+						className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:text-sm"
 						title={t("downloadPatientsBackup")}
 					>
 						<Download className="h-4 w-4" />
 						{backupLoading ? t("downloading") : t("backup")}
 					</button>
 
-					<button type="button" onClick={onAddPatient} className={buttonPrimary}>
+					<button type="button" onClick={onAddPatient} className={`${buttonPrimary} text-xs sm:text-sm`}>
 						<Plus className={`${isRtl ? "ml-2" : "mr-2"} h-4 w-4`} />
 						{t("addPatient")}
 					</button>
@@ -148,7 +148,7 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 			</div>
 
 			<Card className="rounded-2xl border border-slate-200 shadow-sm">
-				<CardContent className="p-4">
+				<CardContent className="p-3 sm:p-4">
 					<div className="relative">
 						<Search
 							className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${
@@ -179,7 +179,7 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 						<EmptyState title={t("noPatientsFound")} />
 					) : (
 						<>
-							<div className="overflow-x-auto">
+							<div className="overflow-x-auto touch-pan-x pb-2">
 								<table
 									dir={isRtl ? "rtl" : "ltr"}
 									className="normal-dir-table w-full min-w-[980px] table-fixed"

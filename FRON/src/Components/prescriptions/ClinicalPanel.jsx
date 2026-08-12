@@ -133,13 +133,13 @@ export default function ClinicalPanel({
 				/>
 			</div>
 
-			<div className="mt-6 shrink-0 flex flex-col gap-3 print:hidden sm:flex-row sm:justify-center">
-				<div className="relative">
+			<div className="mt-6 shrink-0 flex flex-col gap-2.5 print:hidden sm:flex-row sm:justify-center">
+				<div className="relative w-full sm:w-auto">
 					<Type className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
 					<select
 						value={printFontBoost}
 						onChange={(event) => setPrintFontBoost(Number(event.target.value))}
-						className={`appearance-none rounded-xl border py-2 pl-9 pr-8 text-xs font-semibold outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 ${
+						className={`w-full sm:w-auto appearance-none rounded-xl border py-2 pl-9 pr-8 text-xs font-semibold outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 ${
 							printFontBoost > 0
 								? "border-blue-300 bg-blue-50 text-blue-700"
 								: "border-slate-200 bg-white text-slate-700 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"

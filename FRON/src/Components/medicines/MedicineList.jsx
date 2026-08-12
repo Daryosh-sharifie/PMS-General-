@@ -59,7 +59,7 @@ export default function MedicineList({
 	];
 
 	return (
-		<div className="space-y-6 p-4 md:p-6">
+		<div className="space-y-5 p-3 sm:p-6">
 			<DeleteModal
 				open={Boolean(deleteConfirm)}
 				onCancel={() => setDeleteConfirm(null)}
@@ -67,14 +67,14 @@ export default function MedicineList({
 				t={t}
 			/>
 
-			<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-3">
-					<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-						<Pill className="h-6 w-6" />
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12">
+						<Pill className="h-5 w-5 sm:h-6 sm:w-6" />
 					</div>
 					<div className="text-right">
-						<h2 className="text-3xl font-bold text-slate-900">{t("medicineManagement")}</h2>
-						<p className="mt-1 text-sm text-slate-500">
+						<h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">{t("medicineManagement")}</h2>
+						<p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
 							{totalRecords > 0
 								? `${t("total")}: ${totalRecords} ${t("medicinesCount")}`
 								: t("manageMedicineInventory")}
@@ -82,12 +82,12 @@ export default function MedicineList({
 					</div>
 				</div>
 
-				<div className="flex flex-wrap gap-2">
+				<div className="flex flex-wrap items-center gap-2">
 					{onManageCategories && (
 						<button
 							type="button"
 							onClick={onManageCategories}
-							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 sm:px-4 sm:text-sm"
 							title={t("manageCategories")}
 						>
 							<Tags className="h-4 w-4" />
@@ -99,15 +99,15 @@ export default function MedicineList({
 						<button
 							type="button"
 							onClick={onBackup}
-							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-							title={t("downloadMedicineBackup")}
+							className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 sm:px-4 sm:text-sm"
+							title={t("downloadBackup")}
 						>
 							<Download className="h-4 w-4" />
 							{t("backup")}
 						</button>
 					)}
 
-					<button type="button" onClick={onAddMedicine} className={buttonPrimary}>
+					<button type="button" onClick={onAddMedicine} className={`${buttonPrimary} text-xs sm:text-sm`}>
 						<Plus className="mr-2 h-4 w-4" />
 						{t("addMedicine")}
 					</button>

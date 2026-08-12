@@ -1,6 +1,6 @@
 import { Eye, FlaskConical, ArrowRight, ArrowLeft } from "lucide-react";
 import { Card, CardHeader, CardContent } from "../ui/Card";
-import { formatDate } from "../../utils/helpers";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 import { useLanguage } from "../../i18n/LanguageContext";
 import LabStatusBadge from "../labReports/LabStatusBadge";
 
@@ -81,9 +81,9 @@ export default function RecentLabReports({
 															{report.labOrderNo || report.id}
 														</span>
 														<span> • </span>
-														{formatDate(
+														{formatAfghanDate(
 															report.createdAt || report.updatedAt,
-															language
+															{ englishDigits: language !== "fa" }
 														)}
 													</p>
 												</div>

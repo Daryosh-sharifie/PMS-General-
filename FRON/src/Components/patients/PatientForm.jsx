@@ -14,7 +14,8 @@ import { useLanguage } from "../../i18n/LanguageContext";
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 
 export default function PatientForm({ onCancel }) {
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
+	const isRtl = language === "fa";
 
 	const { patientForm, setPatientForm, createPatient, resetPatientForm } =
 		useStore();
@@ -78,7 +79,7 @@ export default function PatientForm({ onCancel }) {
 						<X size={22} />
 					</button>
 
-					<form onSubmit={handleSubmit} className="space-y-8" dir="rtl">
+					<form onSubmit={handleSubmit} className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
 						<div className="flex items-center justify-center border-b border-slate-100 pb-6 text-center">
 							<div>
 								<div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
@@ -105,13 +106,14 @@ export default function PatientForm({ onCancel }) {
 							/>
 						)}
 
-						<Section title={t("personalInformation")}>
+						<Section title={t("personalInformation")} isRtl={isRtl}>
 							<div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 								<FormInput
 									label={t("fullName")}
 									value={patientForm.fullname}
 									onChange={(value) => updateField("fullname", value)}
 									required
+									isRtl={isRtl}
 								/>
 
 								<FormInput
@@ -119,10 +121,11 @@ export default function PatientForm({ onCancel }) {
 									value={patientForm.fathername}
 									onChange={(value) => updateField("fathername", value)}
 									required
+									isRtl={isRtl}
 								/>
 
 								<div>
-									<label className="mb-1.5 block text-right text-xs font-bold text-slate-700">
+									<label className={`mb-1.5 block text-xs font-bold text-slate-700 ${isRtl ? "text-right" : "text-left"}`}>
 										{t("gender")} <span className="text-red-500">*</span>
 									</label>
 									<select
@@ -138,7 +141,7 @@ export default function PatientForm({ onCancel }) {
 								</div>
 
 								<div>
-									<label className="mb-1.5 block text-right text-xs font-bold text-slate-700">
+									<label className={`mb-1.5 block text-xs font-bold text-slate-700 ${isRtl ? "text-right" : "text-left"}`}>
 										{t("age")} <span className="text-red-500">*</span>
 									</label>
 									<AgeInput
@@ -148,17 +151,17 @@ export default function PatientForm({ onCancel }) {
 										inputClassName={inputClasses}
 										required
 									/>
-									<p className="mt-1 text-right text-xs text-slate-500">
+									<p className={`mt-1 text-xs text-slate-500 ${isRtl ? "text-right" : "text-left"}`}>
 										{t("ageExample")}
 									</p>
 								</div>
 							</div>
 						</Section>
 
-						<Section title={t("medicalInformation")}>
+						<Section title={t("medicalInformation")} isRtl={isRtl}>
 							<div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 								<div>
-									<label className="mb-1.5 block text-right text-xs font-bold text-slate-700">
+									<label className={`mb-1.5 block text-xs font-bold text-slate-700 ${isRtl ? "text-right" : "text-left"}`}>
 										{t("bloodGroup")}
 									</label>
 									<select
@@ -180,11 +183,12 @@ export default function PatientForm({ onCancel }) {
 									type="tel"
 									value={patientForm.phone}
 									onChange={(value) => updateField("phone", value)}
+									isRtl={isRtl}
 								/>
 							</div>
 						</Section>
 
-						<Section title={t("knownAllergies")}>
+						<Section title={t("knownAllergies")} isRtl={isRtl}>
 							<textarea
 								className={`${inputClasses} h-24 resize-none`}
 								value={patientForm.knownallergies}
@@ -193,7 +197,12 @@ export default function PatientForm({ onCancel }) {
 							/>
 						</Section>
 
-						<div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+						<div
+							dir="ltr"
+							className={`flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row ${
+								isRtl ? "sm:justify-end" : "sm:justify-start"
+							}`}
+						>
 							<button
 								type="button"
 								className={`${buttonSecondary} justify-center`}
@@ -222,10 +231,10 @@ export default function PatientForm({ onCancel }) {
 	);
 }
 
-function Section({ title, children }) {
+function Section({ title, children, isRtl = true }) {
 	return (
 		<section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
-			<h3 className="mb-4 text-right text-sm font-bold text-slate-800">
+			<h3 className={`mb-4 text-sm font-bold text-slate-800 ${isRtl ? "text-right" : "text-left"}`}>
 				{title}
 			</h3>
 			{children}
@@ -233,10 +242,10 @@ function Section({ title, children }) {
 	);
 }
 
-function FormInput({ label, value, onChange, type = "text", required = false }) {
+function FormInput({ label, value, onChange, type = "text", required = false, isRtl = true }) {
 	return (
 		<div>
-			<label className="mb-1.5 block text-right text-xs font-bold text-slate-700">
+			<label className={`mb-1.5 block text-xs font-bold text-slate-700 ${isRtl ? "text-right" : "text-left"}`}>
 				{label} {required && <span className="text-red-500">*</span>}
 			</label>
 			<input

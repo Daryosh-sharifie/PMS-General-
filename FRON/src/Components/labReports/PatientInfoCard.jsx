@@ -1,4 +1,5 @@
 import { Card, CardHeader, CardContent } from "../ui/Card";
+import { formatAfghanDate } from "../../utils/afghanCalendar";
 
 export default function PatientInfoCard({ order }) {
 	if (!order) return null;
@@ -14,7 +15,10 @@ export default function PatientInfoCard({ order }) {
 				<Info label="Doctor" value={order.doctorName || order.requestedBy?.name || "-"} />
 				<Info label="Lab Number" value={order.labOrderNo} />
 				<Info label="Prescription No" value={order.prescriptionNo || order.prescription?.prescriptionNo || "-"} />
-				<Info label="Requested Date" value={order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "-"} />
+				<Info
+					label="Requested Date"
+					value={formatAfghanDate(order.createdAt, { englishDigits: true })}
+				/>
 			</CardContent>
 		</Card>
 	);

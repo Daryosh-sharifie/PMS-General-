@@ -1,4 +1,6 @@
-const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/activity`;
+import { getApiOrigin } from './baseUrl';
+
+const API_URL = `${getApiOrigin()}/api/v1/activity`;
 
 export const activityApi = {
   getLogs: async (page = 1, limit = 50, filters = {}) => {
