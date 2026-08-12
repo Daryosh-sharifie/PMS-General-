@@ -30,7 +30,7 @@ export default function PrescriptionDetail({
 	onViewPatient,
 	onEdit,
 }) {
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
 
 	const [rejectReason, setRejectReason] = useState("");
 	const [showRejectPopup, setShowRejectPopup] = useState(false);
