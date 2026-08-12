@@ -221,7 +221,7 @@ function App() {
 		return createdPrescription;
 	};
 
-	const handleNavigateModule = (module) => {
+	const handleNavigateModule = (module, extra) => {
 		const routeMap = {
 			dashboard: "/dashboard",
 			patients: "/patients",
@@ -233,7 +233,15 @@ function App() {
 			settings: "/settings",
 		};
 
-		navigate(routeMap[module] || "/dashboard");
+		let target = routeMap[module] || "/dashboard";
+		if (extra && typeof extra === "object") {
+			const search = new URLSearchParams(extra).toString();
+			if (search) target += `?${search}`;
+		} else if (typeof extra === "string") {
+			target += extra;
+		}
+
+		navigate(target);
 	};
 
 	if (!authChecked) {

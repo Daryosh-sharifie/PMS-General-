@@ -134,7 +134,7 @@ export default function PatientForm({ onCancel }) {
 										onChange={(e) => updateField("gender", e.target.value)}
 										required
 									>
-										<option value="">{t("selectGender")}</option>
+										<option value="" disabled>{t("selectGender")}</option>
 										<option value="Male">{t("male")}</option>
 										<option value="Female">{t("female")}</option>
 									</select>

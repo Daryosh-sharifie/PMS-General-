@@ -81,10 +81,6 @@ const validatePatientPayload = (data, next) => {
 		return next(new AppError("Gender is required", 400));
 	}
 
-	if (!data.phone) {
-		return next(new AppError("Phone number is required", 400));
-	}
-
 	return null;
 };
 

@@ -19,7 +19,8 @@ export default function UserForm({
 	onRefetch,
 	user,
 }) {
-	const { t } = useLanguage();
+	const { t, language } = useLanguage();
+	const isRtl = language === "fa";
 	const isEditMode = Boolean(user?.id);
 	const navigate = useNavigate();
 
@@ -162,13 +163,13 @@ export default function UserForm({
 					<button
 						type="button"
 						onClick={handleCancel}
-						className="absolute right-4 top-4 rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-red-500"
+						className={`absolute top-4 ${isRtl ? "right-4" : "left-4"} rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-red-500`}
 						title={t("cancel")}
 					>
 						<X size={22} />
 					</button>
 
-					<form onSubmit={submit} className="space-y-8" dir="rtl">
+					<form onSubmit={submit} className="space-y-8" dir={isRtl ? "rtl" : "ltr"}>
 						<div className="flex items-center justify-center border-b border-slate-100 pb-6 text-center">
 							<div>
 								<div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
@@ -182,7 +183,7 @@ export default function UserForm({
 						{error && <Message type="error" text={error} />}
 						{success && <Message type="success" text={success} />}
 
-						<Section title={t("personalInformation")}>
+						<Section title={t("personalInformation")} isRtl={isRtl}>
 							<div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 								{fields.map((field) => (
 									<FormInput
@@ -192,12 +193,13 @@ export default function UserForm({
 										value={form[field.name]}
 										placeholder={field.placeholder}
 										required={field.required}
+										isRtl={isRtl}
 										onChange={(value) => updateField(field.name, value)}
 									/>
 								))}
 
 								<div>
-									<label className="mb-1.5 block text-right text-xs font-bold text-slate-700">
+									<label className={`mb-1.5 block text-xs font-bold text-slate-700 ${isRtl ? "text-right" : "text-left"}`}>
 										{t("role")} <span className="text-red-500">*</span>
 									</label>
 									<select
@@ -216,7 +218,7 @@ export default function UserForm({
 							</div>
 						</Section>
 
-						<Section title={t("securityAndAccess")}>
+						<Section title={t("securityAndAccess")} isRtl={isRtl}>
 							<div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 								<FormInput
 									label={`${t("password")} ${isEditMode ? `(${t("optional")})` : "*"}`}
@@ -224,6 +226,7 @@ export default function UserForm({
 									value={form.password}
 									placeholder={t("passwordPlaceholder")}
 									required={passwordRequired}
+									isRtl={isRtl}
 									onChange={(value) => updateField("password", value)}
 								/>
 
@@ -233,18 +236,19 @@ export default function UserForm({
 									value={form.confirmPassword}
 									placeholder={t("confirmPasswordPlaceholder")}
 									required={passwordRequired}
+									isRtl={isRtl}
 									onChange={(value) => updateField("confirmPassword", value)}
 								/>
 							</div>
 
-							<p className="mt-3 text-right text-xs text-slate-500">
+							<p className={`mt-3 text-xs text-slate-500 ${isRtl ? "text-right" : "text-left"}`}>
 								{isEditMode
 									? t("editPasswordHint")
 									: t("newPasswordHint")}
 							</p>
 						</Section>
 
-						<div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+						<div className={`flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row ${isRtl ? "sm:justify-end" : "sm:justify-start"}`}>
 							<button
 								type="button"
 								className={`${buttonSecondary} justify-center`}
@@ -278,10 +282,10 @@ export default function UserForm({
 	);
 }
 
-function Section({ title, children }) {
+function Section({ title, children, isRtl = true }) {
 	return (
 		<section className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
-			<h3 className="mb-4 text-right text-sm font-bold text-slate-800">
+			<h3 className={`mb-4 text-sm font-bold text-slate-800 ${isRtl ? "text-right" : "text-left"}`}>
 				{title}
 			</h3>
 			{children}
@@ -296,10 +300,11 @@ function FormInput({
 	type = "text",
 	required = false,
 	placeholder = "",
+	isRtl = true,
 }) {
 	return (
 		<div>
-			<label className="mb-1.5 block text-right text-xs font-bold text-slate-700">
+			<label className={`mb-1.5 block text-xs font-bold text-slate-700 ${isRtl ? "text-right" : "text-left"}`}>
 				{label} {required && <span className="text-red-500">*</span>}
 			</label>
 			<input

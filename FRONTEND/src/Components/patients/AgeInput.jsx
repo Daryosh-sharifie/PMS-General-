@@ -27,11 +27,12 @@ export default function AgeInput({
 		<div className="grid grid-cols-2 gap-2">
 			<input
 				type="text"
-				inputMode="decimal"
+				inputMode="numeric"
 				className={inputClassName}
 				value={displayValue || ""}
+				maxLength={3}
 				onChange={(e) => {
-					const nextValue = toEnglishDigits(e.target.value).replace(/[^\d.]/g, "");
+					const nextValue = toEnglishDigits(e.target.value).replace(/[^\d.]/g, "").slice(0, 3);
 					onChange(nextValue, unit);
 				}}
 				required={required}
