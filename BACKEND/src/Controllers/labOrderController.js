@@ -82,66 +82,66 @@ const createLabOrder = async (req, res) => {
 };
 
 const getLabOrderById = async (req, res) => {
-    try {
-        const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-        const labOrder = await prisma.labOrder.findUnique({
-            where: {
-                id: Number(id),
+    const labOrder = await prisma.labOrder.findUnique({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        patient: true,
+        prescription: true,
+        requestedBy: {
+          select: {
+            id: true,
+            name: true,
+            role: true,
+          },
+        },
+        items: {
+          include: {
+            labTest: true,
+            enteredBy: {
+              select: {
+                id: true,
+                name: true,
+              },
             },
-            include: {
-                patient: true,
-                prescription: true,
-                requestedBy: {
-                    select: {
-                        id: true,
-                        name: true,
-                        role: true,
-                    },
-                },
-                items: {
-                    include: {
-                        labTest: true,
-                        enteredBy: {
-                            select: {
-                                id: true,
-                                name: true,
-                            },
-                        },
-                        verifiedBy: {
-                            select: {
-                                id: true,
-                                name: true,
-                            },
-                        },
-                    },
-                    orderBy: {
-                        id: "asc",
-                    },
-                },
+            verifiedBy: {
+              select: {
+                id: true,
+                name: true,
+              },
             },
-        });
+          },
+          orderBy: {
+            id: "asc",
+          },
+        },
+      },
+    });
 
-        if (!labOrder) {
-            return res.status(404).json({
-                success: false,
-                message: "Lab order not found",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            data: labOrder,
-        });
-
-    } catch (error) {
-        console.error(error);
-
-        return res.status(500).json({
-            success: false,
-            message: "Failed to fetch lab order",
-        });
+    if (!labOrder) {
+      return res.status(404).json({
+        success: false,
+        message: "Lab order not found",
+      });
     }
+
+    return res.status(200).json({
+      success: true,
+      data: labOrder,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch lab order",
+    });
+  }
 };
 
 const getAllLabOrders = async (req, res) => {

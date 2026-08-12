@@ -223,7 +223,7 @@ export default function MedicineSearchInput({
 					<Search className="absolute left-0.5 top-1/2 -translate-y-1/2 h-3 w-3 text-blue-500" />
 					<input
 						type="text"
-						className="h-full w-full pl-5 text-left border border-blue-500 rounded-lg text-sm bg-white/80 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-500 transition"
+						className="h-full w-full pl-5 text-center border border-blue-500 rounded-lg text-sm bg-white/80 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-300 focus:border-blue-500 transition"
 						value={searchQuery}
 						onChange={handleInputChange}
 						onKeyDown={handleKeyDown}

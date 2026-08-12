@@ -26,7 +26,7 @@ export default function Login({ hospitalSettings }) {
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-tr from-blue-100 via-white to-blue-200 p-4"
-		dir="rtl">
+			dir="rtl">
 			<Card className="w-full max-w-md p-2 pb-6 shadow-xl">
 				<CardHeader className="text-center">
 					<div className=" flex justify-center">
@@ -54,7 +54,10 @@ export default function Login({ hospitalSettings }) {
 							<input
 								id="email"
 								type="email"
+								dir="ltr"
+								style={{ textAlign: "left", direction: "ltr" }}
 								className="w-full font-sans rounded-lg text-left border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+								placeholder="email@example.com"
 								value={loginForm.email}
 								onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value, error: null })}
 								required
@@ -68,7 +71,9 @@ export default function Login({ hospitalSettings }) {
 							<input
 								id="password"
 								type="password"
-								className="w-full rounded-lg text-left border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+								dir="ltr"
+								style={{ textAlign: "left", direction: "ltr" }}
+								className="w-full font-sans rounded-lg text-left border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
 								placeholder="••••••••"
 								value={loginForm.password}
 								onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value, error: null })}
@@ -83,21 +88,21 @@ export default function Login({ hospitalSettings }) {
 								</p>
 							</div>
 						)}
-						<button 
-							type="submit" 
+						<button
+							type="submit"
 							className={buttonPrimary + " mt-10 w-full bg-blue-600 hover:from-blue-700 hover:bg-blue-500 focus:ring-blue-500"}
 							disabled={authLoading}
 						>
 							{authLoading ? "...Loading" : "Login"}
 						</button>
 					</form>
-						{/* Provide by spark trust */}
-						<div className="mt-6 flex justify-center">
-							
-							<p className="text-xs text-gray-500 border-t border-gray-300 pt-4 w-full text-center">ارائه شده توسط: <span></span> 
-								<a href="https://sparktrust.tech" target="_blank" rel="noopener noreferrer" className="text-blue-600 pr-2 font-medium hover:underline">
+					{/* Provide by spark trust */}
+					<div className="mt-6 flex justify-center">
+
+						<p className="text-xs text-gray-500 border-t border-gray-300 pt-4 w-full text-center">ارائه شده توسط: <span></span>
+							<a href="https://sparktrust.tech" target="_blank" rel="noopener noreferrer" className="text-blue-600 pr-2 font-medium hover:underline">
 								Spark Trust Technlogy Service</a></p>
-						</div>
+					</div>
 				</CardContent>
 			</Card>
 		</div>
