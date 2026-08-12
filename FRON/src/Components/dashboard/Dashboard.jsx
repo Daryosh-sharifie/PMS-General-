@@ -8,14 +8,15 @@ import {
 	Loader2,
 	FlaskConical,
 	Activity,
-	RefreshCw,
+	ChevronDown,
+	Check,
 } from "lucide-react";
 import StatCard from "./StatCard";
 import RecentPrescriptions from "./RecentPrescriptions";
 import RecentPatients from "./RecentPatients";
 import RecentLabReports from "./RecentLabReports";
 import DashboardCharts from "./DashboardCharts";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { prescriptionApi } from "../../api/prescriptionApi";
 import { patientApi } from "../../api/patientApi";
@@ -222,6 +223,7 @@ export default function Dashboard({
 	currentUser,
 }) {
 	const { t, language } = useLanguage();
+	const isRtl = language === "fa";
 
 	const navigate = useNavigate();
 
@@ -266,6 +268,18 @@ export default function Dashboard({
 	);
 
 	const [periodFilter, setPeriodFilter] = useState("all");
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
+	const filterRef = useRef(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (filterRef.current && !filterRef.current.contains(event.target)) {
+				setIsFilterOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
 	const [recentPrescriptions, setRecentPrescriptions] = useState([]);
@@ -417,37 +431,58 @@ export default function Dashboard({
 						</p>
 					</div>
 					
-					<div className="flex items-center gap-2 overflow-x-auto pb-1 touch-pan-x">
+					<div className="flex items-center gap-2">
 						<LanguageSwitcher />
-						<button
-							type="button"
-							onClick={loadDashboardData}
-							disabled={loading}
-							className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:text-sm"
-						>
-							<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-							{t("refresh")}
-						</button>
 
-						<div className="flex shrink-0 items-center gap-1 rounded-xl bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-500 sm:text-sm">
-							<Filter className="h-4 w-4" />
-							<span>{t("filter")}</span>
-						</div>
-
-						{PERIOD_FILTERS.map((filter) => (
+						<div className="relative shrink-0" ref={filterRef}>
 							<button
-								key={filter.value}
 								type="button"
-								onClick={() => setPeriodFilter(filter.value)}
-								className={`shrink-0 rounded-xl px-3 py-2 text-xs font-semibold transition sm:px-4 sm:text-sm ${
-									periodFilter === filter.value
-										? "bg-blue-600 text-white shadow-sm"
-										: "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-								}`}
+								onClick={() => setIsFilterOpen((prev) => !prev)}
+								className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500/20 sm:px-4 sm:text-sm"
 							>
-								{t(filter.labelKey)}
+								<Filter className="h-4 w-4 text-blue-600" />
+								<span>
+									{t(
+										(PERIOD_FILTERS.find((f) => f.value === periodFilter) || PERIOD_FILTERS[0]).labelKey
+									)}
+								</span>
+								<ChevronDown
+									className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
+										isFilterOpen ? "rotate-180" : ""
+									}`}
+								/>
 							</button>
-						))}
+
+							{isFilterOpen && (
+								<div
+									className={`absolute top-full z-30 mt-2 w-44 rounded-2xl border border-slate-100 bg-white p-1.5 shadow-xl ring-1 ring-black/5 ${
+										isRtl ? "left-0" : "right-0"
+									}`}
+								>
+									{PERIOD_FILTERS.map((filter) => {
+										const isSelected = periodFilter === filter.value;
+										return (
+											<button
+												key={filter.value}
+												type="button"
+												onClick={() => {
+													setPeriodFilter(filter.value);
+													setIsFilterOpen(false);
+												}}
+												className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold transition sm:text-sm ${
+													isSelected
+														? "bg-blue-50 text-blue-700 font-bold"
+														: "text-slate-700 hover:bg-slate-50"
+												}`}
+											>
+												<span>{t(filter.labelKey)}</span>
+												{isSelected && <Check className="h-4 w-4 text-blue-600" />}
+											</button>
+										);
+									})}
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 			</div>
