@@ -302,8 +302,8 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 													{user.email || "-"}
 												</td>
 
-												<td className="px-4 py-4 text-center font-semibold text-slate-900">
-													<div className="flex items-center justify-center gap-3" dir="ltr">
+												<td className="px-4 py-4 font-semibold text-slate-900">
+													<div className="flex items-center justify-start gap-3" dir="ltr">
 														<div className="relative h-10 w-10 shrink-0">
 															{avatarUrl ? (
 																<img
