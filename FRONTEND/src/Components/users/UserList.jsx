@@ -239,7 +239,7 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 										<Th>{t("role")}</Th>
 										<Th>{t("phone")}</Th>
 										<Th>{t("email")}</Th>
-										<Th align="center">{t("name")}</Th>
+										<Th align="left">{t("name")}</Th>
 										<Th>#</Th>
 									</tr>
 								</thead>
@@ -302,7 +302,7 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 													{user.email || "-"}
 												</td>
 
-												<td className="px-4 py-4 font-semibold text-slate-900">
+												<td className="px-4 py-4 text-left font-semibold text-slate-900">
 													<div className="flex items-center justify-start gap-3" dir="ltr">
 														<div className="relative h-10 w-10 shrink-0">
 															{avatarUrl ? (
