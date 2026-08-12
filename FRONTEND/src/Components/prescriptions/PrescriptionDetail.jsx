@@ -289,19 +289,38 @@ export default function PrescriptionDetail({
 		}
 	};
 
-	return (
-		<div className="space-y-6 p-3 sm:p-6 md:p-8">
-			<div className="flex items-center justify-between gap-4">
-				<button type="button" className={buttonGhost} onClick={onBack}>
-					← {t("back")}
-				</button>
+	const isRtl = language === "fa";
 
-				<div className="text-right">
-					<h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-						{prescription.prescriptionNo || prescription.id}
-					</h2>
-					<p className="mt-1 text-xs text-gray-600 sm:text-sm">{t("prescriptionDetails")}</p>
-				</div>
+	return (
+		<div dir={isRtl ? "rtl" : "ltr"} className="space-y-6 p-3 sm:p-6 md:p-8">
+			<div className="flex items-center justify-between gap-4">
+				{isRtl ? (
+					<>
+						<div className="text-right">
+							<h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+								{prescription.prescriptionNo || prescription.id}
+							</h2>
+							<p className="mt-1 text-xs text-gray-600 sm:text-sm">{t("prescriptionDetails")}</p>
+						</div>
+
+						<button type="button" className={buttonGhost} onClick={onBack}>
+							{t("back")} ←
+						</button>
+					</>
+				) : (
+					<>
+						<button type="button" className={buttonGhost} onClick={onBack}>
+							← {t("back")}
+						</button>
+
+						<div className="text-right">
+							<h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+								{prescription.prescriptionNo || prescription.id}
+							</h2>
+							<p className="mt-1 text-xs text-gray-600 sm:text-sm">{t("prescriptionDetails")}</p>
+						</div>
+					</>
+				)}
 			</div>
 
 			<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
