@@ -75,10 +75,11 @@ export default function PrescriptionDetail({
 		if (!dosage) return "-";
 
 		let value = String(dosage).trim();
-		value = value.replace(/\s*(mg)\b/i, " mg");
-		value = value.replace(/\s*(ml)\b/i, " ml");
-		value = value.replace(/\s*(mcg)\b/i, " mcg");
-		value = value.replace(/\s*(g)\b/i, " g");
+
+		// Fix any spaced out units like "m g" -> "mg"
+		value = value.replace(/\bm\s+g\b/gi, "mg");
+		value = value.replace(/\bm\s+l\b/gi, "ml");
+		value = value.replace(/\bm\s+c\s+g\b/gi, "mcg");
 
 		return value;
 	};
@@ -455,7 +456,7 @@ export default function PrescriptionDetail({
 														</span>
 													</div>
 
-													<div className="text-gray-900">
+													<div className="text-gray-900 font-medium" dir="ltr">
 														{formatDose(medicine.dosage)}
 													</div>
 
