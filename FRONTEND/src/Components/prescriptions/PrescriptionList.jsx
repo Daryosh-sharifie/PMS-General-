@@ -195,7 +195,7 @@ export default function PrescriptionList({
 						</p>
 					</div>
 				</div>
-				
+
 				<div className="flex flex-wrap items-center gap-2">
 					{canBackup && (
 						<button
@@ -377,7 +377,7 @@ export default function PrescriptionList({
 																onClick={() =>
 																	setViewReason(
 																		prescription.rejectionReason ||
-																			t("noRejectReason")
+																		t("noRejectReason")
 																	)
 																}
 																className="text-red-500 hover:text-red-700"
@@ -465,11 +465,10 @@ export default function PrescriptionList({
 											<button
 												type="button"
 												onClick={() => goToPage(page)}
-												className={`min-w-[2rem] rounded-lg px-3 py-1 text-sm font-semibold ${
-													currentPage === page
+												className={`min-w-[2rem] rounded-lg px-3 py-1 text-sm font-semibold ${currentPage === page
 														? "bg-blue-600 text-white"
 														: "border border-slate-300 text-slate-700 hover:bg-slate-50"
-												}`}
+													}`}
 											>
 												{page}
 											</button>

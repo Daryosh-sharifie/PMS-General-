@@ -5,8 +5,9 @@ export const translations = {
 		prescriptions: "Prescriptions",
 		medicines: "Medicines",
 		labReports: "Lab Reports",
+		reports: "Reports",
 		users: "Users",
-		activity: "Reports",
+		activity: "Activity",
 		settings: "Settings",
 		logout: "Logout",
 
@@ -659,8 +660,9 @@ export const translations = {
 		prescriptions: "نسخه‌ها",
 		medicines: "مدیریت ادویه",
 		labReports: "لابراتوار",
+		reports: "گزارش‌ها",
 		users: "کاربران",
-		activity: "گزارش‌ها",
+		activity: "فعالیت‌ها",
 		settings: "تنظیمات",
 		logout: "خروج",
 
@@ -1114,7 +1116,7 @@ export const translations = {
 		loadingDoctorPrescriptions: "در حال بارگذاری نسخه‌های داکتر...",
 		noDoctorPrescriptionsDescription: "این داکتر هنوز هیچ نسخه‌ای ایجاد نکرده است.",
 
-		activityLogs: "گزارش‌ها",
+		activityLogs: "فعالیت‌ها",
 		exportPdf: "دانلود PDF",
 		exportingPdf: "در حال ساخت PDF...",
 		pdfExportedSuccessfully: "PDF دانلود شد — {pages} صفحه، {count} گزارش",

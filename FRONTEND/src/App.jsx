@@ -25,6 +25,7 @@ import UserForm from "./Components/users/UserForm";
 import DoctorPrescriptions from "./Components/users/DoctorPrescriptions";
 
 import ActivityLog from "./Components/activity/ActivityLog";
+import ReportsPage from "./Components/reports/ReportsPage";
 import { LabReportsPage, LabOrderDetailPage } from "./Components/labReports";
 
 import useStore from "./store/useStore.jsx";
@@ -442,6 +443,21 @@ function App() {
 								<RoleRoute allowedRoles={["admin", "doctor", "pharmacist"]}>
 									<LabOrderDetailPage />
 								</RoleRoute>
+							}
+						/>
+
+						<Route
+							path="/reports"
+							element={
+								<ProtectedRoute>
+									<ReportsPage
+										currentUser={currentUser}
+										onViewPrescription={(id, doctorId) => {
+											const query = doctorId && doctorId !== "all" ? `&doctorId=${doctorId}` : "";
+											navigate(`/prescriptions/${id}?from=reports${query}`);
+										}}
+									/>
+								</ProtectedRoute>
 							}
 						/>
 

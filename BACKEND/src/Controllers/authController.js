@@ -85,7 +85,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.logIn = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-  
+
   if (!email || !password) {
     return next(new AppError('Please provide your email and password!', 400));
   }
@@ -99,7 +99,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
   }
 
   const correctPassword = await bcrypt.compare(password, user.password);
-  
+
   if (!correctPassword) {
     return next(new AppError('Incorrect email or password!', 401));
   }
@@ -125,7 +125,7 @@ exports.logout = (req, res) => {
     sameSite: 'Lax',
     path: '/',
   });
-  
+
   res.status(200).json({ status: 'success' });
 };
 
@@ -194,7 +194,7 @@ exports.getMe = catchAsync(async (req, res, next) => {
   if (!req.user || !req.user.id) {
     return next(new AppError('No authenticated user found.', 401));
   }
-  
+
   res.status(200).json({
     status: 'success',
     data: {

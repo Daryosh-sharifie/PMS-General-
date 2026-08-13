@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PrescriptionDetail from "./PrescriptionDetail";
 import useStore from "../../store/useStore";
 import { prescriptionApi } from "../../api/prescriptionApi";
@@ -8,7 +8,20 @@ import { useLanguage } from "../../i18n/LanguageContext";
 export default function PrescriptionDetailPage({ hospitalSettings, currentUser }) {
 	const { id } = useParams();
 	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
 	const { t } = useLanguage();
+
+	const from = searchParams.get("from");
+	const doctorId = searchParams.get("doctorId");
+
+	const handleBack = () => {
+		if (from === "reports") {
+			const query = doctorId && doctorId !== "all" ? `?doctorId=${doctorId}` : "";
+			navigate(`/reports${query}`);
+		} else {
+			navigate(-1);
+		}
+	};
 
 	const getPrescriptionById = useStore((state) => state.getPrescriptionById);
 	const getPatientById = useStore((state) => state.getPatientById);
@@ -84,7 +97,7 @@ export default function PrescriptionDetailPage({ hospitalSettings, currentUser }
 				<button
 					type="button"
 					className="rounded bg-blue-600 px-4 py-2 text-white shadow hover:bg-blue-700"
-					onClick={() => navigate(-1)}
+					onClick={handleBack}
 				>
 					{t("back")}
 				</button>
@@ -98,7 +111,7 @@ export default function PrescriptionDetailPage({ hospitalSettings, currentUser }
 			patient={patient}
 			hospitalSettings={hospitalSettings}
 			currentUser={currentUser}
-			onBack={() => navigate(-1)}
+			onBack={handleBack}
 			onDispense={handleDispense}
 			onReject={handleReject}
 			onViewPatient={(patientId) => navigate(`/patients/${patientId}`)}

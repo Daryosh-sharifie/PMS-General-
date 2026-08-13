@@ -187,18 +187,18 @@ function extractList(response, keys = []) {
 }
 
 function extractTotal(response, fallbackList = []) {
-	return (
-		response?.pagination?.totalRecords ??
-		response?.pagination?.total ??
-		response?.data?.pagination?.totalRecords ??
-		response?.data?.pagination?.total ??
-		response?.totalCount ??
-		response?.totalRecords ??
-		response?.data?.totalCount ??
-		response?.data?.totalRecords ??
-		fallbackList.length ??
-		0
-	);
+	if (response?.pagination?.totalRecords !== undefined) return response.pagination.totalRecords;
+	if (response?.pagination?.total !== undefined) return response.pagination.total;
+	if (response?.data?.pagination?.totalRecords !== undefined) return response.data.pagination.totalRecords;
+	if (response?.data?.pagination?.total !== undefined) return response.data.pagination.total;
+	if (response?.totalCount !== undefined) return response.totalCount;
+	if (response?.totalRecords !== undefined) return response.totalRecords;
+	if (response?.data?.totalCount !== undefined) return response.data.totalCount;
+	if (response?.data?.totalRecords !== undefined) return response.data.totalRecords;
+	if (Array.isArray(response?.data)) return response.data.length;
+	if (Array.isArray(response)) return response.length;
+	if (Array.isArray(fallbackList)) return fallbackList.length;
+	return 0;
 }
 
 function getStatusCounts(prescriptions) {

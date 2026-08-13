@@ -112,6 +112,8 @@ export const labOrderApi = {
 			...(filters.search && { search: filters.search }),
 			...(filters.patientId && { patientId: filters.patientId }),
 			...(filters.prescriptionId && { prescriptionId: filters.prescriptionId }),
+			...(filters.startDate && { startDate: filters.startDate }),
+			...(filters.endDate && { endDate: filters.endDate }),
 		});
 
 		try {
