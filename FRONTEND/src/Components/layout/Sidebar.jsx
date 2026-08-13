@@ -11,6 +11,7 @@ import {
 	Activity,
 	UserCog,
 	FlaskConical,
+	BarChart3,
 	Menu,
 	X,
 	PanelLeftClose,
@@ -91,6 +92,7 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 		},
 		{ id: "medicines", label: t("medicines"), icon: Syringe },
 		{ id: "lab-reports", label: t("labReports"), icon: FlaskConical },
+		{ id: "reports", label: t("reports"), icon: BarChart3 },
 		{ id: "users", label: t("users"), icon: UserCog, adminOnly: true },
 		{ id: "activity", label: t("activity"), icon: Activity, adminOnly: true },
 		{ id: "settings", label: t("settings"), icon: Settings },
@@ -116,6 +118,7 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 
 		if (currentPath.startsWith("/medicines")) return "medicines";
 		if (currentPath.startsWith("/lab-reports")) return "lab-reports";
+		if (currentPath.startsWith("/reports")) return "reports";
 		if (currentPath.startsWith("/settings")) return "settings";
 		if (currentPath.startsWith("/users")) return "users";
 		if (currentPath.startsWith("/activity")) return "activity";

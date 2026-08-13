@@ -140,18 +140,18 @@ export const prescriptionApi = {
 	},
 
 	updatePrescription: async (id, data) => {
-    const payload = buildPrescriptionPayload(data, true);
+		const payload = buildPrescriptionPayload(data, true);
 
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: "PATCH",
-      headers: authHeaders(),
-      body: JSON.stringify(payload),
-    });
+		const response = await fetch(`${API_URL}/${id}`, {
+			method: "PATCH",
+			headers: authHeaders(),
+			body: JSON.stringify(payload),
+		});
 
-    const result = await handleResponse(response, "Failed to update prescription");
+		const result = await handleResponse(response, "Failed to update prescription");
 
-    return result;
-  },
+		return result;
+	},
 
 	updatePrescriptionStatus: async (id, status, rejectionReason = null) => {
 		const response = await fetch(`${API_URL}/${id}/status`, {

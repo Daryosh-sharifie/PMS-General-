@@ -1,9 +1,9 @@
-const express= require('express');
-const globalErrorHundler= require('./Controllers/globalErrorHundler');
-const cookieParser=require('cookie-parser')
-const dotenv= require('dotenv');
-const morgan=require('morgan')
-const cors=require('cors')
+const express = require('express');
+const globalErrorHundler = require('./Controllers/globalErrorHundler');
+const cookieParser = require('cookie-parser')
+const dotenv = require('dotenv');
+const morgan = require('morgan')
+const cors = require('cors')
 const appSettingRouter = require('./Routes/appSettingRouter');
 const patientRouter = require('./Routes/patientRouter');
 const authRouter = require('./Routes/authRouter');
@@ -20,8 +20,8 @@ const medicineFrequencyRouter = require('./Routes/medicineFrequencyRouter');
 const medicineMealTimingRouter = require('./Routes/medicineMealTimingRouter');
 
 dotenv.config();
- 
-const app= express();
+
+const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
@@ -30,10 +30,15 @@ app.use(morgan('dev'));
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://4dk6jdrq-5173.euw.devtunnels.ms',
-  'http://192.168.0.195:5173',
-  /^http:\/\/192\.168\.\d{1,3}\.\d{1,3}:5173$/,
-  /^http:\/\/10\.\d{1,3}\.\d{1,3}\.\d{1,3}:5173$/,
+  'http://127.0.0.1:5173',
+  /^http:\/\/localhost:\d+$/,
+  /^http:\/\/127\.0\.0\.1:\d+$/,
+  /^http:\/\/192\.168\.\d{1,3}\.\d{1,3}(:\d+)?$/,
+  /^http:\/\/10\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d+)?$/,
+  /^http:\/\/172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3}(:\d+)?$/,
+  /^https:\/\/.*\.devtunnels\.ms$/,
+  /^https:\/\/.*\.ngrok-free\.app$/,
+  /^https:\/\/.*\.loca\.lt$/,
 ];
 
 app.use(cors({
@@ -43,7 +48,7 @@ app.use(cors({
       entry instanceof RegExp ? entry.test(origin) : entry === origin
     );
     if (allowed) return callback(null, true);
-    return callback(new Error('Not allowed by CORS'));
+    return callback(null, false);
   },
   credentials: true,
 }));
@@ -71,4 +76,4 @@ app.use("/api/v1/lab-order-items", labOrderItemRouter);
 
 
 app.use(globalErrorHundler);
-module.exports= app;
+module.exports = app;

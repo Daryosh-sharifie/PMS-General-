@@ -4,149 +4,149 @@ const prisma = require('../dbConfig/prisma');
 const logActivity = require('../utils/logActivity');
 
 exports.getLastPrescriptions = catchAsync(async (req, res, next) => {
-  const prescriptions = await prisma.prescription.findMany({
-    include: {
-      patient: true,
-      doctor: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-        },
-      },
-      medicines: true,
-    },
-    orderBy: { createdAt: 'desc' },
-    take: 15,
-  });
+	const prescriptions = await prisma.prescription.findMany({
+		include: {
+			patient: true,
+			doctor: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+				},
+			},
+			medicines: true,
+		},
+		orderBy: { createdAt: 'desc' },
+		take: 15,
+	});
 
-  res.status(200).json({
-    status: 'success',
-    results: prescriptions.length,
-    data: { prescriptions },
-  });
+	res.status(200).json({
+		status: 'success',
+		results: prescriptions.length,
+		data: { prescriptions },
+	});
 });
 
 exports.getAllPrescriptions = catchAsync(async (req, res, next) => {
-  const { role, id: userId } = req.user;
-  
-  // Pagination
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
+	const { role, id: userId } = req.user;
 
-  // Build where clause based on role
-  const where = {};
-  
-  // Role-based filtering: Doctors see only their prescriptions
-  if (role === 'Doctor') {
-    where.doctorId = userId;
-  }
+	// Pagination
+	const page = parseInt(req.query.page) || 1;
+	const limit = parseInt(req.query.limit) || 10;
+	const skip = (page - 1) * limit;
 
-  // Search by ID, prescription number, or patient name
-  if (req.query.search) {
-    const searchValue = req.query.search;
-    const numericSearch = parseInt(searchValue, 10);
-    const isNumericSearch = !Number.isNaN(numericSearch);
+	// Build where clause based on role
+	const where = {};
 
-    where.OR = [
-      { prescriptionNo: { contains: searchValue } },
-      { patientName: { contains: searchValue } },
-      ...(isNumericSearch ? [{ id: numericSearch }] : []),
-    ];
-  }
+	// Role-based filtering: Doctors see only their prescriptions
+	if (role === 'Doctor') {
+		where.doctorId = userId;
+	}
 
-  // Filter by status
-  if (req.query.status) {
-    where.status = req.query.status;
-  }
+	// Search by ID, prescription number, or patient name
+	if (req.query.search) {
+		const searchValue = req.query.search;
+		const numericSearch = parseInt(searchValue, 10);
+		const isNumericSearch = !Number.isNaN(numericSearch);
 
-  // Filter by date range
-  if (req.query.startDate || req.query.endDate) {
-    where.date = {};
-    if (req.query.startDate) {
-      where.date.gte = new Date(req.query.startDate);
-    }
-    if (req.query.endDate) {
-      where.date.lte = new Date(req.query.endDate);
-    }
-  }
+		where.OR = [
+			{ prescriptionNo: { contains: searchValue } },
+			{ patientName: { contains: searchValue } },
+			...(isNumericSearch ? [{ id: numericSearch }] : []),
+		];
+	}
 
-  // Get total count for pagination
-  const totalCount = await prisma.prescription.count({ where });
+	// Filter by status
+	if (req.query.status) {
+		where.status = req.query.status;
+	}
 
-  // Get prescriptions with pagination
-  const prescriptions = await prisma.prescription.findMany({
-    where,
-    include: {
-      patient: true,
-      doctor: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-        },
-      },
-      medicines: true,
-    },
-    orderBy: { createdAt: 'desc' },
-    skip,
-    take: limit,
-  });
+	// Filter by date range
+	if (req.query.startDate || req.query.endDate) {
+		where.date = {};
+		if (req.query.startDate) {
+			where.date.gte = new Date(req.query.startDate);
+		}
+		if (req.query.endDate) {
+			where.date.lte = new Date(req.query.endDate);
+		}
+	}
 
-  res.status(200).json({
-    status: 'success',
-    results: prescriptions.length,
-    totalCount,
-    totalPages: Math.ceil(totalCount / limit),
-    currentPage: page,
-    data: { prescriptions },
-  });
+	// Get total count for pagination
+	const totalCount = await prisma.prescription.count({ where });
+
+	// Get prescriptions with pagination
+	const prescriptions = await prisma.prescription.findMany({
+		where,
+		include: {
+			patient: true,
+			doctor: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+				},
+			},
+			medicines: true,
+		},
+		orderBy: { createdAt: 'desc' },
+		skip,
+		take: limit,
+	});
+
+	res.status(200).json({
+		status: 'success',
+		results: prescriptions.length,
+		totalCount,
+		totalPages: Math.ceil(totalCount / limit),
+		currentPage: page,
+		data: { prescriptions },
+	});
 });
 
 exports.getPrescription = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const { role, id: userId } = req.user;
-  
-  const prescription = await prisma.prescription.findUnique({
-    where: { id: parseInt(id) },
-    include: {
-      patient: true,
-      doctor: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-        },
-      },
-      medicines: true,
-      labOrders: {
-        include: {
-          items: {
-            include: {
-              labTest: true,
-            },
-          },
-        },
-      },
-    },
-  });
+	const { id } = req.params;
+	const { role, id: userId } = req.user;
 
-  if (!prescription) {
-    return next(new AppError('Prescription not found', 404));
-  }
+	const prescription = await prisma.prescription.findUnique({
+		where: { id: parseInt(id) },
+		include: {
+			patient: true,
+			doctor: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+				},
+			},
+			medicines: true,
+			labOrders: {
+				include: {
+					items: {
+						include: {
+							labTest: true,
+						},
+					},
+				},
+			},
+		},
+	});
 
-  if (role === 'Doctor' && prescription.doctorId !== userId) {
-    return next(new AppError('You do not have permission to view this prescription', 403));
-  }
+	if (!prescription) {
+		return next(new AppError('Prescription not found', 404));
+	}
 
-  res.status(200).json({
-    status: 'success',
-    data: { prescription },
-  });
+	if (role === 'Doctor' && prescription.doctorId !== userId) {
+		return next(new AppError('You do not have permission to view this prescription', 403));
+	}
+
+	res.status(200).json({
+		status: 'success',
+		data: { prescription },
+	});
 });
 
 exports.createPrescription = catchAsync(async (req, res, next) => {
@@ -227,27 +227,27 @@ exports.createPrescription = catchAsync(async (req, res, next) => {
 
 	const normalizedMedicines = Array.isArray(medicines)
 		? medicines
-				.map((med) => ({
-					name: normalizeString(med?.name).trim(),
-					dosage: normalizeString(med?.dosage).trim(),
-					frequency: normalizeString(med?.frequency).trim(),
-					route: normalizeString(med?.route || med?.type).trim(),
-					duration: normalizeString(med?.duration).trim(),
-					instructions: normalizeString(med?.instructions).trim(),
-					amount: normalizeAmount(med?.amount),
-					mealTiming: normalizeOptionalString(med?.mealTiming),
-				}))
-				.filter(
-					(med) =>
-						med.name ||
-						med.dosage ||
-						med.frequency ||
-						med.route ||
-						med.duration ||
-						med.instructions ||
-						med.amount ||
-						med.mealTiming
-				)
+			.map((med) => ({
+				name: normalizeString(med?.name).trim(),
+				dosage: normalizeString(med?.dosage).trim(),
+				frequency: normalizeString(med?.frequency).trim(),
+				route: normalizeString(med?.route || med?.type).trim(),
+				duration: normalizeString(med?.duration).trim(),
+				instructions: normalizeString(med?.instructions).trim(),
+				amount: normalizeAmount(med?.amount),
+				mealTiming: normalizeOptionalString(med?.mealTiming),
+			}))
+			.filter(
+				(med) =>
+					med.name ||
+					med.dosage ||
+					med.frequency ||
+					med.route ||
+					med.duration ||
+					med.instructions ||
+					med.amount ||
+					med.mealTiming
+			)
 		: [];
 
 	const prescription = await prisma.$transaction(async (tx) => {
@@ -552,67 +552,67 @@ exports.updatePrescription = async (req, res) => {
 };
 
 exports.deletePrescription = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
+	const { id } = req.params;
 
-  // Ensure related medicines are removed even if DB FK doesn't cascade
-  await prisma.prescriptionMedicine.deleteMany({
-    where: { prescriptionId: parseInt(id) },
-  });
+	// Ensure related medicines are removed even if DB FK doesn't cascade
+	await prisma.prescriptionMedicine.deleteMany({
+		where: { prescriptionId: parseInt(id) },
+	});
 
-  await prisma.prescription.delete({
-    where: { id: parseInt(id) },
-  });
+	await prisma.prescription.delete({
+		where: { id: parseInt(id) },
+	});
 
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
+	res.status(204).json({
+		status: 'success',
+		data: null,
+	});
 });
 
 exports.updatePrescriptionStatus = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const { status, rejectionReason } = req.body;
+	const { id } = req.params;
+	const { status, rejectionReason } = req.body;
 
-  if (!['PENDING', 'VERIFIED', 'DISPENSED', 'REJECTED'].includes(status)) {
-    return next(new AppError('Invalid status. Must be PENDING, VERIFIED, DISPENSED, or REJECTED', 400));
-  }
+	if (!['PENDING', 'VERIFIED', 'DISPENSED', 'REJECTED'].includes(status)) {
+		return next(new AppError('Invalid status. Must be PENDING, VERIFIED, DISPENSED, or REJECTED', 400));
+	}
 
-  if (status === 'REJECTED' && !rejectionReason?.trim()) {
-    return next(new AppError('Rejection reason is required when rejecting a prescription', 400));
-  }
+	if (status === 'REJECTED' && !rejectionReason?.trim()) {
+		return next(new AppError('Rejection reason is required when rejecting a prescription', 400));
+	}
 
-  const prescription = await prisma.prescription.update({
-    where: { id: parseInt(id) },
-    data: {
-      status,
-      rejectionReason: status === 'REJECTED' ? rejectionReason.trim() : null,
-    },
-    include: {
-      patient: true,
-      doctor: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-        },
-      },
-      medicines: true,
-    },
-  });
+	const prescription = await prisma.prescription.update({
+		where: { id: parseInt(id) },
+		data: {
+			status,
+			rejectionReason: status === 'REJECTED' ? rejectionReason.trim() : null,
+		},
+		include: {
+			patient: true,
+			doctor: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+				},
+			},
+			medicines: true,
+		},
+	});
 
-  // Emit status update to pharmacy and doctor
-  const io = req.app.get('io');
-  try {
-    const { EVENTS, ROOMS } = require('../socket/events');
-    io.to(ROOMS.PHARMACY).emit(EVENTS.PRESCRIPTION_STATUS_UPDATE, { id: prescription.id, status });
-    io.to(ROOMS.doctorRoom(prescription.doctorId)).emit(EVENTS.PRESCRIPTION_STATUS_UPDATE, { id: prescription.id, status });
-  } catch (e) {
-    // Silently ignore socket errors
-  }
+	// Emit status update to pharmacy and doctor
+	const io = req.app.get('io');
+	try {
+		const { EVENTS, ROOMS } = require('../socket/events');
+		io.to(ROOMS.PHARMACY).emit(EVENTS.PRESCRIPTION_STATUS_UPDATE, { id: prescription.id, status });
+		io.to(ROOMS.doctorRoom(prescription.doctorId)).emit(EVENTS.PRESCRIPTION_STATUS_UPDATE, { id: prescription.id, status });
+	} catch (e) {
+		// Silently ignore socket errors
+	}
 
-  res.status(200).json({
-    status: 'success',
-    data: { prescription },
-  });
+	res.status(200).json({
+		status: 'success',
+		data: { prescription },
+	});
 });

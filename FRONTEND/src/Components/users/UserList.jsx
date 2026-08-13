@@ -272,11 +272,10 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 
 														<button
 															type="button"
-															className={`${buttonGhost} px-2 py-1 ${
-																isOnlyAdmin
+															className={`${buttonGhost} px-2 py-1 ${isOnlyAdmin
 																	? "cursor-not-allowed opacity-50"
 																	: "hover:text-red-600"
-															}`}
+																}`}
 															title={
 																isOnlyAdmin
 																	? t("cannotDeleteOnlyAdmin")
@@ -330,9 +329,8 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 																/>
 															) : null}
 															<div
-																className={`h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-bold text-white shadow-sm border-2 border-white ${
-																	avatarUrl ? "hidden" : "flex"
-																}`}
+																className={`h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-xs font-bold text-white shadow-sm border-2 border-white ${avatarUrl ? "hidden" : "flex"
+																	}`}
 															>
 																{getInitials(user.name)}
 															</div>
@@ -409,11 +407,10 @@ function Pagination({ currentPage, totalPages, goToPage }) {
 							<button
 								type="button"
 								onClick={() => goToPage(page)}
-								className={`min-w-[2rem] rounded-lg px-3 py-1 text-sm font-semibold ${
-									currentPage === page
+								className={`min-w-[2rem] rounded-lg px-3 py-1 text-sm font-semibold ${currentPage === page
 										? "bg-blue-600 text-white"
 										: "border border-slate-300 text-slate-700 hover:bg-slate-50"
-								}`}
+									}`}
 							>
 								{page}
 							</button>

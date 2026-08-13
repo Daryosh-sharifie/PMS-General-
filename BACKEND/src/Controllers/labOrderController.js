@@ -146,7 +146,46 @@ const getLabOrderById = async (req, res) => {
 
 const getAllLabOrders = async (req, res) => {
   try {
+    const { page, limit, status, search, patientId, prescriptionId, startDate, endDate } = req.query;
+
+    const where = {};
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (patientId) {
+      where.patientId = Number(patientId);
+    }
+
+    if (prescriptionId) {
+      where.prescriptionId = Number(prescriptionId);
+    }
+
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = new Date(startDate);
+      if (endDate) where.createdAt.lte = new Date(endDate);
+    }
+
+    if (search) {
+      where.OR = [
+        { labOrderNo: { contains: search } },
+        { patient: { fullname: { contains: search } } },
+      ];
+    }
+
+    const totalRecords = await prisma.labOrder.count({ where });
+
+    let take;
+    let skip;
+    if (limit) {
+      take = Number(limit);
+      skip = page ? (Number(page) - 1) * take : 0;
+    }
+
     const labOrders = await prisma.labOrder.findMany({
+      where,
       include: {
         patient: true,
         prescription: true,
@@ -154,9 +193,23 @@ const getAllLabOrders = async (req, res) => {
         items: true,
       },
       orderBy: { createdAt: "desc" },
+      ...(take && { take }),
+      ...(skip !== undefined && { skip }),
     });
 
-    return res.status(200).json({ success: true, data: labOrders });
+    const currentPage = page ? Number(page) : 1;
+    const totalPages = take ? Math.ceil(totalRecords / take) : 1;
+
+    return res.status(200).json({
+      success: true,
+      data: labOrders,
+      pagination: {
+        totalRecords,
+        totalPages,
+        currentPage,
+        limit: take || totalRecords,
+      },
+    });
   } catch (error) {
     console.error("Get all lab orders error:", error);
     return res.status(500).json({ success: false, message: "Failed to fetch lab orders" });
