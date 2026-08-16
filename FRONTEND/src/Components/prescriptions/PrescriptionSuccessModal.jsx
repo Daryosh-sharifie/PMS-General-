@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { X, Printer, CheckCircle } from 'lucide-react';
+import { matchesShortcut, getShortcutById } from '../../utils/shortcutManager';
 
 export default function PrescriptionSuccessModal({ prescription, onClose, hospitalSettings, currentUser }) {
 	if (!prescription) return null;
@@ -6,6 +8,20 @@ export default function PrescriptionSuccessModal({ prescription, onClose, hospit
 	const handlePrint = () => {
 		window.print();
 	};
+
+	useEffect(() => {
+		const handleKeyDown = (e) => {
+			if (matchesShortcut(e, getShortcutById("printPrescription"))) {
+				e.preventDefault();
+				handlePrint();
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, []);
 
 	return (
 		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">

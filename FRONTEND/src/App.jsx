@@ -34,6 +34,7 @@ import RoleRoute from "./routes/RoleRoute";
 import { useErrorHandler } from "./hooks/useErrorHandler.jsx";
 import { APP_SETTINGS_BASE } from "./api/appSettingApi";
 import { useLanguage } from "./i18n/LanguageContext.jsx";
+import { matchesShortcut, getShortcutById } from "./utils/shortcutManager";
 
 function resolveAssetUrl(assetPath) {
 	if (!assetPath) return null;
@@ -222,22 +223,17 @@ function App() {
 		if (!isAuthenticated || !authChecked) return;
 
 		const handleKeyDown = (e) => {
-			if (!e.altKey || e.ctrlKey || e.metaKey) return;
-
-			const key = e.key ? e.key.toLowerCase() : "";
-			const code = e.code ? e.code : "";
-
-			if (key === "m" || code === "KeyM") {
+			if (matchesShortcut(e, getShortcutById("addPatient"))) {
 				e.preventDefault();
 				navigate("/add-patient");
-			} else if (key === "n" || code === "KeyN") {
+			} else if (matchesShortcut(e, getShortcutById("createPrescription"))) {
 				e.preventDefault();
 				resetPrescriptionForm();
 				navigate("/create-prescription");
-			} else if (key === "l" || code === "KeyL") {
+			} else if (matchesShortcut(e, getShortcutById("laboratory"))) {
 				e.preventDefault();
 				navigate("/lab-reports");
-			} else if (key === "r" || code === "KeyR") {
+			} else if (matchesShortcut(e, getShortcutById("reports"))) {
 				e.preventDefault();
 				navigate("/reports");
 			}

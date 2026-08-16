@@ -6,6 +6,7 @@ import {
 	Lock,
 	Shield,
 	User,
+	Keyboard,
 	Settings as SettingsIcon,
 	DatabaseBackup,
 	UploadCloud,
@@ -17,6 +18,7 @@ import { userApi } from "../../api/userApi";
 import { getMe, updatePassword } from "../../api/authApi";
 import { APP_SETTINGS_BASE } from "../../api/appSettingApi";
 import AppSettings from "./AppSettings";
+import ShortcutsTab from "./ShortcutsTab";
 import { backupApi } from "../../api/backupApi";
 import { useLanguage } from "../../i18n/LanguageContext";
 
@@ -118,6 +120,11 @@ export default function Settings({
 				id: "security",
 				label: t("security"),
 				icon: Lock,
+			},
+			{
+				id: "shortcuts",
+				label: t("shortcuts"),
+				icon: Keyboard,
 			},
 		];
 
@@ -368,6 +375,10 @@ export default function Settings({
 					t={t}
 					isRtl={isRtl}
 				/>
+			)}
+
+			{activeTab === "shortcuts" && (
+				<ShortcutsTab showMessage={showMessage} />
 			)}
 
 			{activeTab === "backup" && isAdmin && (

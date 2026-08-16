@@ -6,7 +6,7 @@ import {
 	User,
 	Pencil,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent } from "../ui/Card";
 import Badge from "../ui/Badge";
 import {
@@ -18,6 +18,7 @@ import { getStatusColor, formatDate } from "../../utils/helpers";
 import { printPrescription } from "./PrescriptionPrint";
 import PrescriptionLabResultsPanel from "./PrescriptionLabResultsPanel";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { matchesShortcut, getShortcutById } from "../../utils/shortcutManager";
 
 export default function PrescriptionDetail({
 	prescription,
@@ -288,6 +289,20 @@ export default function PrescriptionDetail({
 			setPrinting(false);
 		}
 	};
+
+	useEffect(() => {
+		const handleKeyDown = (e) => {
+			if (matchesShortcut(e, getShortcutById("printPrescription"))) {
+				e.preventDefault();
+				handlePrint();
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [handlePrint]);
 
 	const isRtl = language === "fa";
 
