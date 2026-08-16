@@ -20,6 +20,7 @@ import { backupApi } from "../../api/backupApi";
 import Loader from "../ui/Loader";
 import Message from "../ui/Message";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { getShortcutTooltip } from "../../utils/shortcutManager";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -241,6 +242,7 @@ export default function PrescriptionList({
 							<button
 								type="button"
 								onClick={onCreatePrescription}
+								title={getShortcutTooltip("createPrescription", t("createPrescription"), language)}
 								className={`${buttonPrimary} justify-center text-xs sm:text-sm`}
 							>
 								<Plus className="mr-2 h-4 w-4" />

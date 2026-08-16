@@ -16,6 +16,7 @@ import { formatDate, displayPatientAge } from "../../utils/helpers";
 import useStore from "../../store/useStore.jsx";
 import { backupApi } from "../../api/backupApi";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { getShortcutTooltip } from "../../utils/shortcutManager";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -140,7 +141,12 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 						{backupLoading ? t("downloading") : t("backup")}
 					</button>
 
-					<button type="button" onClick={onAddPatient} className={`${buttonPrimary} text-xs sm:text-sm`}>
+					<button
+						type="button"
+						onClick={onAddPatient}
+						title={getShortcutTooltip("addPatient", t("addPatient"), language)}
+						className={`${buttonPrimary} text-xs sm:text-sm`}
+					>
 						<Plus className={`${isRtl ? "ml-2" : "mr-2"} h-4 w-4`} />
 						{t("addPatient")}
 					</button>

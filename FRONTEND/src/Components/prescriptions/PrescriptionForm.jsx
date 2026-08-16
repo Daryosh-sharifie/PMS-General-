@@ -5,6 +5,7 @@ import { printPrescription } from "./PrescriptionPrint";
 import { labOrderApi } from "../../api/labOrderApi";
 import { labOrderItemApi } from "../../api/labOrderItemApi";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { matchesShortcut, getShortcutById } from "../../utils/shortcutManager";
 
 import PrescriptionTopBar from "./PrescriptionTopBar";
 import PatientSelector from "./PatientSelector";
@@ -341,8 +342,21 @@ export default function PrescriptionForm({
 		currentUser,
 		t,
 		selectedLabTests,
-		printFontBoost,
 	]);
+
+	useEffect(() => {
+		const handleKeyDown = (e) => {
+			if (matchesShortcut(e, getShortcutById("printPrescription"))) {
+				e.preventDefault();
+				handlePrint();
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [handlePrint]);
 
 	const createLabRequestAfterSave = async (prescriptionId, finalPrescriptionData) => {
 		if (labTestIdsForSave.length === 0) return { ok: true };
