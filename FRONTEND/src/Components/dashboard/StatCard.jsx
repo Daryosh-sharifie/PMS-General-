@@ -9,6 +9,7 @@ export default function StatCard({
 	iconColor = "text-blue-600",
 	accent = "bg-blue-50",
 	onClick,
+	tooltip,
 }) {
 	const Wrapper = onClick ? "button" : "div";
 
@@ -21,6 +22,7 @@ export default function StatCard({
 			<Wrapper
 				type={onClick ? "button" : undefined}
 				onClick={onClick}
+				title={tooltip || title}
 				className="w-full text-left"
 			>
 				<CardContent className="p-5">

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { X, Printer, CheckCircle } from 'lucide-react';
-import { matchesShortcut, getShortcutById } from '../../utils/shortcutManager';
+import { matchesShortcut, getShortcutById, getShortcutTooltip } from '../../utils/shortcutManager';
 
 export default function PrescriptionSuccessModal({ prescription, onClose, hospitalSettings, currentUser }) {
 	if (!prescription) return null;
@@ -104,6 +104,7 @@ export default function PrescriptionSuccessModal({ prescription, onClose, hospit
 				<div className="bg-gray-50 p-3 sm:p-6 flex gap-2 sm:gap-3 justify-center border-t sticky bottom-0 print:hidden flex-wrap">
 					<button
 						onClick={handlePrint}
+						title={getShortcutTooltip("printPrescription", "چاپ نسخه", "fa")}
 						className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 sm:py-3 sm:px-8 rounded text-sm sm:text-base transition transform hover:scale-105"
 					>
 						<Printer className="h-4 w-4 sm:h-5 sm:w-5" />

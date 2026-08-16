@@ -161,22 +161,24 @@ async function renderPrescriptionsPdfPageCanvas({
 		fontFamily: "Tahoma, 'Vazirmatn', Arial, Helvetica, sans-serif",
 	});
 
-	const filterInfo = doctorName ? `داکتر: ${doctorName}` : "همه داکتران";
+	const filterInfo = doctorName
+		? `${isRtl ? "داکتر" : "Doctor"}: ${doctorName}`
+		: t("allDoctors");
 
 	wrapper.innerHTML = `
 		<div style="background-color:#312e81;padding:14px 18px;color:#ffffff;">
 			<table style="width:100%;border-collapse:collapse;color:#ffffff;">
 				<tr>
 					<td style="text-align:${isRtl ? "right" : "left"};vertical-align:middle;color:#ffffff;">
-						<div style="font-size:20px;font-weight:800;color:#ffffff;">گزارش تفصیلی نسخه‌ها و داکتران</div>
+						<div style="font-size:20px;font-weight:800;color:#ffffff;">${escapeHtml(t("detailedReportHeader"))}</div>
 						<div style="margin-top:4px;font-size:11px;color:#e0e7ff;">
-							سیستم مدیریت نسخه‌ها و مریضان
+							${escapeHtml(t("systemReportSubHeader"))}
 						</div>
 					</td>
 					<td style="text-align:${isRtl ? "left" : "right"};vertical-align:middle;font-size:11px;line-height:1.6;color:#ffffff;">
-						<div style="color:#ffffff;">تعداد کل گزارش‌ها: <b style="color:#ffffff;">${totalRecords.toLocaleString(numberLocale)}</b></div>
-						<div style="color:#ffffff;">فیلتر: <b style="color:#ffffff;">${escapeHtml(filterInfo)}</b></div>
-						<div style="color:#ffffff;">تاریخ تهیه: ${escapeHtml(generatedAt)}</div>
+						<div style="color:#ffffff;">${escapeHtml(t("totalReportsCount"))} <b style="color:#ffffff;">${totalRecords.toLocaleString(numberLocale)}</b></div>
+						<div style="color:#ffffff;">${escapeHtml(t("doctorFilter"))} <b style="color:#ffffff;">${escapeHtml(filterInfo)}</b></div>
+						<div style="color:#ffffff;">${escapeHtml(t("dateGenerated"))} ${escapeHtml(generatedAt)}</div>
 					</td>
 				</tr>
 			</table>
@@ -195,12 +197,12 @@ async function renderPrescriptionsPdfPageCanvas({
 				<thead>
 					<tr>
 						${headerCell("#")}
-						${headerCell("نمبر نسخه")}
-						${headerCell("اسم مریض")}
-						${headerCell("داکتر مربوطه")}
-						${headerCell("تاریخ ثبت")}
-						${headerCell("تشخیص")}
-						${headerCell("حالت")}
+						${headerCell(t("prescriptionNo"))}
+						${headerCell(t("patient"))}
+						${headerCell(t("doctor"))}
+						${headerCell(t("registeredDate"))}
+						${headerCell(t("diagnosis"))}
+						${headerCell(t("status"))}
 					</tr>
 				</thead>
 				<tbody>${rows}</tbody>
@@ -209,10 +211,10 @@ async function renderPrescriptionsPdfPageCanvas({
 		<div style="border-top:1px solid #cbd5e1;margin-top:12px;padding:12px 16px 28px;font-size:11px;color:#475569;background:#ffffff;">
 			<table style="width:100%;border-collapse:collapse;color:#475569;">
 				<tr>
-					<td style="text-align:${isRtl ? "right" : "left"};color:#475569;">گزارش نسخه‌ها • ${escapeHtml(dateStamp)}</td>
+					<td style="text-align:${isRtl ? "right" : "left"};color:#475569;">${escapeHtml(t("prescriptionReportsDoc"))} • ${escapeHtml(dateStamp)}</td>
 					<td style="text-align:${isRtl ? "left" : "right"};font-weight:700;color:#312e81;">
-						صفحه ${pageNumber.toLocaleString(numberLocale)} از ${totalPages.toLocaleString(numberLocale)}
-						• ${pageItems.length.toLocaleString(numberLocale)} نسخه در این صفحه
+						${isRtl ? `صفحه ${pageNumber.toLocaleString(numberLocale)} از ${totalPages.toLocaleString(numberLocale)}` : `Page ${pageNumber} of ${totalPages}`}
+						• ${isRtl ? `${pageItems.length.toLocaleString(numberLocale)} نسخه در این صفحه` : `${pageItems.length} prescriptions on this page`}
 					</td>
 				</tr>
 			</table>
@@ -261,7 +263,7 @@ async function renderPrescriptionsPdfPageCanvas({
 
 async function downloadPrescriptionReportsAsPdf({ prescriptions, t, language, doctorName, total }) {
 	if (!prescriptions || !prescriptions.length) {
-		throw new Error("هیچ گزارش نسخه‌ای برای خروجی وجود ندارد.");
+		throw new Error(t("noPrescriptionsToExport"));
 	}
 
 	const generatedAt = formatDate(new Date().toISOString(), language);
@@ -400,19 +402,20 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 
 	const handleDeletePrescription = async (id, presNo) => {
 		if (!canDelete) {
-			alert("فقط مدیر سیستم اجازه حذف گزارش‌ها/نسخه‌ها را دارد.");
+			alert(t("onlyAdminCanDeleteReports"));
 			return;
 		}
 
-		if (!window.confirm(`آیا از حذف این نسخه (${presNo || id}) مطمئن هستید؟`)) return;
+		const confirmMsg = t("confirmDeletePrescription").replace("{no}", presNo || id);
+		if (!window.confirm(confirmMsg)) return;
 
 		try {
 			await removePrescription(id);
-			setActionMessage(`نسخه ${presNo || id} با موفقیت حذف شد.`);
+			setActionMessage(t("prescriptionDeletedSuccess").replace("{no}", presNo || id));
 			setTimeout(() => setActionMessage(""), 3000);
 			loadReportsData();
 		} catch (err) {
-			alert(`خطا در حذف نسخه: ${err.message}`);
+			alert(`${t("errorDeletingPrescription")} ${err.message}`);
 		}
 	};
 
@@ -433,7 +436,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 			const docKey = String(doc.id);
 			map[docKey] = {
 				id: docKey,
-				name: doc.name || "داکتر",
+				name: doc.name || t("doctor"),
 				email: doc.email || "",
 				totalPrescriptions: 0,
 				dispensed: 0,
@@ -451,7 +454,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 			if (!map[docId]) {
 				map[docId] = {
 					id: docId,
-					name: pres.doctorName || pres.doctor?.name || "داکتر",
+					name: pres.doctorName || pres.doctor?.name || t("doctor"),
 					email: pres.doctor?.email || "",
 					totalPrescriptions: 0,
 					dispensed: 0,
@@ -495,7 +498,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 
 	const handleExportPdf = async () => {
 		if (!displayedPrescriptions || displayedPrescriptions.length === 0) {
-			alert(t("noPrescriptionsYet") || "هیچ نسخه‌ای برای خروجی وجود ندارد.");
+			alert(t("noPrescriptionsToExport"));
 			return;
 		}
 
@@ -512,12 +515,14 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 			});
 
 			setActionMessage(
-				`فایل PDF با موفقیت دانلود شد — ${pagesCreated} صفحه، ${displayedPrescriptions.length} گزارش`
+				t("pdfExportSuccess")
+					.replace("{pages}", pagesCreated)
+					.replace("{total}", displayedPrescriptions.length)
 			);
 			setTimeout(() => setActionMessage(""), 4000);
 		} catch (err) {
 			console.error("PDF Export error:", err);
-			alert(`خطا در ایجاد PDF: ${err.message}`);
+			alert(`${t("errorCreatingPdf")} ${err.message}`);
 		} finally {
 			setExportingPdf(false);
 		}
@@ -539,8 +544,8 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 							</h1>
 							<p className="mt-1 text-xs text-slate-500 sm:text-sm">
 								{isAdmin
-									? "گزارش عملکرد داکتران، نسخه‌های ایجادشده و آمار کلی سیستم"
-									: "گزارش اختصاصی نسخه‌ها و فعالیتهای ثبت‌شده در حساب شما"}
+									? t("reportsSubtitleAdmin")
+									: t("reportsSubtitleDoctor")}
 							</p>
 						</div>
 					</div>
@@ -555,12 +560,12 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 							{exportingPdf ? (
 								<>
 									<Loader2 className="h-4 w-4 animate-spin" />
-									<span>{t("exportingPdf") || "در حال ساخت PDF..."}</span>
+									<span>{t("exportingPdf")}</span>
 								</>
 							) : (
 								<>
 									<Download className="h-4 w-4" />
-									<span>{t("exportPdf") || "دانلود PDF"}</span>
+									<span>{t("exportPdf")}</span>
 								</>
 							)}
 						</button>
@@ -568,7 +573,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 						{isDoctor && (
 							<div className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-800">
 								<Stethoscope className="h-4 w-4 text-blue-600 shrink-0" />
-								<span>گزارش اختصاصی حساب داکتر: {currentUser?.name}</span>
+								<span>{t("exclusiveDoctorReport")}: {currentUser?.name}</span>
 							</div>
 						)}
 					</div>
@@ -589,14 +594,14 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 						{isAdmin && (
 							<div className="w-full lg:w-60">
 								<label className="mb-1 block text-xs font-bold text-slate-600">
-									فیلتر داکتر:
+									{t("doctorFilter")}
 								</label>
 								<select
 									value={selectedDoctorId}
 									onChange={(e) => handleDoctorChange(e.target.value)}
 									className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:text-sm"
 								>
-									<option value="all">همه داکتران</option>
+									<option value="all">{t("allDoctors")}</option>
 									{doctors.map((doc) => (
 										<option key={doc.id} value={doc.id}>
 											{doc.name} {doc.email ? `(${doc.email})` : ""}
@@ -609,7 +614,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 						{/* Period Filter */}
 						<div className="w-full lg:w-48">
 							<label className="mb-1 block text-xs font-bold text-slate-600">
-								زمان:
+								{t("period")}
 							</label>
 							<select
 								value={selectedPeriod}
@@ -630,7 +635,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 						{/* Status Filter */}
 						<div className="w-full lg:w-48">
 							<label className="mb-1 block text-xs font-bold text-slate-600">
-								حالت نسخه:
+								{t("prescriptionStatus")}
 							</label>
 							<select
 								value={statusFilter}
@@ -651,19 +656,25 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 						{/* Search Input */}
 						<div className="flex-1">
 							<label className="mb-1 block text-xs font-bold text-slate-600">
-								جستجو:
+								{t("search")}
 							</label>
 							<div className="relative">
 								<input
-									className={`${inputClasses} pl-10 text-right text-xs sm:text-sm`}
-									placeholder="جستجو بر اساس اسم مریض یا نمبر نسخه..."
+									className={`${inputClasses} ${
+										isRtl ? "pr-10 pl-4 text-right" : "pl-10 pr-4 text-left"
+									} text-xs sm:text-sm`}
+									placeholder={t("searchPlaceholderReports")}
 									value={searchQuery}
 									onChange={(e) => {
 										setSearchQuery(e.target.value);
 										setCurrentPage(1);
 									}}
 								/>
-								<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+								<Search
+									className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${
+										isRtl ? "right-3" : "left-3"
+									}`}
+								/>
 							</div>
 						</div>
 					</div>
@@ -677,7 +688,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 						<div className="flex items-center gap-2">
 							<Stethoscope className="h-5 w-5 text-indigo-600" />
 							<h2 className="text-lg font-bold text-slate-900">
-								خلاصه کارکرد و گزارش داکتران
+								{t("doctorPerformanceSummary")}
 							</h2>
 						</div>
 					</CardHeader>
@@ -687,20 +698,20 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 							<table className="min-w-full">
 								<thead className="border-b border-slate-200 bg-slate-50 text-xs font-bold uppercase text-slate-600">
 									<tr>
-										<th className="px-4 py-3 text-right">داکتر</th>
-										<th className="px-4 py-3 text-center">کل نسخه‌ها</th>
-										<th className="px-4 py-3 text-center">تعداد مریضان</th>
-										<th className="px-4 py-3 text-center">توزیع‌شده</th>
-										<th className="px-4 py-3 text-center">معلق</th>
-										<th className="px-4 py-3 text-center">مستردشده</th>
-										<th className="px-4 py-3 text-center">عملیات</th>
+										<th className={`px-4 py-3 ${isRtl ? "text-right" : "text-left"}`}>{t("doctor")}</th>
+										<th className="px-4 py-3 text-center">{t("totalPrescriptions")}</th>
+										<th className="px-4 py-3 text-center">{t("totalPatients")}</th>
+										<th className="px-4 py-3 text-center">{t("dispensed")}</th>
+										<th className="px-4 py-3 text-center">{t("pending")}</th>
+										<th className="px-4 py-3 text-center">{t("rejected")}</th>
+										<th className="px-4 py-3 text-center">{t("actions")}</th>
 									</tr>
 								</thead>
 
 								<tbody className="divide-y divide-slate-100 text-sm">
 									{doctorPerformanceSummary.map((doc) => (
 										<tr key={doc.id} className="hover:bg-slate-50/80 transition">
-											<td className="px-4 py-3.5 text-right font-bold text-slate-900">
+											<td className={`px-4 py-3.5 ${isRtl ? "text-right" : "text-left"} font-bold text-slate-900`}>
 												{doc.name}
 												{doc.email && (
 													<span className="block text-xs font-normal text-slate-500">
@@ -736,7 +747,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 													className="inline-flex items-center gap-1 rounded-xl bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-100 transition"
 												>
 													<Filter className="h-3.5 w-3.5" />
-													فیلتر گزارش این داکتر
+													{t("filterThisDoctor")}
 												</button>
 											</td>
 										</tr>
@@ -755,23 +766,23 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 						<div className="flex items-center gap-2">
 							<FileText className="h-5 w-5 text-indigo-600" />
 							<h2 className="text-lg font-bold text-slate-900">
-								لیست تفصیلی گزارش نسخه‌ها
+								{t("detailedPrescriptionReports")}
 							</h2>
 						</div>
 
 						<span className="text-xs font-semibold text-slate-500">
-							تعداد کل: {displayedPrescriptions.length}
+							{t("totalCount")}: {displayedPrescriptions.length}
 						</span>
 					</div>
 				</CardHeader>
 
 				<CardContent className="p-0">
 					{prescriptionsLoading ? (
-						<Loader message="در حال بارگذاری گزارش‌ها..." size="md" fullHeight />
+						<Loader message={t("loadingReports")} size="md" fullHeight />
 					) : prescriptionsError ? (
 						<Message
 							type="error"
-							title="خطا در بارگذاری گزارش‌ها"
+							title={t("errorLoadingReports")}
 							description={prescriptionsError}
 							fullHeight
 						/>
@@ -780,9 +791,9 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 							<div className="mb-3 rounded-2xl bg-slate-50 p-4 text-slate-400">
 								<FileText className="h-8 w-8" />
 							</div>
-							<p className="font-bold text-slate-700">هیچ گزارشی یافت نشد</p>
+							<p className="font-bold text-slate-700">{t("noReportsFound")}</p>
 							<p className="mt-1 text-sm text-slate-500">
-								با فیلترهای دیگر جستجو کنید یا فیلتر داکتر را تغییر دهید.
+								{t("noReportsFoundDesc")}
 							</p>
 						</div>
 					) : (
@@ -790,28 +801,28 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 							<table className="min-w-full">
 								<thead className="border-b border-slate-200 bg-slate-50 text-xs font-bold uppercase text-slate-600">
 									<tr>
-										<th className="px-4 py-3 text-right">نمبر نسخه</th>
-										<th className="px-4 py-3 text-right">اسم مریض</th>
-										<th className="px-4 py-3 text-right">داکتر مربوطه</th>
-										<th className="px-4 py-3 text-center">تاریخ ثبت</th>
-										<th className="px-4 py-3 text-right">تشخیص</th>
-										<th className="px-4 py-3 text-center">حالت</th>
-										<th className="px-4 py-3 text-center">عملیات</th>
+										<th className={`px-4 py-3 ${isRtl ? "text-right" : "text-left"}`}>{t("prescriptionNo")}</th>
+										<th className={`px-4 py-3 ${isRtl ? "text-right" : "text-left"}`}>{t("patient")}</th>
+										<th className={`px-4 py-3 ${isRtl ? "text-right" : "text-left"}`}>{t("doctor")}</th>
+										<th className="px-4 py-3 text-center">{t("registeredDate")}</th>
+										<th className={`px-4 py-3 ${isRtl ? "text-right" : "text-left"}`}>{t("diagnosis")}</th>
+										<th className="px-4 py-3 text-center">{t("status")}</th>
+										<th className="px-4 py-3 text-center">{t("actions")}</th>
 									</tr>
 								</thead>
 
 								<tbody className="divide-y divide-slate-100 text-sm">
 									{displayedPrescriptions.map((prescription) => (
 										<tr key={prescription.id} className="hover:bg-slate-50/80 transition">
-											<td className="px-4 py-4 text-right font-bold text-indigo-700">
+											<td className={`px-4 py-4 ${isRtl ? "text-right" : "text-left"} font-bold text-indigo-700`}>
 												{prescription.prescriptionNo || prescription.id}
 											</td>
 
-											<td className="px-4 py-4 text-right font-semibold text-slate-900">
+											<td className={`px-4 py-4 ${isRtl ? "text-right" : "text-left"} font-semibold text-slate-900`}>
 												{prescription.patientName || prescription.patient?.fullname || "-"}
 											</td>
 
-											<td className="px-4 py-4 text-right text-slate-700 font-medium">
+											<td className={`px-4 py-4 ${isRtl ? "text-right" : "text-left"} text-slate-700 font-medium`}>
 												{prescription.doctorName || prescription.doctor?.name || "-"}
 											</td>
 
@@ -819,7 +830,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 												{formatDate(prescription.date || prescription.createdAt, language)}
 											</td>
 
-											<td className="px-4 py-4 text-right text-slate-700">
+											<td className={`px-4 py-4 ${isRtl ? "text-right" : "text-left"} text-slate-700`}>
 												{prescription.diagnosis || "-"}
 											</td>
 
@@ -835,7 +846,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 														type="button"
 														className={`${buttonGhost} px-2 py-1`}
 														onClick={() => handleView(prescription.id)}
-														title="مشاهده نسخه"
+														title={t("viewPrescription")}
 													>
 														<Eye className="h-4 w-4" />
 													</button>
@@ -851,7 +862,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 																	prescription.prescriptionNo
 																)
 															}
-															title="حذف نسخه (فقط مدیر)"
+															title={t("deletePrescriptionAdmin")}
 														>
 															<Trash2 className="h-4 w-4" />
 														</button>
@@ -876,12 +887,12 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 						onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
 						className="inline-flex items-center gap-1 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
 					>
-						<ChevronRight className="h-4 w-4" />
-						قبلی
+						{isRtl ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+						{t("previous")}
 					</button>
 
 					<span className="text-xs font-semibold text-slate-600">
-						صفحه {currentPage} از {totalPages}
+						{isRtl ? `صفحه ${currentPage} از ${totalPages}` : `Page ${currentPage} of ${totalPages}`}
 					</span>
 
 					<button
@@ -890,8 +901,8 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 						onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
 						className="inline-flex items-center gap-1 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
 					>
-						بعدی
-						<ChevronLeft className="h-4 w-4" />
+						{t("next")}
+						{isRtl ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
 					</button>
 				</div>
 			)}

@@ -132,3 +132,18 @@ export function formatShortcut(shortcut) {
 	const k = shortcut.key ? shortcut.key.trim() : "";
 	return `${mod} + ${k}`;
 }
+
+export function getShortcutTooltip(shortcutId, actionName, language = "fa") {
+	const sc = getShortcutById(shortcutId);
+	if (!sc) return actionName || "";
+	const combo = formatShortcut(sc);
+	const isRtl = language === "fa";
+
+	if (isRtl) {
+		const label = actionName || sc.labelFa;
+		return `برای ${label}: ${combo}`;
+	}
+
+	const label = actionName || sc.labelEn;
+	return `For ${label.toLowerCase()}: ${combo}`;
+}

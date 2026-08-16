@@ -24,6 +24,8 @@ import { APP_SETTINGS_BASE } from "../../api/appSettingApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
 
+import { getShortcutTooltip } from "../../utils/shortcutManager";
+
 function resolveAsset(src) {
 	if (!src) return "";
 
@@ -83,16 +85,17 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 
 	const navigation = [
 		{ id: "dashboard", label: t("dashboard"), icon: Home },
-		{ id: "patients", label: t("patients"), icon: Users },
+		{ id: "patients", label: t("patients"), icon: Users, shortcutId: "addPatient" },
 		{
 			id: "prescriptions",
 			label: t("prescriptions"),
 			icon: FileText,
+			shortcutId: "createPrescription",
 			hideForRoles: ["pharmacist"],
 		},
 		{ id: "medicines", label: t("medicines"), icon: Syringe },
-		{ id: "lab-reports", label: t("labReports"), icon: FlaskConical },
-		{ id: "reports", label: t("reports"), icon: BarChart3 },
+		{ id: "lab-reports", label: t("labReports"), icon: FlaskConical, shortcutId: "laboratory" },
+		{ id: "reports", label: t("reports"), icon: BarChart3, shortcutId: "reports" },
 		{ id: "users", label: t("users"), icon: UserCog, adminOnly: true },
 		{ id: "activity", label: t("activity"), icon: Activity, adminOnly: true },
 		{ id: "settings", label: t("settings"), icon: Settings },
@@ -280,7 +283,11 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 								key={item.id}
 								type="button"
 								onClick={() => go(item.id)}
-								title={!showText ? item.label : undefined}
+								title={
+									item.shortcutId
+										? getShortcutTooltip(item.shortcutId, item.label, language)
+										: item.label
+								}
 								className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition ${
 									isActive
 										? "bg-blue-50 text-blue-700 shadow-xs"

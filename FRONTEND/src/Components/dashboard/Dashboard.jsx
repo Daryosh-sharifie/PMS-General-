@@ -24,6 +24,7 @@ import medicineApi from "../../api/medicineApi";
 import { labOrderApi } from "../../api/labOrderApi";
 import { useLanguage } from "../../i18n/LanguageContext";
 import LanguageSwitcher from "../layout/LanguageSwitcher";
+import { getShortcutTooltip } from "../../utils/shortcutManager";
 
 const PERIOD_FILTERS = [
 	{ value: "today", labelKey: "today" },
@@ -512,6 +513,7 @@ export default function Dashboard({
 					trend={periodTrend}
 					iconColor="text-blue-600"
 					accent="bg-blue-50"
+					tooltip={getShortcutTooltip("addPatient", t("patients"), language)}
 					onClick={() => goToModule("patients")}
 				/>
 
@@ -522,6 +524,7 @@ export default function Dashboard({
 					trend={periodTrend}
 					iconColor="text-emerald-600"
 					accent="bg-emerald-50"
+					tooltip={getShortcutTooltip("createPrescription", t("prescriptions"), language)}
 					onClick={() => goToModule("prescriptions")}
 				/>
 
@@ -532,6 +535,7 @@ export default function Dashboard({
 					trend={periodTrend}
 					iconColor="text-indigo-600"
 					accent="bg-indigo-50"
+					tooltip={getShortcutTooltip("laboratory", t("labReports"), language)}
 					onClick={() => goToModule("labReports")}
 				/>
 

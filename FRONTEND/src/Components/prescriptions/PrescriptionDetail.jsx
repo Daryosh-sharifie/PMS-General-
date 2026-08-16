@@ -583,6 +583,7 @@ export default function PrescriptionDetail({
 							className={`${buttonSecondary} w-full`}
 							onClick={handlePrint}
 							disabled={printing}
+							title={getShortcutTooltip("printPrescription", t("printPrescription"), language)}
 						>
 							<FileText className="mr-2 h-4 w-4" />
 							{printing ? t("processing") : t("printPrescription")}
