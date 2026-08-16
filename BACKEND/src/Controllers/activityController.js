@@ -1,5 +1,5 @@
 const catchAsync = require('../utils/catchAsync');
-const prisma = require('../dbConfig/prisma');
+const prisma = require('../DBconfig/prisma');
 
 let backfilled = false;
 
