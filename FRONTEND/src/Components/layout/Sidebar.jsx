@@ -197,19 +197,18 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 			{/* Sidebar Component (Desktop & Mobile Drawer) */}
 			<aside
 				dir={isRtl ? "rtl" : "ltr"}
-				className={`relative fixed inset-y-0 z-50 flex h-full flex-col bg-white transition-all duration-300 print:hidden md:static md:z-auto md:h-screen md:shrink-0 ${
-					isRtl ? "right-0 border-l border-slate-200" : "left-0 border-r border-slate-200"
-				} ${
+				className={`relative fixed inset-y-0 z-50 flex h-full flex-col bg-white transition-all duration-300 print:hidden md:static md:z-auto md:h-screen md:shrink-0 ${isRtl ? "right-0 border-l border-slate-200" : "left-0 border-r border-slate-200"
+					} ${
 					/* Mobile drawer placement */
 					isMobileOpen
 						? "translate-x-0 w-72"
 						: isRtl
-						? "translate-x-full md:translate-x-0"
-						: "-translate-x-full md:translate-x-0"
-				} ${
+							? "translate-x-full md:translate-x-0"
+							: "-translate-x-full md:translate-x-0"
+					} ${
 					/* Desktop width */
 					isCollapsed ? "md:w-20" : "md:w-72"
-				}`}
+					}`}
 			>
 				{/* Sidebar Header */}
 				<div className="relative border-b border-slate-200 p-4">
@@ -224,9 +223,8 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 					</button>
 
 					<div
-						className={`flex items-center gap-3 ${
-							isCollapsed ? "md:justify-center" : isRtl ? "justify-end text-right" : "justify-start text-left"
-						}`}
+						className={`flex items-center gap-3 ${isCollapsed ? "md:justify-center" : isRtl ? "justify-end text-right" : "justify-start text-left"
+							}`}
 					>
 						<div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-blue-50 text-blue-700 shadow-sm">
 							{hospitalSettings?.logoPreview || hospitalSettings?.logo ? (
@@ -259,11 +257,10 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 				<button
 					type="button"
 					onClick={toggleCollapse}
-					className={`group hidden md:flex absolute top-6 z-30 items-center justify-center border border-slate-200 bg-white text-slate-500 shadow-[0_4px_14px_rgba(15,23,42,0.12)] transition-all duration-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
-						isRtl
+					className={`group hidden md:flex absolute top-6 z-30 items-center justify-center border border-slate-200 bg-white text-slate-500 shadow-[0_4px_14px_rgba(15,23,42,0.12)] transition-all duration-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${isRtl
 							? "-left-3 h-10 w-6 rounded-l-full rounded-r-md border-r-0"
 							: "-right-3 h-10 w-6 rounded-r-full rounded-l-md border-l-0"
-					}`}
+						}`}
 					title={collapseLabel}
 					aria-label={collapseLabel}
 					aria-expanded={!isCollapsed}
@@ -283,22 +280,16 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 								key={item.id}
 								type="button"
 								onClick={() => go(item.id)}
-								title={
-									item.shortcutId
-										? getShortcutTooltip(item.shortcutId, item.label, language)
-										: item.label
-								}
-								className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition ${
-									isActive
+								title={!showText ? item.label : undefined}
+								className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition ${isActive
 										? "bg-blue-50 text-blue-700 shadow-xs"
 										: "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
-								} ${
-									!showText
+									} ${!showText
 										? "justify-center"
 										: isRtl
-										? "flex-row-reverse text-right"
-										: "text-left"
-								}`}
+											? "flex-row-reverse text-right"
+											: "text-left"
+									}`}
 							>
 								<Icon className="h-5 w-5 shrink-0" />
 								{showText && (
@@ -312,13 +303,12 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 				{/* Sidebar Footer (User Profile & Logout) */}
 				<div className="border-t border-slate-200 p-3">
 					<div
-						className={`mb-3 flex items-center gap-3 ${
-							!isCollapsed || isMobileOpen
+						className={`mb-3 flex items-center gap-3 ${!isCollapsed || isMobileOpen
 								? isRtl
 									? "flex-row-reverse text-right"
 									: "text-left"
 								: "justify-center"
-						}`}
+							}`}
 					>
 						{currentUser?.photoPreview || currentUser?.avatar ? (
 							<div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-blue-100">
@@ -348,9 +338,8 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 
 					<button
 						type="button"
-						className={`${buttonPrimary} w-full ${
-							!isCollapsed || isMobileOpen ? "justify-center" : "justify-center px-0 py-2.5"
-						}`}
+						className={`${buttonPrimary} w-full ${!isCollapsed || isMobileOpen ? "justify-center" : "justify-center px-0 py-2.5"
+							}`}
 						onClick={onLogout}
 						title={isCollapsed && !isMobileOpen ? t("logout") : undefined}
 					>

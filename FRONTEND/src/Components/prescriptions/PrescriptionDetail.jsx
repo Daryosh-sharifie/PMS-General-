@@ -5,6 +5,7 @@ import {
 	FileText,
 	User,
 	Pencil,
+	Printer,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent } from "../ui/Card";
@@ -18,7 +19,7 @@ import { getStatusColor, formatDate } from "../../utils/helpers";
 import { printPrescription } from "./PrescriptionPrint";
 import PrescriptionLabResultsPanel from "./PrescriptionLabResultsPanel";
 import { useLanguage } from "../../i18n/LanguageContext";
-import { matchesShortcut, getShortcutById } from "../../utils/shortcutManager";
+import { matchesShortcut, getShortcutById, getShortcutTooltip, formatShortcut } from "../../utils/shortcutManager";
 
 export default function PrescriptionDetail({
 	prescription,
@@ -653,6 +654,16 @@ export default function PrescriptionDetail({
 					</div>
 				</div>
 			)}
+
+			{/* Shortcut Print Hint Banner at Bottom */}
+			<div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 text-xs font-semibold text-slate-600 shadow-2xs print:hidden">
+				<Printer className="h-4 w-4 text-blue-600 shrink-0" />
+				<span>
+					{isRtl
+						? `برای چاپ نسخه: ${formatShortcut(getShortcutById("printPrescription")) || "Ctrl + Space"}`
+						: `For printing prescription: ${formatShortcut(getShortcutById("printPrescription")) || "Ctrl + Space"}`}
+				</span>
+			</div>
 		</div>
 	);
 }

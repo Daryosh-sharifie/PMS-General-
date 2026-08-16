@@ -374,9 +374,8 @@ function FormInput({
 				)}
 				<input
 					type="text"
-					className={`${inputClasses} w-full ${
-						forceLtrValue ? "ltr-value pl-10 pr-3 text-left" : dir.inputPadding
-					}`}
+					className={`${inputClasses} w-full ${forceLtrValue ? "ltr-value pl-10 pr-3 text-left" : dir.inputPadding
+						}`}
 					value={value || ""}
 					placeholder={placeholder}
 					onChange={(event) => onChange(event.target.value)}
@@ -398,9 +397,8 @@ function Message({ type, text, isRtl }) {
 
 	return (
 		<div
-			className={`flex items-center gap-2 rounded-xl border p-3 text-sm font-semibold ${classes} ${
-				isRtl ? "flex-row-reverse text-right" : "text-left"
-			}`}
+			className={`flex items-center gap-2 rounded-xl border p-3 text-sm font-semibold ${classes} ${isRtl ? "flex-row-reverse text-right" : "text-left"
+				}`}
 		>
 			<Icon className="h-5 w-5" />
 			<span>{text}</span>
