@@ -217,6 +217,38 @@ function App() {
 		};
 	}, [isAuthenticated, authChecked, currentUser, fetchPrescriptions]);
 
+	// Global Keyboard Shortcuts
+	useEffect(() => {
+		if (!isAuthenticated || !authChecked) return;
+
+		const handleKeyDown = (e) => {
+			if (!e.altKey || e.ctrlKey || e.metaKey) return;
+
+			const key = e.key ? e.key.toLowerCase() : "";
+			const code = e.code ? e.code : "";
+
+			if (key === "m" || code === "KeyM") {
+				e.preventDefault();
+				navigate("/add-patient");
+			} else if (key === "n" || code === "KeyN") {
+				e.preventDefault();
+				resetPrescriptionForm();
+				navigate("/create-prescription");
+			} else if (key === "l" || code === "KeyL") {
+				e.preventDefault();
+				navigate("/lab-reports");
+			} else if (key === "r" || code === "KeyR") {
+				e.preventDefault();
+				navigate("/reports");
+			}
+		};
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [isAuthenticated, authChecked, navigate, resetPrescriptionForm]);
+
 	const handleCreatePrescription = async (prescriptionData) => {
 		const createdPrescription = await createPrescription(prescriptionData);
 		return createdPrescription;
