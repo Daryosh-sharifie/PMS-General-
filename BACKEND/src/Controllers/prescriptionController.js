@@ -1,6 +1,6 @@
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
-const prisma = require('../dbConfig/prisma');
+const prisma = require('../DBconfig/prisma');
 const logActivity = require('../utils/logActivity');
 
 exports.getLastPrescriptions = catchAsync(async (req, res, next) => {
