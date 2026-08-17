@@ -619,7 +619,7 @@ export default function ActivityLog() {
 				<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 					<div className="flex items-center gap-4">
 						<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 shadow-md shadow-blue-500/10 ring-2 ring-blue-500/20 modern-icon-badge transition-all">
-							<Activity className="h-6 w-6 animate-modern-header-icon" />
+							<Activity className="h-6 w-6 gentle-header-activity" />
 						</div>
 						<div>
 							<h2 className="text-2xl font-bold text-slate-950">{t("activityLogs")}</h2>

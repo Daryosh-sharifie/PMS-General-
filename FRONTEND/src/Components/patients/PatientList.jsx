@@ -112,7 +112,7 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-3">
 					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12 shadow-md shadow-blue-500/10 ring-2 ring-blue-500/20 modern-icon-badge transition-all">
-						<Users className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
+						<Users className="h-5 w-5 sm:h-6 sm:w-6 gentle-header-patients" />
 					</div>
 
 					<div className={isRtl ? "text-right" : "text-left"}>

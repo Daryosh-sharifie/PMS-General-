@@ -164,7 +164,7 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<div className="flex items-center gap-3">
 						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-teal-50 text-teal-700 sm:h-12 sm:w-12 shadow-md shadow-teal-500/10 ring-2 ring-teal-500/20 modern-icon-badge transition-all">
-							<UserCog className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
+							<UserCog className="h-5 w-5 sm:h-6 sm:w-6 gentle-header-users" />
 						</div>
 
 						<div>
