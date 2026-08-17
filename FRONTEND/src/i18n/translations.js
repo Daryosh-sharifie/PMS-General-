@@ -698,6 +698,9 @@ export const translations = {
 		prescriptionManagementSystem: "Prescription Management System",
 		logout: "Logout",
 		failedToCreateLabRequest: "Failed to create lab request",
+		fullScreen: "Fullscreen",
+		exitFullScreen: "Exit Fullscreen",
+		toggleFullScreen: "Toggle Fullscreen",
 	},
 
 	fa: {
@@ -1399,5 +1402,8 @@ export const translations = {
 		hospital: "شفاخانه",
 		prescriptionManagementSystem: "سیستم مدیریت نسخه",
 		logout: "خروج",
+		fullScreen: "تمام صفحه",
+		exitFullScreen: "خروج از تمام صفحه",
+		toggleFullScreen: "تغییر حالت تمام صفحه",
 	}
 };

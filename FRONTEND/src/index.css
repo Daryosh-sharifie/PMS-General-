@@ -6,12 +6,13 @@
   .animate-slide-in {
     animation: slideIn 0.3s ease-out;
   }
-  
+
   @keyframes slideIn {
     from {
       transform: translateX(100%);
       opacity: 0;
     }
+
     to {
       transform: translateX(0);
       opacity: 1;
@@ -23,6 +24,7 @@
 body {
   font-family: "Vazirmatn", system-ui, sans-serif;
 }
+
 /* -------------------------------------------------------
    Global language direction normalization
    English = LTR
@@ -36,42 +38,44 @@ body {
 
 html[dir="ltr"],
 html[dir="ltr"] body {
-	direction: ltr;
-	text-align: left;
+  direction: ltr;
+  text-align: left;
 }
 
 html[dir="rtl"],
 html[dir="rtl"] body {
-	direction: rtl;
-	text-align: right;
+  direction: rtl;
+  text-align: right;
 }
 
 /* App shell flex layout */
 @media (min-width: 768px) {
-	html[dir="ltr"] .app-shell,
-	html[dir="rtl"] .app-shell {
-		display: flex;
-		flex-direction: row;
-	}
+
+  html[dir="ltr"] .app-shell,
+  html[dir="rtl"] .app-shell {
+    display: flex;
+    flex-direction: row;
+  }
 }
 
 @media (max-width: 767px) {
-	html[dir="ltr"] .app-shell,
-	html[dir="rtl"] .app-shell {
-		display: flex;
-		flex-direction: column;
-	}
+
+  html[dir="ltr"] .app-shell,
+  html[dir="rtl"] .app-shell {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 /* Main page direction */
 html[dir="ltr"] .app-main {
-	direction: ltr;
-	text-align: left;
+  direction: ltr;
+  text-align: left;
 }
 
 html[dir="rtl"] .app-main {
-	direction: rtl;
-	text-align: right;
+  direction: rtl;
+  text-align: right;
 }
 
 /* -------------------------------------------------------
@@ -80,24 +84,24 @@ html[dir="rtl"] .app-main {
 ------------------------------------------------------- */
 
 html[dir="ltr"] .app-main .text-right {
-	text-align: left !important;
+  text-align: left !important;
 }
 
 html[dir="ltr"] .app-main .text-left {
-	text-align: left !important;
+  text-align: left !important;
 }
 
 html[dir="rtl"] .app-main .text-left {
-	text-align: right !important;
+  text-align: right !important;
 }
 
 html[dir="rtl"] .app-main .text-right {
-	text-align: right !important;
+  text-align: right !important;
 }
 
 html[dir="ltr"] .app-main .text-center,
 html[dir="rtl"] .app-main .text-center {
-	text-align: center !important;
+  text-align: center !important;
 }
 
 /* -------------------------------------------------------
@@ -106,28 +110,28 @@ html[dir="rtl"] .app-main .text-center {
 ------------------------------------------------------- */
 
 html[dir="ltr"] .app-main .justify-end {
-	justify-content: flex-start !important;
+  justify-content: flex-start !important;
 }
 
 html[dir="ltr"] .app-main .justify-start {
-	justify-content: flex-start !important;
+  justify-content: flex-start !important;
 }
 
 html[dir="rtl"] .app-main .justify-start {
-	justify-content: flex-end !important;
+  justify-content: flex-end !important;
 }
 
 html[dir="rtl"] .app-main .justify-end {
-	justify-content: flex-end !important;
+  justify-content: flex-end !important;
 }
 
 /* Hardcoded row reverse fixes */
 html[dir="ltr"] .app-main .flex-row-reverse {
-	flex-direction: row !important;
+  flex-direction: row !important;
 }
 
 html[dir="rtl"] .app-main .flex-row-reverse {
-	flex-direction: row-reverse !important;
+  flex-direction: row-reverse !important;
 }
 
 /* -------------------------------------------------------
@@ -146,27 +150,27 @@ html[dir="rtl"] .app-main .flex-row-reverse {
    Flip legacy RTL-coded tables so # appears on the left
    and Actions appears on the right. */
 html[dir="ltr"] .app-main table {
-	direction: rtl !important;
+  direction: rtl !important;
 }
 
 /* Dari:
    Flip the same legacy order so # appears on the right
    and Actions appears on the left. */
 html[dir="rtl"] .app-main table {
-	direction: ltr !important;
+  direction: ltr !important;
 }
 
 /* But cell content itself should still follow the selected language. */
 html[dir="ltr"] .app-main table th,
 html[dir="ltr"] .app-main table td {
-	direction: ltr;
-	text-align: left;
+  direction: ltr;
+  text-align: left;
 }
 
 html[dir="rtl"] .app-main table th,
 html[dir="rtl"] .app-main table td {
-	direction: rtl;
-	text-align: right;
+  direction: rtl;
+  text-align: right;
 }
 
 /* Keep action buttons, status badges, numbers and centered cells centered. */
@@ -174,24 +178,24 @@ html[dir="ltr"] .app-main table th.text-center,
 html[dir="ltr"] .app-main table td.text-center,
 html[dir="rtl"] .app-main table th.text-center,
 html[dir="rtl"] .app-main table td.text-center {
-	text-align: center !important;
+  text-align: center !important;
 }
 
 /* Tailwind text-right/text-left inside tables */
 html[dir="ltr"] .app-main table th.text-right,
 html[dir="ltr"] .app-main table td.text-right {
-	text-align: left !important;
+  text-align: left !important;
 }
 
 html[dir="rtl"] .app-main table th.text-left,
 html[dir="rtl"] .app-main table td.text-left {
-	text-align: right !important;
+  text-align: right !important;
 }
 
 /* Keep table action buttons visually centered */
 html[dir="ltr"] .app-main table td .flex.justify-center,
 html[dir="rtl"] .app-main table td .flex.justify-center {
-	justify-content: center !important;
+  justify-content: center !important;
 }
 
 /* -------------------------------------------------------
@@ -201,15 +205,15 @@ html[dir="rtl"] .app-main table td .flex.justify-center {
 html[dir="ltr"] input,
 html[dir="ltr"] textarea,
 html[dir="ltr"] select {
-	direction: ltr;
-	text-align: left;
+  direction: ltr;
+  text-align: left;
 }
 
 html[dir="rtl"] input,
 html[dir="rtl"] textarea,
 html[dir="rtl"] select {
-	direction: rtl;
-	text-align: right;
+  direction: rtl;
+  text-align: right;
 }
 
 /* Emails, IDs, phones, numbers should stay readable in both languages */
@@ -221,22 +225,22 @@ html[dir="rtl"] input[type="email"],
 html[dir="rtl"] input[type="tel"],
 html[dir="rtl"] input[type="number"],
 html[dir="rtl"] .ltr-value {
-	direction: ltr !important;
-	text-align: left !important;
+  direction: ltr !important;
+  text-align: left !important;
 }
 
 /* Prescription numbers, IDs, emails, phone values inside tables */
 html[dir="ltr"] .app-main table .ltr-value,
 html[dir="rtl"] .app-main table .ltr-value {
-	direction: ltr !important;
-	text-align: left !important;
-	unicode-bidi: isolate;
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: isolate;
 }
 
 html[dir="rtl"] .app-main table bdo[dir="ltr"] {
-	direction: ltr !important;
-	unicode-bidi: isolate;
-	display: inline-block;
+  direction: ltr !important;
+  unicode-bidi: isolate;
+  display: inline-block;
 }
 
 /* -------------------------------------------------------
@@ -245,14 +249,14 @@ html[dir="rtl"] .app-main table bdo[dir="ltr"] {
 
 html[dir="ltr"] [role="dialog"],
 html[dir="ltr"] .modal {
-	direction: ltr;
-	text-align: left;
+  direction: ltr;
+  text-align: left;
 }
 
 html[dir="rtl"] [role="dialog"],
 html[dir="rtl"] .modal {
-	direction: rtl;
-	text-align: right;
+  direction: rtl;
+  text-align: right;
 }
 
 /* -------------------------------------------------------
@@ -260,7 +264,7 @@ html[dir="rtl"] .modal {
 ------------------------------------------------------- */
 
 svg {
-	flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 /* -------------------------------------------------------
@@ -271,34 +275,93 @@ svg {
 ------------------------------------------------------- */
 
 html[dir="ltr"] .app-main table.normal-dir-table {
-	direction: ltr !important;
+  direction: ltr !important;
 }
 
 html[dir="rtl"] .app-main table.normal-dir-table {
-	direction: rtl !important;
+  direction: rtl !important;
 }
 
 html[dir="ltr"] .app-main table.normal-dir-table th,
 html[dir="ltr"] .app-main table.normal-dir-table td {
-	direction: ltr !important;
-	text-align: left !important;
+  direction: ltr !important;
+  text-align: left !important;
 }
 
 html[dir="rtl"] .app-main table.normal-dir-table th,
 html[dir="rtl"] .app-main table.normal-dir-table td {
-	direction: rtl !important;
-	text-align: right !important;
+  direction: rtl !important;
+  text-align: right !important;
 }
 
 html[dir="ltr"] .app-main table.normal-dir-table th.text-center,
 html[dir="ltr"] .app-main table.normal-dir-table td.text-center,
 html[dir="rtl"] .app-main table.normal-dir-table th.text-center,
 html[dir="rtl"] .app-main table.normal-dir-table td.text-center {
-	text-align: center !important;
+  text-align: center !important;
 }
 
 html[dir="ltr"] .app-main table.normal-dir-table .ltr-value,
 html[dir="rtl"] .app-main table.normal-dir-table .ltr-value {
-	direction: ltr !important;
-	text-align: left !important;
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* -------------------------------------------------------
+   Ultra-Modern Top Header Icon Motion (Soft motion that ends after 3s)
+------------------------------------------------------- */
+
+@keyframes modernHeaderEntryAndSoftFloat {
+
+  /* Entrance Pop (0% to 25%) */
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-14deg) translateY(10px);
+  }
+
+  15% {
+    opacity: 1;
+    transform: scale(1.18) rotate(6deg) translateY(-3px);
+  }
+
+  25% {
+    transform: scale(0.96) rotate(-2deg) translateY(0px);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg) translateY(0px);
+  }
+
+  /* Gentle Soft Motion (30% to 85%) */
+  48% {
+    transform: scale(1.06) rotate(3deg) translateY(-4px);
+  }
+
+  66% {
+    transform: scale(0.98) rotate(-2deg) translateY(1px);
+  }
+
+  82% {
+    transform: scale(1.03) rotate(1deg) translateY(-2px);
+  }
+
+  /* Complete Stop at Rest (85% to 100%) */
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg) translateY(0px);
+  }
+}
+
+.animate-modern-header-icon {
+  animation: modernHeaderEntryAndSoftFloat 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.modern-icon-badge {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modern-icon-badge:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.25);
 }

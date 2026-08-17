@@ -7,7 +7,7 @@ import {
 	ChevronRight,
 	Filter,
 	Download,
-	Pill,
+	Syringe,
 	Tags,
 } from "lucide-react";
 import { useState } from "react";
@@ -69,8 +69,8 @@ export default function MedicineList({
 
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-3">
-					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12">
-						<Pill className="h-5 w-5 sm:h-6 sm:w-6" />
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-purple-50 text-purple-700 sm:h-12 sm:w-12 shadow-md shadow-purple-500/10 ring-2 ring-purple-500/20 modern-icon-badge transition-all">
+						<Syringe className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
 					</div>
 					<div className="text-right">
 						<h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">{t("medicineManagement")}</h2>
@@ -273,11 +273,10 @@ function Pagination({ currentPage, totalPages, goToPage }) {
 						key={page}
 						type="button"
 						onClick={() => goToPage(page)}
-						className={`h-8 w-8 rounded-lg text-sm font-semibold transition ${
-							currentPage === page
+						className={`h-8 w-8 rounded-lg text-sm font-semibold transition ${currentPage === page
 								? "bg-blue-600 text-white"
 								: "text-slate-700 hover:bg-slate-200"
-						}`}
+							}`}
 					>
 						{page}
 					</button>

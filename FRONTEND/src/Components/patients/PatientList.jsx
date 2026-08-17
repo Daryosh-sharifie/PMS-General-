@@ -111,8 +111,8 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-3">
-					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12">
-						<Users className="h-5 w-5 sm:h-6 sm:w-6" />
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12 shadow-md shadow-blue-500/10 ring-2 ring-blue-500/20 modern-icon-badge transition-all">
+						<Users className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
 					</div>
 
 					<div className={isRtl ? "text-right" : "text-left"}>
@@ -122,8 +122,8 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 						<p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
 							{patientsTotalRecords > 0
 								? `${t("total")}: ${Number(patientsTotalRecords).toLocaleString(
-										isRtl ? "fa-IR" : "en-US"
-								  )} ${t("patientsCount")}`
+									isRtl ? "fa-IR" : "en-US"
+								)} ${t("patientsCount")}`
 								: t("managePatientsSubtitle")}
 						</p>
 					</div>
@@ -157,15 +157,13 @@ export default function PatientList({ onAddPatient, onViewPatient }) {
 				<CardContent className="p-3 sm:p-4">
 					<div className="relative">
 						<Search
-							className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${
-								isRtl ? "right-3" : "left-3"
-							}`}
+							className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${isRtl ? "right-3" : "left-3"
+								}`}
 						/>
 
 						<input
-							className={`${inputClasses} ${
-								isRtl ? "pr-10 text-right" : "pl-10 text-left"
-							}`}
+							className={`${inputClasses} ${isRtl ? "pr-10 text-right" : "pl-10 text-left"
+								}`}
 							placeholder={t("searchPatientsPlaceholder")}
 							value={patientSearch}
 							onChange={(event) => handleSearchChange(event.target.value)}
@@ -358,11 +356,10 @@ function Pagination({ currentPage, totalPages = 1, goToPage, isRtl }) {
 							<button
 								type="button"
 								onClick={() => goToPage(page)}
-								className={`h-8 min-w-8 rounded-lg px-2 text-sm font-semibold transition ${
-									currentPage === page
-										? "bg-blue-600 text-white"
-										: "text-slate-700 hover:bg-slate-200"
-								}`}
+								className={`h-8 min-w-8 rounded-lg px-2 text-sm font-semibold transition ${currentPage === page
+									? "bg-blue-600 text-white"
+									: "text-slate-700 hover:bg-slate-200"
+									}`}
 							>
 								{Number(page).toLocaleString(isRtl ? "fa-IR" : "en-US")}
 							</button>
@@ -389,9 +386,8 @@ function DeleteModal({ open, onCancel, onConfirm, t, isRtl }) {
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
 			<div
-				className={`w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl ${
-					isRtl ? "text-right" : "text-left"
-				}`}
+				className={`w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl ${isRtl ? "text-right" : "text-left"
+					}`}
 				dir={isRtl ? "rtl" : "ltr"}
 			>
 				<h3 className="mb-2 text-lg font-bold text-slate-900">

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Plus, FlaskConical } from "lucide-react";
 import { CardContent } from "../ui/Card";
 import Message from "../ui/Message";
 import { labTestApi } from "../../api/labTestApi";
@@ -76,16 +76,18 @@ export default function LabReportsPage() {
 	return (
 		<div className="space-y-6 p-4 md:p-6">
 			<div className="flex items-center justify-between gap-3">
-				<div className="flex items-start gap-3">
-					
+				<div className="flex items-center gap-3">
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700 sm:h-12 sm:w-12 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-500/20 modern-icon-badge transition-all">
+						<FlaskConical className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
+					</div>
 
 					<div>
-					<h2 className="text-right text-3xl font-bold text-slate-900">
-						{t("labReports")}
-					</h2>
-					<p className="text-right text-sm text-slate-500">
-						{t("labReportsSubtitle")}
-					</p>
+						<h2 className="text-right text-3xl font-bold text-slate-900">
+							{t("labReports")}
+						</h2>
+						<p className="text-right text-sm text-slate-500">
+							{t("labReportsSubtitle")}
+						</p>
 					</div>
 				</div>
 
@@ -102,31 +104,31 @@ export default function LabReportsPage() {
 						{t("addLabTest")}
 					</button>
 				</div>
-				
+
 			</div>
 
-				<CardContent>
-					<LabOrderList
-						orders={currentOrders}
-						loading={loading}
-						error={error}
-						searchTerm={searchTerm}
-						setSearchTerm={(value) => {
-							setSearchTerm(value);
-							setCurrentPage(1);
-						}}
-						statusFilter={statusFilter}
-						setStatusFilter={(value) => {
-							setStatusFilter(value);
-							setCurrentPage(1);
-						}}
-						currentPage={currentPage}
-						totalPages={totalPages}
-						totalRecords={totalRecords}
-						onPageChange={handlePageChange}
-						onOpenOrder={(id) => navigate(`/lab-reports/${id}`)}
-					/>
-				</CardContent>
+			<CardContent>
+				<LabOrderList
+					orders={currentOrders}
+					loading={loading}
+					error={error}
+					searchTerm={searchTerm}
+					setSearchTerm={(value) => {
+						setSearchTerm(value);
+						setCurrentPage(1);
+					}}
+					statusFilter={statusFilter}
+					setStatusFilter={(value) => {
+						setStatusFilter(value);
+						setCurrentPage(1);
+					}}
+					currentPage={currentPage}
+					totalPages={totalPages}
+					totalRecords={totalRecords}
+					onPageChange={handlePageChange}
+					onOpenOrder={(id) => navigate(`/lab-reports/${id}`)}
+				/>
+			</CardContent>
 
 			{!loading && !error && filteredOrders.length === 0 && (
 				<Message

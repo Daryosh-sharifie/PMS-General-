@@ -23,6 +23,7 @@ import { buttonPrimary } from "../../constants/styles";
 import { APP_SETTINGS_BASE } from "../../api/appSettingApi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
+import FullScreenButton from "./FullScreenButton";
 
 import { getShortcutTooltip } from "../../utils/shortcutManager";
 
@@ -184,6 +185,8 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 						</h1>
 					</div>
 				</div>
+
+				<FullScreenButton variant="compact" />
 			</div>
 
 			{/* Mobile Drawer Overlay Backdrop */}
@@ -258,8 +261,8 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 					type="button"
 					onClick={toggleCollapse}
 					className={`group hidden md:flex absolute top-6 z-30 items-center justify-center border border-slate-200 bg-white text-slate-500 shadow-[0_4px_14px_rgba(15,23,42,0.12)] transition-all duration-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${isRtl
-							? "-left-3 h-10 w-6 rounded-l-full rounded-r-md border-r-0"
-							: "-right-3 h-10 w-6 rounded-r-full rounded-l-md border-l-0"
+						? "-left-3 h-10 w-6 rounded-l-full rounded-r-md border-r-0"
+						: "-right-3 h-10 w-6 rounded-r-full rounded-l-md border-l-0"
 						}`}
 					title={collapseLabel}
 					aria-label={collapseLabel}
@@ -282,8 +285,8 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 								onClick={() => go(item.id)}
 								title={!showText ? item.label : undefined}
 								className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition ${isActive
-										? "bg-blue-50 text-blue-700 shadow-xs"
-										: "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+									? "bg-blue-50 text-blue-700 shadow-xs"
+									: "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
 									} ${!showText
 										? "justify-center"
 										: isRtl
@@ -300,14 +303,17 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 					})}
 				</nav>
 
-				{/* Sidebar Footer (User Profile & Logout) */}
+				{/* Sidebar Footer (FullScreen, User Profile & Logout) */}
 				<div className="border-t border-slate-200 p-3">
+					<div className="mb-3">
+						<FullScreenButton variant="sidebar" showLabel={!isCollapsed || isMobileOpen} />
+					</div>
 					<div
 						className={`mb-3 flex items-center gap-3 ${!isCollapsed || isMobileOpen
-								? isRtl
-									? "flex-row-reverse text-right"
-									: "text-left"
-								: "justify-center"
+							? isRtl
+								? "flex-row-reverse text-right"
+								: "text-left"
+							: "justify-center"
 							}`}
 					>
 						{currentUser?.photoPreview || currentUser?.avatar ? (

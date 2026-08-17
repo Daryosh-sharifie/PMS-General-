@@ -371,7 +371,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 
 	useEffect(() => {
 		if (fetchUsers && (!users || users.length === 0)) {
-			fetchUsers().catch(() => {});
+			fetchUsers().catch(() => { });
 		}
 	}, [fetchUsers, users]);
 
@@ -534,8 +534,8 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 			<div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
 				<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 					<div className="flex items-center gap-3.5">
-						<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
-							<BarChart3 className="h-6 w-6" />
+						<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-500/20 modern-icon-badge transition-all">
+							<BarChart3 className="h-6 w-6 animate-modern-header-icon" />
 						</div>
 
 						<div>
@@ -660,9 +660,8 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 							</label>
 							<div className="relative">
 								<input
-									className={`${inputClasses} ${
-										isRtl ? "pr-10 pl-4 text-right" : "pl-10 pr-4 text-left"
-									} text-xs sm:text-sm`}
+									className={`${inputClasses} ${isRtl ? "pr-10 pl-4 text-right" : "pl-10 pr-4 text-left"
+										} text-xs sm:text-sm`}
 									placeholder={t("searchPlaceholderReports")}
 									value={searchQuery}
 									onChange={(e) => {
@@ -671,9 +670,8 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 									}}
 								/>
 								<Search
-									className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${
-										isRtl ? "right-3" : "left-3"
-									}`}
+									className={`absolute top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 ${isRtl ? "right-3" : "left-3"
+										}`}
 								/>
 							</div>
 						</div>
