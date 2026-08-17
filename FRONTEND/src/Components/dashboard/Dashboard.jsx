@@ -418,7 +418,7 @@ export default function Dashboard({
 				<div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
 					<div className="text-right">
 						<div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 shadow-sm ring-1 ring-blue-500/20 modern-icon-badge">
-							<Activity className="h-3.5 w-3.5 animate-modern-header-icon" />
+							<Activity className="h-3.5 w-3.5 gentle-header-dashboard" />
 							{t("liveOverview")}
 						</div>
 

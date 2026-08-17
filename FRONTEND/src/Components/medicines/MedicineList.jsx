@@ -70,7 +70,7 @@ export default function MedicineList({
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-3">
 					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-purple-50 text-purple-700 sm:h-12 sm:w-12 shadow-md shadow-purple-500/10 ring-2 ring-purple-500/20 modern-icon-badge transition-all">
-						<Syringe className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
+						<Syringe className="h-5 w-5 sm:h-6 sm:w-6 gentle-header-medicines" />
 					</div>
 					<div className="text-right">
 						<h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">{t("medicineManagement")}</h2>

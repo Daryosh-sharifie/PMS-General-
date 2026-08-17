@@ -535,7 +535,7 @@ export default function ReportsPage({ currentUser, onViewPrescription }) {
 				<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 					<div className="flex items-center gap-3.5">
 						<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-500/20 modern-icon-badge transition-all">
-							<BarChart3 className="h-6 w-6 animate-modern-header-icon" />
+							<BarChart3 className="h-6 w-6 gentle-header-reports" />
 						</div>
 
 						<div>

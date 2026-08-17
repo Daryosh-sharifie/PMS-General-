@@ -307,61 +307,248 @@ html[dir="rtl"] .app-main table.normal-dir-table .ltr-value {
   text-align: left !important;
 }
 
-/* -------------------------------------------------------
-   Ultra-Modern Top Header Icon Motion (Soft motion that ends after 3s)
-------------------------------------------------------- */
-
-@keyframes modernHeaderEntryAndSoftFloat {
-
-  /* Entrance Pop (0% to 25%) */
-  0% {
-    opacity: 0;
-    transform: scale(0.4) rotate(-14deg) translateY(10px);
-  }
-
-  15% {
-    opacity: 1;
-    transform: scale(1.18) rotate(6deg) translateY(-3px);
-  }
-
-  25% {
-    transform: scale(0.96) rotate(-2deg) translateY(0px);
-  }
-
-  30% {
-    opacity: 1;
-    transform: scale(1) rotate(0deg) translateY(0px);
-  }
-
-  /* Gentle Soft Motion (30% to 85%) */
-  48% {
-    transform: scale(1.06) rotate(3deg) translateY(-4px);
-  }
-
-  66% {
-    transform: scale(0.98) rotate(-2deg) translateY(1px);
-  }
-
-  82% {
-    transform: scale(1.03) rotate(1deg) translateY(-2px);
-  }
-
-  /* Complete Stop at Rest (85% to 100%) */
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(0deg) translateY(0px);
-  }
-}
-
-.animate-modern-header-icon {
-  animation: modernHeaderEntryAndSoftFloat 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
 .modern-icon-badge {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease-in-out;
 }
 
 .modern-icon-badge:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.25);
+  transform: scale(1.05);
+}
+
+/* -------------------------------------------------------
+   Ultra-Gentle 2-Second Distinct Tab & Header Entrance Motions
+------------------------------------------------------- */
+
+/* 1. Dashboard - Soft Heartbeat Pulse (2s) */
+@keyframes gentleDashboard2s {
+  0% {
+    opacity: 0.2;
+    transform: translateY(6px) scale(0.9);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.08);
+  }
+
+  75% {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.gentle-header-dashboard {
+  animation: gentleDashboard2s 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 2. Patients - Gentle Friendly Wave Tilt (2s) */
+@keyframes gentlePatients2s {
+  0% {
+    opacity: 0.2;
+    transform: translateY(6px) scale(0.92) rotate(-8deg);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.08) rotate(4deg);
+  }
+
+  75% {
+    transform: translateY(1px) scale(0.99) rotate(-1deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.gentle-header-patients {
+  animation: gentlePatients2s 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 3. Prescriptions - Gentle Page Unfold (2s) */
+@keyframes gentlePrescriptions2s {
+  0% {
+    opacity: 0.2;
+    transform: translateY(8px) scale(0.9);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.08);
+  }
+
+  75% {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.gentle-header-prescriptions {
+  animation: gentlePrescriptions2s 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 4. Medicines - Gentle Syringe Angle Float (2s) */
+@keyframes gentleMedicines2s {
+  0% {
+    opacity: 0.2;
+    transform: translateY(6px) scale(0.92) rotate(12deg);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.08) rotate(-4deg);
+  }
+
+  75% {
+    transform: translateY(1px) scale(0.99) rotate(1deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.gentle-header-medicines {
+  animation: gentleMedicines2s 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 5. Lab Reports - Gentle Flask Swirl & Bloom (2s) */
+@keyframes gentleLab2s {
+  0% {
+    opacity: 0.2;
+    transform: translateY(6px) scale(0.9) rotate(-14deg);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.08) rotate(5deg);
+  }
+
+  75% {
+    transform: translateY(1px) scale(0.99) rotate(-1deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.gentle-header-lab {
+  animation: gentleLab2s 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 6. Reports - Gentle Bar Growth Rise (2s) */
+@keyframes gentleReports2s {
+  0% {
+    opacity: 0.2;
+    transform: translateY(8px) scaleY(0.7);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-3px) scaleY(1.08);
+  }
+
+  75% {
+    transform: translateY(1px) scaleY(0.99);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.gentle-header-reports {
+  animation: gentleReports2s 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 7. Users - Gentle Gear Turn (2s) */
+@keyframes gentleUsers2s {
+  0% {
+    opacity: 0.2;
+    transform: translateY(6px) scale(0.92) rotate(-60deg);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.08) rotate(12deg);
+  }
+
+  75% {
+    transform: translateY(1px) scale(0.99) rotate(-2deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.gentle-header-users {
+  animation: gentleUsers2s 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 8. Activity Logs - Gentle ECG Pulse (2s) */
+@keyframes gentleActivity2s {
+  0% {
+    opacity: 0.2;
+    transform: translateY(6px) scale(0.9);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.1) rotate(3deg);
+  }
+
+  75% {
+    transform: translateY(1px) scale(0.99) rotate(-1deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.gentle-header-activity {
+  animation: gentleActivity2s 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 9. Settings - Gentle Gear Nudge & Turn (2s) */
+@keyframes gentleSettings2s {
+  0% {
+    opacity: 0.2;
+    transform: translateY(6px) scale(0.92) rotate(90deg);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.08) rotate(-8deg);
+  }
+
+  75% {
+    transform: translateY(1px) scale(0.99) rotate(2deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+.gentle-header-settings {
+  animation: gentleSettings2s 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

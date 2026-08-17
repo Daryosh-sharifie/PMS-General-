@@ -130,7 +130,7 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 					<div className="flex items-center justify-between gap-3">
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700 sm:h-12 sm:w-12 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-500/20 modern-icon-badge transition-all">
-								<FlaskConical className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
+								<FlaskConical className="h-5 w-5 sm:h-6 sm:w-6 gentle-header-lab" />
 							</div>
 
 							<div className={isRtl ? "text-right" : "text-left"}>

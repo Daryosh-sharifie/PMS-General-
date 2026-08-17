@@ -132,22 +132,26 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 
 	const currentPageId = getCurrentPageId();
 
+	const getGentleMotionClass = (id) => {
+		switch (id) {
+			case "dashboard": return "gentle-header-dashboard";
+			case "patients": return "gentle-header-patients";
+			case "prescriptions": return "gentle-header-prescriptions";
+			case "medicines": return "gentle-header-medicines";
+			case "lab-reports": return "gentle-header-lab";
+			case "reports": return "gentle-header-reports";
+			case "users": return "gentle-header-users";
+			case "activity": return "gentle-header-activity";
+			case "settings": return "gentle-header-settings";
+			default: return "gentle-header-dashboard";
+		}
+	};
+
 	const visibleNavigation = navigation.filter((item) => {
 		if (item.adminOnly && userRole !== "admin") return false;
 		if (item.hideForRoles?.includes(userRole)) return false;
 		return true;
 	});
-
-	// Collapse icon: panel-style toggle that matches sidebar side and state
-	const CollapseIcon = isRtl
-		? isCollapsed
-			? PanelRightOpen
-			: PanelRightClose
-		: isCollapsed
-			? PanelLeftOpen
-			: PanelLeftClose;
-
-	const collapseLabel = isCollapsed ? t("expand") || "Expand" : t("collapse") || "Collapse";
 
 	return (
 		<>
@@ -192,56 +196,43 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 			{/* Mobile Drawer Overlay Backdrop */}
 			{isMobileOpen && (
 				<div
-					className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm print:hidden md:hidden"
+					className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs print:hidden md:hidden"
 					onClick={() => setIsMobileOpen(false)}
 				/>
 			)}
 
-			{/* Sidebar Component (Desktop & Mobile Drawer) */}
+			{/* Sidebar Container */}
 			<aside
 				dir={isRtl ? "rtl" : "ltr"}
-				className={`relative fixed inset-y-0 z-50 flex h-full flex-col bg-white transition-all duration-300 print:hidden md:static md:z-auto md:h-screen md:shrink-0 ${isRtl ? "right-0 border-l border-slate-200" : "left-0 border-r border-slate-200"
-					} ${
-					/* Mobile drawer placement */
-					isMobileOpen
-						? "translate-x-0 w-72"
-						: isRtl
-							? "translate-x-full md:translate-x-0"
-							: "-translate-x-full md:translate-x-0"
-					} ${
-					/* Desktop width */
-					isCollapsed ? "md:w-20" : "md:w-72"
+				className={`fixed top-0 z-50 flex h-full flex-col border-slate-200 bg-white transition-all duration-300 print:hidden md:static md:z-auto ${isRtl ? "border-l" : "border-r"
+					} ${isCollapsed ? "w-20" : "w-64"} ${isMobileOpen
+						? "left-0 right-0 w-64 shadow-2xl"
+						: "max-md:-translate-x-full md:translate-x-0"
 					}`}
 			>
-				{/* Sidebar Header */}
-				<div className="relative border-b border-slate-200 p-4">
-					{/* Close button for Mobile Drawer */}
-					<button
-						type="button"
-						onClick={() => setIsMobileOpen(false)}
-						className="absolute top-4 right-4 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 md:hidden"
-						aria-label="Close menu"
-					>
-						<X className="h-5 w-5" />
-					</button>
-
+				{/* Desktop Header / Logo */}
+				<div className="hidden h-20 items-center border-b border-slate-200 px-4 md:flex">
 					<div
-						className={`flex items-center gap-3 ${isCollapsed ? "md:justify-center" : isRtl ? "justify-end text-right" : "justify-start text-left"
+						className={`flex w-full items-center gap-3 ${isCollapsed
+							? "justify-center"
+							: isRtl
+								? "flex-row-reverse text-right"
+								: "text-left"
 							}`}
 					>
-						<div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-blue-50 text-blue-700 shadow-sm">
+						<div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-blue-50 text-blue-700">
 							{hospitalSettings?.logoPreview || hospitalSettings?.logo ? (
 								<img
 									src={hospitalSettings.logoPreview || resolveAsset(hospitalSettings.logo)}
 									alt={t("hospitalLogo")}
-									className="h-full w-full object-contain p-1.5"
+									className="h-full w-full object-contain p-1"
 								/>
 							) : (
 								<Hospital className="h-6 w-6" />
 							)}
 						</div>
 
-						{(!isCollapsed || isMobileOpen) && (
+						{!isCollapsed && (
 							<div className="min-w-0 flex-1">
 								<h1 className="truncate text-base font-bold text-slate-950">
 									{hospitalSettings?.hospitalName ||
@@ -256,21 +247,6 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 					</div>
 				</div>
 
-				{/* Desktop collapse handle — top edge of sidebar */}
-				<button
-					type="button"
-					onClick={toggleCollapse}
-					className={`group hidden md:flex absolute top-6 z-30 items-center justify-center border border-slate-200 bg-white text-slate-500 shadow-[0_4px_14px_rgba(15,23,42,0.12)] transition-all duration-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${isRtl
-						? "-left-3 h-10 w-6 rounded-l-full rounded-r-md border-r-0"
-						: "-right-3 h-10 w-6 rounded-r-full rounded-l-md border-l-0"
-						}`}
-					title={collapseLabel}
-					aria-label={collapseLabel}
-					aria-expanded={!isCollapsed}
-				>
-					<CollapseIcon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-				</button>
-
 				{/* Navigation Links */}
 				<nav className="flex-1 space-y-1.5 overflow-y-auto p-3">
 					{visibleNavigation.map((item) => {
@@ -284,8 +260,8 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 								type="button"
 								onClick={() => go(item.id)}
 								title={!showText ? item.label : undefined}
-								className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition ${isActive
-									? "bg-blue-50 text-blue-700 shadow-xs"
+								className={`group flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-semibold transition-all duration-200 active:scale-95 ${isActive
+									? "bg-blue-50 text-blue-700 shadow-xs ring-1 ring-blue-100 font-bold"
 									: "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
 									} ${!showText
 										? "justify-center"
@@ -294,7 +270,16 @@ export default function Sidebar({ currentUser, onLogout, hospitalSettings }) {
 											: "text-left"
 									}`}
 							>
-								<Icon className="h-5 w-5 shrink-0" />
+								<div className="flex h-5 w-5 shrink-0 items-center justify-center">
+									<Icon
+										key={isActive ? `active-${item.id}` : `inactive-${item.id}`}
+										className={`h-5 w-5 shrink-0 transition-transform duration-200 ${
+											isActive
+												? `${getGentleMotionClass(item.id)} text-blue-700`
+												: "group-hover:scale-125 group-hover:rotate-6 text-slate-500 group-hover:text-slate-900"
+										}`}
+									/>
+								</div>
 								{showText && (
 									<span className="min-w-0 flex-1 truncate">{item.label}</span>
 								)}
