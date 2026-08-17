@@ -304,8 +304,8 @@ export default function Settings({
 					className="flex items-center gap-3"
 					style={startFlexStyle()}
 				>
-					<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-						<SettingsIcon className="h-6 w-6" />
+					<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 shadow-md shadow-blue-500/10 ring-2 ring-blue-500/20 modern-icon-badge transition-all">
+						<SettingsIcon className="h-6 w-6 animate-modern-header-icon" />
 					</div>
 
 					<div className={dir.text}>
@@ -335,11 +335,10 @@ export default function Settings({
 									key={tab.id}
 									type="button"
 									onClick={() => setActiveTab(tab.id)}
-									className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${
-										activeTab === tab.id
+									className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${activeTab === tab.id
 											? "bg-blue-600 text-white shadow-sm"
 											: "bg-slate-50 text-slate-600 hover:bg-slate-100"
-									} ${dir.buttonRow}`}
+										} ${dir.buttonRow}`}
 								>
 									<Icon className="h-4 w-4" />
 									{tab.label}
@@ -511,7 +510,7 @@ function ProfileTab({
 						label={t("role")}
 						value={t(roleKey)}
 						readOnly
-						onChange={() => {}}
+						onChange={() => { }}
 						isRtl={isRtl}
 					/>
 				</div>
@@ -806,11 +805,10 @@ function BackupTab({ showMessage, t, isRtl }) {
 
 					{restoreResult && (
 						<div
-							className={`rounded-xl border p-4 text-sm ${
-								restoreResult.ok
+							className={`rounded-xl border p-4 text-sm ${restoreResult.ok
 									? "border-green-200 bg-green-50 text-green-800"
 									: "border-red-200 bg-red-50 text-red-800"
-							} ${dir.text}`}
+								} ${dir.text}`}
 						>
 							<p className="font-bold">{restoreResult.msg}</p>
 
@@ -861,9 +859,8 @@ function FormInput({
 			</label>
 			<input
 				type={type}
-				className={`${inputClasses} w-full ${
-					forceLtrValue ? "ltr-value text-left" : dir.text
-				} ${readOnly ? "bg-slate-100 text-slate-500" : ""}`}
+				className={`${inputClasses} w-full ${forceLtrValue ? "ltr-value text-left" : dir.text
+					} ${readOnly ? "bg-slate-100 text-slate-500" : ""}`}
 				value={value || ""}
 				placeholder={placeholder}
 				onChange={(event) => onChange(event.target.value)}
@@ -884,9 +881,8 @@ function Message({ type, text, isRtl }) {
 
 	return (
 		<div
-			className={`flex items-center gap-2 rounded-xl border p-3 text-sm font-semibold ${classes} ${
-				isRtl ? "flex-row-reverse text-right" : "text-left"
-			}`}
+			className={`flex items-center gap-2 rounded-xl border p-3 text-sm font-semibold ${classes} ${isRtl ? "flex-row-reverse text-right" : "text-left"
+				}`}
 		>
 			<Icon className="h-5 w-5" />
 			<span>{text}</span>

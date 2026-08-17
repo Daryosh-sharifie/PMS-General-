@@ -9,6 +9,7 @@ import {
 	ChevronRight,
 	Search,
 	Users,
+	UserCog,
 	ShieldCheck,
 } from "lucide-react";
 import { Card, CardContent } from "../ui/Card";
@@ -162,8 +163,8 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 			<div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
 				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<div className="flex items-center gap-3">
-						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12">
-							<Users className="h-5 w-5 sm:h-6 sm:w-6" />
+						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-teal-50 text-teal-700 sm:h-12 sm:w-12 shadow-md shadow-teal-500/10 ring-2 ring-teal-500/20 modern-icon-badge transition-all">
+							<UserCog className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
 						</div>
 
 						<div>
@@ -273,8 +274,8 @@ export default function UserList({ users = [], onRemoveUser, onRefetch }) {
 														<button
 															type="button"
 															className={`${buttonGhost} px-2 py-1 ${isOnlyAdmin
-																	? "cursor-not-allowed opacity-50"
-																	: "hover:text-red-600"
+																? "cursor-not-allowed opacity-50"
+																: "hover:text-red-600"
 																}`}
 															title={
 																isOnlyAdmin
@@ -408,8 +409,8 @@ function Pagination({ currentPage, totalPages, goToPage }) {
 								type="button"
 								onClick={() => goToPage(page)}
 								className={`min-w-[2rem] rounded-lg px-3 py-1 text-sm font-semibold ${currentPage === page
-										? "bg-blue-600 text-white"
-										: "border border-slate-300 text-slate-700 hover:bg-slate-50"
+									? "bg-blue-600 text-white"
+									: "border border-slate-300 text-slate-700 hover:bg-slate-50"
 									}`}
 							>
 								{page}

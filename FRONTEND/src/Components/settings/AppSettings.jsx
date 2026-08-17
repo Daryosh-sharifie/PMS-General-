@@ -362,6 +362,12 @@ function FormInput({
 }) {
 	const dir = directionClasses(isRtl);
 
+	const paddingClasses = forceLtrValue
+		? Icon
+			? "ltr-value pl-10 pr-10 text-left"
+			: "ltr-value pl-3.5 pr-3.5 text-left"
+		: dir.inputPadding;
+
 	return (
 		<div>
 			<label className={`mb-1.5 block text-xs font-bold text-slate-700 ${dir.text}`}>
@@ -370,13 +376,11 @@ function FormInput({
 
 			<div className="relative">
 				{Icon && (
-					<Icon className={`absolute ${dir.inputIcon} top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400`} />
+					<Icon className={`absolute ${dir.inputIcon} top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none z-10`} />
 				)}
 				<input
 					type="text"
-					className={`${inputClasses} w-full ${
-						forceLtrValue ? "ltr-value pl-10 pr-3 text-left" : dir.inputPadding
-					}`}
+					className={`${inputClasses} w-full ${paddingClasses}`}
 					value={value || ""}
 					placeholder={placeholder}
 					onChange={(event) => onChange(event.target.value)}
@@ -398,9 +402,8 @@ function Message({ type, text, isRtl }) {
 
 	return (
 		<div
-			className={`flex items-center gap-2 rounded-xl border p-3 text-sm font-semibold ${classes} ${
-				isRtl ? "flex-row-reverse text-right" : "text-left"
-			}`}
+			className={`flex items-center gap-2 rounded-xl border p-3 text-sm font-semibold ${classes} ${isRtl ? "flex-row-reverse text-right" : "text-left"
+				}`}
 		>
 			<Icon className="h-5 w-5" />
 			<span>{text}</span>

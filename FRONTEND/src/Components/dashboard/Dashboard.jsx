@@ -24,6 +24,7 @@ import medicineApi from "../../api/medicineApi";
 import { labOrderApi } from "../../api/labOrderApi";
 import { useLanguage } from "../../i18n/LanguageContext";
 import LanguageSwitcher from "../layout/LanguageSwitcher";
+import FullScreenButton from "../layout/FullScreenButton";
 import { getShortcutTooltip } from "../../utils/shortcutManager";
 
 const PERIOD_FILTERS = [
@@ -416,8 +417,8 @@ export default function Dashboard({
 			<div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
 				<div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
 					<div className="text-right">
-						<div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
-							<Activity className="h-3.5 w-3.5" />
+						<div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 shadow-sm ring-1 ring-blue-500/20 modern-icon-badge">
+							<Activity className="h-3.5 w-3.5 animate-modern-header-icon" />
 							{t("liveOverview")}
 						</div>
 
@@ -431,8 +432,9 @@ export default function Dashboard({
 								: t("dashboardSubtitle")}
 						</p>
 					</div>
-					
-					<div className="flex items-center gap-2">
+
+					<div className="flex flex-wrap items-center gap-2">
+						<FullScreenButton showLabel={true} />
 						<LanguageSwitcher />
 
 						<div className="relative shrink-0" ref={filterRef}>
@@ -448,17 +450,15 @@ export default function Dashboard({
 									)}
 								</span>
 								<ChevronDown
-									className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
-										isFilterOpen ? "rotate-180" : ""
-									}`}
+									className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isFilterOpen ? "rotate-180" : ""
+										}`}
 								/>
 							</button>
 
 							{isFilterOpen && (
 								<div
-									className={`absolute top-full z-30 mt-2 w-44 rounded-2xl border border-slate-100 bg-white p-1.5 shadow-xl ring-1 ring-black/5 ${
-										isRtl ? "left-0" : "right-0"
-									}`}
+									className={`absolute top-full z-30 mt-2 w-44 rounded-2xl border border-slate-100 bg-white p-1.5 shadow-xl ring-1 ring-black/5 ${isRtl ? "left-0" : "right-0"
+										}`}
 								>
 									{PERIOD_FILTERS.map((filter) => {
 										const isSelected = periodFilter === filter.value;
@@ -470,11 +470,10 @@ export default function Dashboard({
 													setPeriodFilter(filter.value);
 													setIsFilterOpen(false);
 												}}
-												className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold transition sm:text-sm ${
-													isSelected
+												className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold transition sm:text-sm ${isSelected
 														? "bg-blue-50 text-blue-700 font-bold"
 														: "text-slate-700 hover:bg-slate-50"
-												}`}
+													}`}
 											>
 												<span>{t(filter.labelKey)}</span>
 												{isSelected && <Check className="h-4 w-4 text-blue-600" />}
@@ -502,9 +501,8 @@ export default function Dashboard({
 			)}
 
 			<div
-				className={`grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-6 ${
-					loading ? "pointer-events-none opacity-50" : ""
-				}`}
+				className={`grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-6 ${loading ? "pointer-events-none opacity-50" : ""
+					}`}
 			>
 				<StatCard
 					icon={Users}
@@ -580,9 +578,8 @@ export default function Dashboard({
 			</div>
 
 			<div
-				className={`grid grid-cols-1 items-start gap-6 xl:grid-cols-3 ${
-					loading ? "pointer-events-none opacity-50" : ""
-				}`}
+				className={`grid grid-cols-1 items-start gap-6 xl:grid-cols-3 ${loading ? "pointer-events-none opacity-50" : ""
+					}`}
 			>
 				<RecentPrescriptions
 					prescriptions={recentPrescriptions}

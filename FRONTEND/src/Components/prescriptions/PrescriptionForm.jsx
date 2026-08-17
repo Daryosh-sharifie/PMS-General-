@@ -1,11 +1,11 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Printer } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useStore from "../../store/useStore.jsx";
 import { printPrescription } from "./PrescriptionPrint";
 import { labOrderApi } from "../../api/labOrderApi";
 import { labOrderItemApi } from "../../api/labOrderItemApi";
 import { useLanguage } from "../../i18n/LanguageContext";
-import { matchesShortcut, getShortcutById } from "../../utils/shortcutManager";
+import { matchesShortcut, getShortcutById, formatShortcut } from "../../utils/shortcutManager";
 
 import PrescriptionTopBar from "./PrescriptionTopBar";
 import PatientSelector from "./PatientSelector";
@@ -628,6 +628,16 @@ export default function PrescriptionForm({
 				handleAddPage={handleAddPage}
 				handleRemovePage={handleRemovePage}
 			/>
+
+			{/* Shortcut Print Hint at Bottom of Prescription */}
+			<div className="mt-4 flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 text-xs font-semibold text-slate-600 shadow-2xs print:hidden">
+				<Printer className="h-4 w-4 text-blue-600 shrink-0" />
+				<span>
+					{isRtl
+						? `برای چاپ نسخه: ${formatShortcut(getShortcutById("printPrescription")) || "Ctrl + Space"}`
+						: `For printing prescription: ${formatShortcut(getShortcutById("printPrescription")) || "Ctrl + Space"}`}
+				</span>
+			</div>
 		</div>
 	);
 }

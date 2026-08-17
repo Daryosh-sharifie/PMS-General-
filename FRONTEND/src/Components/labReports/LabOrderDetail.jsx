@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye } from "lucide-react";
+import { Eye, FlaskConical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "../ui/Card";
 import Message from "../ui/Message";
@@ -128,11 +128,17 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 			<div dir={isRtl ? "rtl" : "ltr"} className="h-full min-h-0 overflow-y-auto bg-slate-50 p-4 md:p-6 print:hidden">
 				<div className="mx-auto max-w-6xl space-y-6">
 					<div className="flex items-center justify-between gap-3">
-						<div className={isRtl ? "text-right" : "text-left"}>
-							<h2 className="text-2xl font-bold text-slate-900">
-								{getLabOrderDisplayName(order)}
-							</h2>
-							<p className="text-sm text-slate-500">{t("labOrderDetail")}</p>
+						<div className="flex items-center gap-3">
+							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-700 sm:h-12 sm:w-12 shadow-md shadow-indigo-500/10 ring-2 ring-indigo-500/20 modern-icon-badge transition-all">
+								<FlaskConical className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
+							</div>
+
+							<div className={isRtl ? "text-right" : "text-left"}>
+								<h2 className="text-2xl font-bold text-slate-900">
+									{getLabOrderDisplayName(order)}
+								</h2>
+								<p className="text-sm text-slate-500">{t("labOrderDetail")}</p>
+							</div>
 						</div>
 
 						<button
@@ -146,13 +152,12 @@ export default function LabOrderDetail({ order, loading, error, onReload }) {
 
 					{message && (
 						<div
-							className={`rounded-xl border p-4 text-sm ${
-								messageType === "success"
+							className={`rounded-xl border p-4 text-sm ${messageType === "success"
 									? "border-emerald-200 bg-emerald-50 text-emerald-800"
 									: messageType === "error"
-									? "border-rose-200 bg-rose-50 text-rose-800"
-									: "border-blue-200 bg-blue-50 text-blue-800"
-							}`}
+										? "border-rose-200 bg-rose-50 text-rose-800"
+										: "border-blue-200 bg-blue-50 text-blue-800"
+								}`}
 						>
 							{message}
 						</div>

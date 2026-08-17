@@ -181,8 +181,8 @@ export default function PrescriptionList({
 		<div className="space-y-5 p-3 sm:p-6">
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-3">
-					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 sm:h-12 sm:w-12">
-						<FileText className="h-5 w-5 sm:h-6 sm:w-6" />
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 sm:h-12 sm:w-12 shadow-md shadow-emerald-500/10 ring-2 ring-emerald-500/20 modern-icon-badge transition-all">
+						<FileText className="h-5 w-5 sm:h-6 sm:w-6 animate-modern-header-icon" />
 					</div>
 
 					<div>
@@ -468,8 +468,8 @@ export default function PrescriptionList({
 												type="button"
 												onClick={() => goToPage(page)}
 												className={`min-w-[2rem] rounded-lg px-3 py-1 text-sm font-semibold ${currentPage === page
-														? "bg-blue-600 text-white"
-														: "border border-slate-300 text-slate-700 hover:bg-slate-50"
+													? "bg-blue-600 text-white"
+													: "border border-slate-300 text-slate-700 hover:bg-slate-50"
 													}`}
 											>
 												{page}

@@ -617,9 +617,9 @@ export default function ActivityLog() {
 
 			<div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 				<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-					<div className={`flex items-center gap-4 ${isRtl ? "flex-row-reverse text-right" : "text-left"}`}>
-						<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-sm">
-							<Clock className="h-6 w-6" />
+					<div className="flex items-center gap-4">
+						<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 shadow-md shadow-blue-500/10 ring-2 ring-blue-500/20 modern-icon-badge transition-all">
+							<Activity className="h-6 w-6 animate-modern-header-icon" />
 						</div>
 						<div>
 							<h2 className="text-2xl font-bold text-slate-950">{t("activityLogs")}</h2>
@@ -674,9 +674,8 @@ export default function ActivityLog() {
 						style={startFlex}
 					>
 						<div
-							className={`flex items-center gap-1 rounded-xl bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-500 ${
-								isRtl ? "flex-row-reverse" : "flex-row"
-							}`}
+							className={`flex items-center gap-1 rounded-xl bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-500 ${isRtl ? "flex-row-reverse" : "flex-row"
+								}`}
 						>
 							<Filter className="h-4 w-4" />
 							<span>{t("filter")}</span>
@@ -687,11 +686,10 @@ export default function ActivityLog() {
 								key={filter.value}
 								type="button"
 								onClick={() => handleFilterChange(filter.value)}
-								className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
-									entityFilter === filter.value
+								className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${entityFilter === filter.value
 										? "bg-blue-600 text-white shadow-sm"
 										: "bg-slate-100 text-slate-700 hover:bg-slate-200"
-								}`}
+									}`}
 							>
 								{t(filter.labelKey)}
 							</button>
@@ -818,11 +816,10 @@ export default function ActivityLog() {
 									<button
 										type="button"
 										onClick={() => goToPage(item)}
-										className={`min-w-[2rem] rounded-lg px-3 py-1 text-sm font-semibold ${
-											page === item
+										className={`min-w-[2rem] rounded-lg px-3 py-1 text-sm font-semibold ${page === item
 												? "bg-blue-600 text-white"
 												: "border border-slate-300 text-slate-700 hover:bg-slate-50"
-										}`}
+											}`}
 									>
 										{item.toLocaleString(numberLocale)}
 									</button>

@@ -141,6 +141,21 @@ function App() {
 	}, [isRtl]);
 
 	useEffect(() => {
+		if (hospitalInfo.hospitalName) {
+			document.title = hospitalInfo.hospitalName;
+		}
+
+		const iconUrl = hospitalInfo.logo || "/src/assets/header.jpeg";
+		let favicon = document.querySelector("link[rel='icon']");
+		if (!favicon) {
+			favicon = document.createElement("link");
+			favicon.rel = "icon";
+			document.head.appendChild(favicon);
+		}
+		favicon.href = iconUrl;
+	}, [hospitalInfo.hospitalName, hospitalInfo.logo]);
+
+	useEffect(() => {
 		let active = true;
 
 		const initAuth = async () => {
